@@ -32,7 +32,7 @@ from .make_syn import ToolSyn
 from hdlmake.util import path as path_mod
 from hdlmake.util import shell
 from hdlmake.srcfile import (VHDLFile, VerilogFile, SVFile, DPFFile,
-                             SignalTapFile, SDCFile, QIPFile, QSYSFile,
+                             SignalTapFile, SDCFile, QIPFile, QSYSFile, IPFile,
                              QSFFile, BSFFile, BDFFile, TDFFile, GDFFile)
 
 
@@ -47,7 +47,7 @@ class ToolQuartus(ToolSyn):
         'linux_bin': 'quartus_sh -t',
         'project_ext': 'qpf'}
 
-    STANDARD_LIBS = ['altera', 'altera_mf', 'lpm', 'ieee', 'std']
+    STANDARD_LIBS = ['altera', 'altera_mf', 'fourteennm', 'lpm', 'ieee', 'std']
 
     _QUARTUS_SOURCE = 'set_global_assignment -name {0} $(sourcefile)'
 
@@ -71,7 +71,10 @@ class ToolQuartus(ToolSyn):
         VerilogFile: _QUARTUS_SOURCE.format('VERILOG_FILE') +
                      _QUARTUS_LIBRARY,
         SVFile: _QUARTUS_SOURCE.format('SYSTEMVERILOG_FILE') +
-                 _QUARTUS_LIBRARY}
+                 _QUARTUS_LIBRARY,
+        IPFile:  _QUARTUS_SOURCE.format('IP_FILE') +
+                 _QUARTUS_LIBRARY,
+    }
 
     CLEAN_TARGETS = {'clean': ["*.rpt", "*.smsg", "*.summary",
                                "*.done", "*.jdi", "*.pin", "*.qws",

@@ -29,7 +29,8 @@ import os
 import logging
 
 from .util import path as path_mod
-from .dep_file import DepFile, File
+from .dep_file import DepFile, File, DepRelation
+from .new_dep_solver import DepParser
 import six
 
 
@@ -49,6 +50,7 @@ class SourceFile(DepFile):
         DepFile.__init__(self,
                          file_path=path,
                          module=module)
+        self.parser = DepParser(self)
 
     def __hash__(self):
         return hash(self.path + self.library)
@@ -276,6 +278,21 @@ class QIPFile(File):
     """This is the class providing the Altera Quartus IP file"""
     pass
 
+class IPFile(SourceFile):
+    """This is the class providing the Altera Quartus IP file"""
+    def __init__(self, path, module):
+        assert isinstance(path, six.string_types)
+        filename = path_mod.pathsplit(path)[-1]
+        library = filename[:-3] # making some poor assumptions here.
+        entity = filename[:-3]  # and here.
+        SourceFile.__init__(self,
+                            path=path,
+                            module=module,
+                            library=library)
+        obj_name = "%s.%s" % (library, entity)
+        provides = DepRelation(obj_name, DepRelation.PROVIDE, DepRelation.ENTITY)
+        self.add_relation(provides)
+        self.is_parsed = True
 
 class QSYSFile(File):
     """Qsys - Altera's System Integration Tool"""
@@ -320,6 +337,7 @@ class SignalTapFile(File):
 ALTERA_FILE_DICT = {
     'stp': SignalTapFile,
     'qip': QIPFile,
+    'ip' : IPFile,
     'qsys': QSYSFile,
     'dpf': DPFFile,
     'qsf': QSFFile,

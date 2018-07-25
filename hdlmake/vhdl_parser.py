@@ -107,6 +107,11 @@ class VHDLParser(DepParser):
                 DepRelation("%s.%s" % (dep_file.library, text.group(1)),
                             DepRelation.PROVIDE,
                             DepRelation.ENTITY))
+            # Depend on an architecture incase the architecture is not in the same file.
+            dep_file.add_relation(
+                DepRelation("%s.%s" % (dep_file.library, text.group(1)),
+                            DepRelation.USE,
+                            DepRelation.ARCHITECTURE))
             return "<hdlmake entity_pattern %s.%s>" % (dep_file.library,
                                                        text.group(1))
 
@@ -132,11 +137,6 @@ class VHDLParser(DepParser):
                 DepRelation("%s.%s" % (dep_file.library, text.group(2)),
                             DepRelation.PROVIDE,
                             DepRelation.ARCHITECTURE))
-            dep_file.add_relation(
-                DepRelation("%s.%s" % (dep_file.library, text.group(2)),
-                            DepRelation.USE,
-                            DepRelation.ENTITY))
-
             return "<hdlmake architecture %s.%s>" % (dep_file.library,
                                                      text.group(2))
         buf = re.sub(architecture_split_pattern, do_architecture, buf)

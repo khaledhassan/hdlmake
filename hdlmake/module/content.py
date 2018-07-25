@@ -52,10 +52,10 @@ class ModuleContent(ModuleCore):
 
     def process_manifest(self):
         """Process the content section of the manifest_dic"""
+        super(ModuleContent, self).process_manifest()
         self._process_manifest_files()
         self._process_manifest_modules()
         self._process_manifest_makefiles()
-        super(ModuleContent, self).process_manifest()
 
     def _process_manifest_files(self):
         """Process the files instantiated by the HDLMake module"""
@@ -71,8 +71,10 @@ class ModuleContent(ModuleCore):
         else:
             self.manifest_dict["files"] = path_mod.flatten_list(
                 self.manifest_dict["files"])
-            logging.debug("Files in %s: %s",
-                          self.path, str(self.manifest_dict["files"]))
+            logging.debug("Files in %s: %s to library %s" ,
+                          self.path,
+                          str(self.manifest_dict["files"]),
+                          self.library)
             paths = self._make_list_of_paths(self.manifest_dict["files"])
             self.files = self._create_file_list_from_paths(paths=paths)
 

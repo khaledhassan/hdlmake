@@ -248,7 +248,10 @@ class VHDLParser(DepParser):
         # instantions
         libraries = set([dep_file.library])
         instance_pattern = re.compile(
-            r"^\s*(\w+)\s*:\s*(?:entity\s+\w+\.)?(\w+)\s*(?:\(\s*\w+\s*\)\s*)?(?:port\s+map.*?|generic\s+map.*?)",
+            r"^\s*(?P<LABEL>\w+)\s*:"
+            r"\s*(?:entity\s+(?P<LIB>\w+)\.)?(?P<ENTITY>\w+)"
+            r"\s*(?:\(\s*(?P<ARCH>\w+)\s*\)\s*)?"
+            r"(?:port\s+map.*?|generic\s+map.*?)",
             re.DOTALL | re.MULTILINE | re.IGNORECASE)
 
         def do_instance(text):
@@ -256,14 +259,17 @@ class VHDLParser(DepParser):
             instance_pattern in the VHDL code -- group() returns positive
             matches as indexed plain strings. It adds the found USE
             relations to the file"""
-            for lib in libraries:
-                logging.debug("-> instantiates %s.%s as %s",
-                              lib, text.group(2), text.group(1))
-                dep_file.add_relation(DepRelation(
-                    "%s.%s" % (lib, text.group(2)),
-                    DepRelation.USE, DepRelation.ENTITY))
-            return "<hdlmake instance %s|%s>" % (text.group(1),
-                                                 text.group(2))
+            logging.debug("-> instantiates %s.%s(%s) as %s",
+                          text.group("LIB"), text.group("ENTITY"), text.group("ARCH"), text.group("LABEL"))
+            lib = text.group("LIB")
+            if not lib or lib == "work":
+                lib = dep_file.library
+            dep_file.add_relation(DepRelation(
+                "%s.%s" % (lib, text.group("ENTITY")),
+                DepRelation.USE, DepRelation.ENTITY))
+            return "<hdlmake instance %s|%s|%s>" % (text.group("LABEL"),
+                                                    lib,
+                                                    text.group("ENTITY"))
         buf = re.sub(instance_pattern, do_instance, buf)
 
         instance_from_library_pattern = re.compile(

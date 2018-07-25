@@ -136,8 +136,8 @@ def make_dependency_set(fileset, top_level_entity, extra_modules=None):
     def _check_entity(test_file, entity_name):
         """ Check if the input file provides the entity pointed by the name"""
         entity_rel_vhdl = DepRelation(
-            "%s.%s" %
-            ("work", entity_name), DepRelation.PROVIDE, DepRelation.ENTITY)
+            entity_name,
+            DepRelation.PROVIDE, DepRelation.ENTITY)
         entity_rel_vlog = DepRelation(
             "%s.%s" %
             ("work", entity_name), DepRelation.PROVIDE, DepRelation.MODULE)

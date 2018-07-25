@@ -143,5 +143,8 @@ class ModuleCore(ModuleConfig):
         # Libraries
         if "library" in self.manifest_dict:
             self.library = self.manifest_dict["library"]
+        elif self.parent:
+            self.library = self.parent.library
+
         if "action" in self.manifest_dict:
             self.action = self.manifest_dict["action"].lower()

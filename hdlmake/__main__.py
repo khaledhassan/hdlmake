@@ -125,6 +125,11 @@ def _get_parser():
         dest="delimiter",
         default=None)
     listfiles.add_argument(
+        "--qip",
+        help="write file list to intel/altera .qip file",
+        dest="qip",
+        default=None)
+    listfiles.add_argument(
         "--reverse",
         help="reverse the order for the list of files",
         dest="reverse",

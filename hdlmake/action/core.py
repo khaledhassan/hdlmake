@@ -34,7 +34,7 @@ from hdlmake.util import path as path_mod
 from hdlmake.fetch import Svn, Git, GitSM, Local
 from hdlmake.fetch import SVN, GIT, GITSM, LOCAL
 from .action import Action
-
+from hdlmake.srcfile import VHDLFile, VerilogFile, IPFile
 
 class ActionCore(Action):
 
@@ -64,6 +64,10 @@ class ActionCore(Action):
         self.solve_file_set()
         combined_fileset = self.parseable_fileset
         combined_fileset.add(self.privative_fileset)
+        if self.tool == None:
+            logging.error("No tool selected. You may need to set an action in your Manifest.py before a Makefile can be generated.")
+            logging.error("    Either action='simulation', or action='synthesis'.")
+            quit()
         self.tool.write_makefile(self.config,
                                  combined_fileset,
                                  filename=self.options.filename)
@@ -155,6 +159,9 @@ class ActionCore(Action):
         self.solve_file_set()
         file_list = dep_solver.make_dependency_sorted_list(
             self.parseable_fileset)
+        if self.options.qip:
+            self._write_qip(file_list, self.options.qip)
+            return
         files_str = [file_aux.path for file_aux in file_list]
         if self.options.reverse is True:
             files_str.reverse()
@@ -163,6 +170,32 @@ class ActionCore(Action):
         else:
             delimiter = self.options.delimiter
         print(delimiter.join(files_str))
+
+    def _write_qip(self, file_list, filename):
+        tcl = []
+        for file_aux in file_list:
+            path = os.path.relpath(file_aux.path)
+            lib  = file_aux.library
+            if isinstance(file_aux, VHDLFile):
+                ftype = "VHDL_FILE"
+            elif isinstance(file_aux, VerilogFile):
+                ftype = "VERILOG_FILE"
+            elif isinstance(file_aux, IPFile):
+                ftype = "IP_FILE"
+            else:
+                ftype = "MISC_FILE"
+
+                #[file join $::quartus(qip_path) {path}]
+            tcl.append('''set_global_assignment -library "{lib}" -name {ftype}  "{path}"'''.format(lib=lib, ftype=ftype, path=path))
+
+        #qip_filename = self.get_top_module().manifest_dict["qip_filename"]
+        if not filename:
+            filename = self.top_entity
+        outfile = open(filename, "w")
+        outfile.write("\n".join(tcl))
+        outfile.write("\n")
+        outfile.close()
+
 
     def _print_comment(self, message):
         """Private method that prints a message to stdout if not terse"""

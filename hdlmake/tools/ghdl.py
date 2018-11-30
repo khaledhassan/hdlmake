@@ -48,8 +48,8 @@ class ToolGHDL(ToolSim):
                      'mrproper': ["*.vcd"]}
 
     SIMULATOR_CONTROLS = {'vlog': None,
-                          'vhdl': 'ghdl -a $<',
-                          'compiler': 'ghdl -e $(TOP_MODULE)'}
+                          'vhdl': '$(GHDL) -a $(GHDL_OPT) $<',
+                          'compiler': '$(GHDL) -e $(GHDL_OPT) $(TOP_MODULE)'}
 
     def __init__(self):
         super(ToolGHDL, self).__init__()
@@ -63,7 +63,8 @@ class ToolGHDL(ToolSim):
         """Print the GHDL options to the Makefile"""
         ghdl_opt = self.manifest_dict.get("ghdl_opt", '')
         ghdl_string = string.Template(
-            """GHDL_OPT := ${ghdl_opt}\n""")
+            "GHDL := ghdl\n"
+            "GHDL_OPT := ${ghdl_opt}\n")
         self.writeln(ghdl_string.substitute(
             ghdl_opt=ghdl_opt))
 

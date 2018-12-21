@@ -27,7 +27,7 @@
 from __future__ import absolute_import
 from .xilinx import ToolXilinx
 from hdlmake.srcfile import (XDCFile, XCIFile, NGCFile, XMPFile,
-                             XCOFile, COEFile, BDFile, TCLFile,
+                             XCOFile, COEFile, BDFile, TCLFile, BMMFile,
                              MIFFile, RAMFile, VHOFile, VEOFile, XCFFile)
 
 
@@ -54,6 +54,7 @@ class ToolVivado(ToolXilinx):
          XCOFile: ToolXilinx._XILINX_SOURCE,
          COEFile: ToolXilinx._XILINX_SOURCE,
          BDFile: ToolXilinx._XILINX_SOURCE,
+         BMMFile: ToolXilinx._XILINX_SOURCE,
          TCLFile: ToolXilinx._XILINX_SOURCE,
          MIFFile: ToolXilinx._XILINX_SOURCE,
          RAMFile: ToolXilinx._XILINX_SOURCE,

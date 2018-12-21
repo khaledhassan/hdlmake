@@ -184,6 +184,11 @@ class VHOFile(File):
     pass
 
 
+class BMMFile(File):
+    """Xilinx Block Memory Map File"""
+    pass
+
+
 class VEOFile(File):
     """Xilinx Verilog Template File"""
     pass
@@ -212,6 +217,7 @@ XILINX_FILE_DICT = {
     'ram': RAMFile,
     'vho': VHOFile,
     'veo': VEOFile,
+    'bmm': BMMFile,
     'xci': XCIFile}
 
 

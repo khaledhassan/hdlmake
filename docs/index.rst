@@ -26,9 +26,9 @@ Makefiles, and fetching IP-Core libraries from remote repositories.
 Contribute
 ----------
 
-- Wiki Pages: http://www.ohwr.org/projects/hdl-make/wiki
-- Issue Tracker: http://www.ohwr.org/projects/hdl-make/issues
-- Source Code: http://www.ohwr.org/projects/hdl-make/repository
+- Wiki Pages: https://www.ohwr.org/projects/hdl-make/wiki
+- Issue Tracker: https://www.ohwr.org/projects/hdl-make/work_packages
+- Source Code: https://www.ohwr.org/projects/hdl-make/repository
 
 
 Support

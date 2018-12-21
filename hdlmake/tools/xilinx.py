@@ -84,6 +84,8 @@ $(TCL_CLOSE)'''
         """Create the property list"""
         syn_properties = self.manifest_dict.get("syn_properties")
         language = self.manifest_dict.get("language")
+        if language == None:
+            language = "vhdl"
         properties = [
             ['part', '$(SYN_DEVICE)' +
                      '$(SYN_PACKAGE)' +

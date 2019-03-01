@@ -33,6 +33,9 @@ from .dep_file import DepFile, File, DepRelation
 from .new_dep_solver import DepParser
 import six
 
+import re
+import io
+import mmap
 
 class SourceFile(DepFile):
 
@@ -292,12 +295,37 @@ class IPFile(SourceFile):
         obj_name = "%s.%s" % (library, entity)
         provides = DepRelation(obj_name, DepRelation.PROVIDE, DepRelation.ENTITY)
         self.add_relation(provides)
+        logging.debug("%s -> provides %s" % (filename, obj_name))
         self.is_parsed = True
 
-class QSYSFile(File):
+class QSYSFile(SourceFile):
     """Qsys - Altera's System Integration Tool"""
-    pass
-
+    def __init__(self, path, module):
+        assert isinstance(path, six.string_types)
+        filename = path_mod.pathsplit(path)[-1]
+        library = filename[:-5] # making some poor assumptions here.
+        entity = filename[:-5]  # and here.        
+        SourceFile.__init__(self,
+                            path=path,
+                            module=module,
+                            library=library)
+        obj_name = "%s.%s" % (library, entity)
+        self.add_relation(DepRelation(obj_name, DepRelation.PROVIDE, DepRelation.ENTITY))
+        self.add_relation(DepRelation(obj_name, DepRelation.PROVIDE, DepRelation.ARCHITECTURE))
+        logging.debug("%s -> provides %s" % (filename, obj_name))
+        with io.open(path, 'r', encoding="utf-8") as qsys_file:
+            # Avoid loading entire file into memory - since it is a large file.
+            with mmap.mmap(qsys_file.fileno(), 0, access=mmap.ACCESS_READ) as qsys_xml:
+                child_re = r'<hdlLibraryName>(?P<entity>[\w_\d]+)</hdlLibraryName>'
+                pattern = re.compile(child_re.encode("utf-8"))
+                for match in pattern.finditer(qsys_xml):
+                    entity = str(match.group("entity").decode('utf-8'))
+                    library = entity
+                    obj_name = "%s.%s" % (library, entity)
+                    depends = DepRelation(obj_name, DepRelation.USE, DepRelation.ENTITY)
+                    self.add_relation(depends)
+                    logging.debug("%s -> depends %s" % (filename, obj_name))
+        self.is_parsed = True
 
 class DPFFile(File):
     """This is the class providing Altera Quartus Design Protocol File"""

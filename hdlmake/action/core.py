@@ -34,7 +34,7 @@ from hdlmake.util import path as path_mod
 from hdlmake.fetch import Svn, Git, GitSM, Local
 from hdlmake.fetch import SVN, GIT, GITSM, LOCAL
 from .action import Action
-from hdlmake.srcfile import VHDLFile, VerilogFile, IPFile
+from hdlmake.srcfile import VHDLFile, VerilogFile, IPFile, QSYSFile
 
 class ActionCore(Action):
 
@@ -182,6 +182,8 @@ class ActionCore(Action):
                 ftype = "VERILOG_FILE"
             elif isinstance(file_aux, IPFile):
                 ftype = "IP_FILE"
+            elif isinstance(file_aux, QSYSFile):
+                ftype = "QSYS_FILE"
             else:
                 ftype = "MISC_FILE"
 

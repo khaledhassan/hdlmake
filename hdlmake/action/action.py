@@ -32,7 +32,7 @@ from hdlmake.tools import load_syn_tool, load_sim_tool
 from hdlmake.util import shell
 from hdlmake.util.termcolor import colored
 from hdlmake import new_dep_solver as dep_solver
-from hdlmake.srcfile import SourceFileSet, VHDLFile, VerilogFile, SVFile, IPFile
+from hdlmake.srcfile import SourceFileSet, VHDLFile, VerilogFile, SVFile, IPFile, QSYSFile
 
 def set_logging_level(options):
     """Set the log level and config (A.K.A. log verbosity)"""
@@ -169,8 +169,8 @@ class Action(list):
         for file_aux in total_files:
             if self.tool == None:
                 if any(isinstance(file_aux, file_type)
-                       for file_type in [VHDLFile, VerilogFile, SVFile, IPFile]):
-                    self.parseable_fileset.add(file_aux)
+                       for file_type in [VHDLFile, VerilogFile, SVFile, IPFile, QSYSFile]):
+                            self.parseable_fileset.add(file_aux)
                 else:
                     self.privative_fileset.add(file_aux)
             else:

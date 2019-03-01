@@ -26,9 +26,9 @@ Makefiles, and fetching IP-Core libraries from remote repositories.
 Contribute
 ----------
 
-- Wiki Pages: http://www.ohwr.org/projects/hdl-make/wiki
-- Issue Tracker: http://www.ohwr.org/projects/hdl-make/issues
-- Source Code: http://www.ohwr.org/projects/hdl-make/repository
+- Wiki Pages: https://www.ohwr.org/projects/hdl-make/wiki
+- Issue Tracker: https://www.ohwr.org/projects/hdl-make/work_packages
+- Source Code: https://www.ohwr.org/projects/hdl-make/repository
 
 
 Support
@@ -1117,6 +1117,8 @@ This project makes use of **custom Xilinx Vivado properties** and **custom Pytho
    modules = { "local" : [ "../../../../top/afc_v3/vivado/dbe_bpm2" ] };
 
 
+.. note:: If you are generating HDL code from a Xilinx IP library, you may need to select the target language by setting the ``language`` top manifest variable to either ``vhdl`` or ``verilog``. If the ``language`` variable is not defined, ``hdlmake`` will choose ``vhdl`` as the default HDL language.
+
 
 Intel Quartus
 ~~~~~~~~~~~~~
@@ -1402,6 +1404,8 @@ Top Manifest variables
 +----------------+--------------+-----------------------------------------------------------------+-----------+
 | incl_makefiles | list, str    | List of .mk files appended to toplevel makefile                 | []        |
 +----------------+--------------+-----------------------------------------------------------------+-----------+
+| language       | str          | Select the default HDL language if required (verilog, vhdl)     | "vhdl"    |
++----------------+--------------+-----------------------------------------------------------------+-----------+
  
 
 Universal variables
@@ -1466,6 +1470,15 @@ Icarus Verilog specific variables:
 | Name           | Type         | Description                                                     | Default   |
 +================+==============+=================================================================+===========+
 | iverilog_opt   | str          | Additional options for iverilog                                 | ""        |
++----------------+--------------+-----------------------------------------------------------------+-----------+
+
+
+GHDL specific variables:
+
++----------------+--------------+-----------------------------------------------------------------+-----------+
+| Name           | Type         | Description                                                     | Default   |
++================+==============+=================================================================+===========+
+| ghdl_opt       | str          | Additional options for ghdl                                     | ""        |
 +----------------+--------------+-----------------------------------------------------------------+-----------+
 
 

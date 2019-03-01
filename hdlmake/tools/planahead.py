@@ -25,7 +25,7 @@
 
 from __future__ import absolute_import
 from .xilinx import ToolXilinx
-from hdlmake.srcfile import (UCFFile, NGCFile, XMPFile, XCOFile)
+from hdlmake.srcfile import (UCFFile, NGCFile, XMPFile, XCOFile, BMMFile)
 
 
 class ToolPlanAhead(ToolXilinx):
@@ -46,6 +46,7 @@ class ToolPlanAhead(ToolXilinx):
         UCFFile: ToolXilinx._XILINX_SOURCE,
         NGCFile: ToolXilinx._XILINX_SOURCE,
         XMPFile: ToolXilinx._XILINX_SOURCE,
+        BMMFile: ToolXilinx._XILINX_SOURCE,
         XCOFile: ToolXilinx._XILINX_SOURCE}
 
     CLEAN_TARGETS = {'clean': ["planAhead_*", "planAhead.*",

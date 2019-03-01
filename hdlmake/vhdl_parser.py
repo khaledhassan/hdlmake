@@ -172,10 +172,12 @@ class VHDLParser(DepParser):
             matches as indexed plain strings. It doesn't add any relation
             to the file"""
             logging.debug("found component declaration %s", text.group(1))
-            #dep_file.add_relation(
-            #    DepRelation("%s.%s" % (dep_file.library, text.group(1)),
-            #                DepRelation.USE,
-            #                DepRelation.ENTITY))
+            # dep_file.add_relation(
+            #     DepRelation("%s.%s" % (dep_file.library, text.group(1)),
+            #                 DepRelation.PROVIDE,
+            #                 DepRelation.ENTITY))
+            # logging.debug("-> provides %s.%s",
+            #                   dep_file.library, text.group(1))
             return "<hdlmake component %s>" % text.group(1)
 
         buf = re.sub(component_pattern, do_component, buf)
@@ -258,15 +260,16 @@ class VHDLParser(DepParser):
             """Function to be applied by re.sub to every match of the
             instance_pattern in the VHDL code -- group() returns positive
             matches as indexed plain strings. It adds the found USE
-            relations to the file"""
-            logging.debug("-> instantiates %s.%s(%s) as %s",
-                          text.group("LIB"), text.group("ENTITY"), text.group("ARCH"), text.group("LABEL"))
+            relations to the file"""            
             lib = text.group("LIB")
-            if not lib or lib == "work":
-                lib = dep_file.library
-            dep_file.add_relation(DepRelation(
-                "%s.%s" % (lib, text.group("ENTITY")),
-                DepRelation.USE, DepRelation.ENTITY))
+            if lib is not None: # else is a component instanciation. Assume declaration in scope already. Either earlier in file or in a used package.
+                if lib == "work":
+                    lib = dep_file.library
+                dep_file.add_relation(DepRelation(
+                    "%s.%s" % (lib, text.group("ENTITY")),
+                    DepRelation.USE, DepRelation.ENTITY))
+            logging.debug("-> instantiates %s.%s(%s) as %s",
+                          lib, text.group("ENTITY"), text.group("ARCH"), text.group("LABEL"))
             return "<hdlmake instance %s|%s|%s>" % (text.group("LABEL"),
                                                     lib,
                                                     text.group("ENTITY"))

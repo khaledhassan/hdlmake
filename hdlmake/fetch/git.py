@@ -66,6 +66,7 @@ class Git(Fetcher):
     def fetch(self, module):
         """Get the code from the remote Git repository"""
         fetchto = module.fetchto()
+        logging.debug("Fetchto = '{}'".format(fetchto))
         if not os.path.exists(fetchto):
             os.mkdir(fetchto)
         basename = path_utils.url_basename(module.url)

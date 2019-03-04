@@ -36,7 +36,7 @@ class ModuleConfig(object):
 
     def fetchto(self):
         """Get the fetchto folder for the module"""
-        return os.path.dirname(self.path)
+        return os.path.dirname(os.path.join(".", self.path))
 
     def init_config(self, module_args):
         """This initializes the module configuration.

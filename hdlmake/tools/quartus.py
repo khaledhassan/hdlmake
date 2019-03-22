@@ -55,7 +55,7 @@ class ToolQuartus(ToolSyn):
         SignalTapFile: _QUARTUS_SOURCE.format('SIGNALTAP_FILE'),
         SDCFile: _QUARTUS_SOURCE.format('SDC_FILE'),
         QIPFile: _QUARTUS_SOURCE.format('QIP_FILE'),
-        #QSYSFile: _QUARTUS_SOURCE.format('QSYS_FILE'),
+        QSYSFile: _QUARTUS_SOURCE.format('QSYS_FILE'),
         DPFFile: _QUARTUS_SOURCE.format('MISC_FILE'),
         QSFFile: _QUARTUS_SOURCE.format('SOURCE_TCL_SCRIPT_FILE'),
         BSFFile: _QUARTUS_SOURCE.format('BSF_FILE'),
@@ -74,7 +74,7 @@ class ToolQuartus(ToolSyn):
                  _QUARTUS_LIBRARY,
         IPFile:  _QUARTUS_SOURCE.format('IP_FILE') +
                  _QUARTUS_LIBRARY,
-        QSYSFile:  _QUARTUS_SOURCE.format('QSYSFile_FILE') +
+        QSYSFile:  _QUARTUS_SOURCE.format('QSYS_FILE') +
                  _QUARTUS_LIBRARY,
     }
 
@@ -131,7 +131,9 @@ class ToolQuartus(ToolSyn):
                 "^EP4CE.*$": "Cyclone IV E",
                 "^EP4CGX.*$": "Cyclone IV GX",
                 "^5A.*$": "Arria V",
-                "^5S.*$": "Stratix V"}
+                "^5S.*$": "Stratix V",
+                "^1S.*$": "Stratix 10",
+                }
             if family is None:
                 for key in family_names:
                     if re.match(key, device.upper()):

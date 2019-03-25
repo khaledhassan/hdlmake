@@ -26,21 +26,23 @@ from __future__ import print_function
 from __future__ import absolute_import
 import os
 
-
 def url_parse(url):
     """
     Check if link to a Git repo seems to be correct. Filter revision
     number and branch
     """
-    url_clean, branch, rev = None, None, None
-    if "@@" in url:
-        url_clean, rev = url.split("@@")
-    elif "::" in url:
-        url_clean, branch = url.split("::")
+    url_clean, branch, rev, lib = None, None, None, None
+    if isinstance(url,tuple):
+        url_clean, lib = url
     else:
         url_clean = url
 
-    return (url_clean, branch, rev)
+    if "@@" in url_clean:
+        url_clean, rev = url_clean.split("@@")
+    elif "::" in url_clean:
+        url_clean, branch = url_clean.split("::")
+
+    return (url_clean, branch, rev, lib)
 
 
 def svn_parse(url):
@@ -48,14 +50,16 @@ def svn_parse(url):
     Check if link to a SVN repo seems to be correct. Filter revision
     number
     """
-    url_clean, rev = None, None
-    if "@" in url:
-        url_clean, rev = url.split("@")
+    url_clean, rev, lib = None, None, None
+    if isinstance(url,tuple):
+        url_clean, lib = url
     else:
         url_clean = url
 
-    return (url_clean, rev)
+    if "@" in url_clean:
+        url_clean, rev = url_clean.split("@")
 
+    return (url_clean, rev, lib)
 
 def url_basename(url):
     """

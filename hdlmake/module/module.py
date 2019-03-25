@@ -53,11 +53,11 @@ class Module(ModuleContent):
         super(Module, self).__init__()
         self.init_config(module_args)
         self.set_pool(pool)
-        self.module_args = ModuleArgs()
-        self.module_args = module_args
+        #self.module_args = ModuleArgs()
+        #self.module_args = module_args
 
     def __str__(self):
-        return self.module_args.url
+        return self.url
 
     @property
     def is_fetched_to(self):

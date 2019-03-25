@@ -70,17 +70,17 @@ class Git(Fetcher):
         if not os.path.exists(fetchto):
             os.mkdir(fetchto)
         basename = path_utils.url_basename(module.url)
-        mod_path = os.path.join(fetchto, basename)
         if basename.endswith(".git"):
             basename = basename[:-4]  # remove trailing .git
         if not module.isfetched:
-            logging.info("Fetching git module %s", mod_path)
-            cmd = "(cd {0} && git clone {1})"
-            cmd = cmd.format(fetchto, module.url)
+            logging.info("Fetching git module %s to %s", module.url, module.path)
+            cmd = "(git clone {1} {2})"
+            cmd = cmd.format(fetchto, module.url, module.path)
+            logging.info(cmd)
             if os.system(cmd) != 0:
                 return False
         else:
-            logging.info("Updating git module %s", mod_path)
+            logging.info("Updating git module %s", module.path)
         checkout_id = None
         if module.branch is not None:
             checkout_id = module.branch
@@ -94,17 +94,16 @@ class Git(Fetcher):
         if checkout_id is not None:
             logging.info("Checking out version %s", checkout_id)
             cmd = "(cd {0} && git checkout {1})"
-            cmd = cmd.format(mod_path, checkout_id)
+            cmd = cmd.format(module.path, checkout_id)
             if os.system(cmd) != 0:
                 return False
         if self.submodule and not module.isfetched:
             cmd = ("(cd {0} && git submodule init &&"
                 "git submodule update --recursive)")
-            cmd = cmd.format(mod_path)
+            cmd = cmd.format(module.path)
             if os.system(cmd) != 0:
                 return False
         module.isfetched = True
-        module.path = mod_path
         return True
 
     @staticmethod

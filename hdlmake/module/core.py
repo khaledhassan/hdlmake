@@ -22,6 +22,7 @@ class ModuleConfig(object):
         self.revision = None
         self.path = None
         self.isfetched = False
+        self.library_overide = None
 
     def process_manifest(self):
         """process_manifest does nothing for ModuleConfig"""
@@ -51,12 +52,14 @@ class ModuleConfig(object):
 
         if self.source != fetch.LOCAL:
             if self.source == fetch.SVN:
-                self.url, self.revision = \
+                self.url, self.revision, self.library_overide = \
                     path_mod.svn_parse(url)
             else:
-                self.url, self.branch, self.revision = \
+                self.url, self.branch, self.revision, self.library_overide = \
                     path_mod.url_parse(url)
             basename = self.basename()
+            if self.library_overide:
+                basename += "-" + self.library_overide                
             path = path_mod.relpath(os.path.abspath(
                 os.path.join(fetchto, basename)))
 
@@ -141,7 +144,9 @@ class ModuleCore(ModuleConfig):
         # if "top_module" in self.manifest_dict:
         #    self.top_module = self.manifest_dict["top_module"]
         # Libraries
-        if "library" in self.manifest_dict:
+        if self.library_overide is not None:
+            self.library = self.library_overide
+        elif "library" in self.manifest_dict:
             self.library = self.manifest_dict["library"]
         elif self.parent:
             self.library = self.parent.library

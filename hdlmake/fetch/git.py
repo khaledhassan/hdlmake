@@ -54,6 +54,8 @@ class Git(Fetcher):
     def get_submodule_commit(submodule_dir):
         """Get the commit for a repository if defined in Git submodules"""
         status_line = shell.run("git submodule status %s" % submodule_dir)
+        if status_line is None:
+            return None
         status_line = status_line.split()
         if len(status_line) == 2 or len(status_line) == 3:
             if status_line[0][0] in ['-', '+', 'U']:
@@ -69,11 +71,8 @@ class Git(Fetcher):
         logging.debug("Fetchto = '{}'".format(fetchto))
         if not os.path.exists(fetchto):
             os.mkdir(fetchto)
-        basename = path_utils.url_basename(module.url)
-        if basename.endswith(".git"):
-            basename = basename[:-4]  # remove trailing .git
         if not module.isfetched:
-            logging.info("Fetching git module %s to %s", module.url, module.path)
+            logging.info("Cloning git module %s to %s", module.url, module.path)
             cmd = "(git clone {1} {2})"
             cmd = cmd.format(fetchto, module.url, module.path)
             logging.info(cmd)
@@ -81,6 +80,7 @@ class Git(Fetcher):
                 return False
         else:
             logging.info("Updating git module %s", module.path)
+
         checkout_id = None
         if module.branch is not None:
             checkout_id = module.branch
@@ -91,12 +91,14 @@ class Git(Fetcher):
         else:
             checkout_id = self.get_submodule_commit(module.path)
             logging.debug("Git submodule commit: %s", checkout_id)
+
         if checkout_id is not None:
             logging.info("Checking out version %s", checkout_id)
             cmd = "(cd {0} && git checkout {1})"
             cmd = cmd.format(module.path, checkout_id)
             if os.system(cmd) != 0:
                 return False
+
         if self.submodule and not module.isfetched:
             cmd = ("(cd {0} && git submodule init &&"
                 "git submodule update --recursive)")

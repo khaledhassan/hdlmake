@@ -34,6 +34,7 @@ class ToolSim(ToolMakefile):
         _check_simulation_manifest(config)
         self.makefile_setup(config, fileset, filename=filename)
         self.makefile_check_tool('sim_path')
+        self.makefile_includes()
         self._makefile_sim_top()
         self._makefile_sim_options()
         self._makefile_sim_local()

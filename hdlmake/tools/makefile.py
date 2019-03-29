@@ -133,10 +133,11 @@ class ToolMakefile(object):
 
     def makefile_includes(self):
         """Add the included makefiles that need to be previously loaded"""
-        #for file_aux in self.top_module.incl_makefiles:
-        #    if os.path.exists(file_aux):
-        #        self.write("include %s\n" % file_aux)
-        pass
+        if self.manifest_dict.get("incl_makefiles") is not None:
+            for file_aux in self.manifest_dict["incl_makefiles"]:
+                if os.path.exists(file_aux):
+                    self.writeln("include %s" % file_aux)
+            self.writeln()
 
     def makefile_clean(self):
         """Print the Makefile target for cleaning intermediate files"""

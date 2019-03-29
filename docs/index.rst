@@ -1402,7 +1402,7 @@ Top Manifest variables
 +================+==============+=================================================================+===========+ 
 | action         | str          | What is the action that should be taken (simulation/synthesis)  | ""        | 
 +----------------+--------------+-----------------------------------------------------------------+-----------+
-| incl_makefiles | list, str    | List of .mk files appended to toplevel makefile                 | []        |
+| incl_makefiles | list         | List of .mk files included in the generated makefile            | []        |
 +----------------+--------------+-----------------------------------------------------------------+-----------+
 | language       | str          | Select the default HDL language if required (verilog, vhdl)     | "vhdl"    |
 +----------------+--------------+-----------------------------------------------------------------+-----------+

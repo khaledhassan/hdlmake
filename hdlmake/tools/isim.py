@@ -255,7 +255,7 @@ fuse:
                     self.write(
                         " \\\n" + os.path.join(dep_file.library,
                                                name, "." + name + "_" +
-                                               vhdl_file.extension()))
+                                               dep_file.extension()))
                 else:
                     self.write(" \\\n" + os.path.join(dep_file.rel_path()))
             self.write('\n')

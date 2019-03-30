@@ -42,7 +42,7 @@ class ToolDiamond(ToolSyn):
 
     STANDARD_LIBS = ['ieee', 'std']
 
-    _LATTICE_SOURCE = 'prj_src {0} "$$filename"'
+    _LATTICE_SOURCE = 'prj_src {0} $(sourcefile)'
 
     SUPPORTED_FILES = {
         EDFFile: _LATTICE_SOURCE.format('add'),
@@ -63,7 +63,7 @@ class ToolDiamond(ToolSyn):
                     'save': 'prj_project save',
                     'close': 'prj_project close',
                     'project': '$(TCL_CREATE)\n'
-                               '$(TCL_FILES)\n'
+                               'source files.tcl\n'
                                '$(TCL_SAVE)\n'
                                '$(TCL_CLOSE)',
                     'par': '$(TCL_OPEN)\n'

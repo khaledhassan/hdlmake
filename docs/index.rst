@@ -26,18 +26,18 @@ Makefiles, and fetching IP-Core libraries from remote repositories.
 Contribute
 ----------
 
-- Wiki Pages: https://www.ohwr.org/projects/hdl-make/wiki
-- Issue Tracker: https://www.ohwr.org/projects/hdl-make/work_packages
-- Source Code: https://www.ohwr.org/projects/hdl-make/repository
+- Wiki Pages: https://ohwr.org/projects/hdl-make/wiki
+- Issue Tracker: https://ohwr.org/project/hdl-make/issues
+- Source Code: https://ohwr.org/project/hdl-make
 
 
 Support
 -------
 
 If you are experiencing any issues, please let us know.
-We have a mailing list located at:
+You can find a dedicated support forum located at:
 
-- http://www.ohwr.org/mailing_list/show?project_id=hdl-make
+- https://forums.ohwr.org/c/hdl-make
 
 If you are seeking for consultancy and training services on advanced ``hdlmake`` use cases, you can get **commercial support from GL Research**, the company on charge of maintaining and developing the tool.
 

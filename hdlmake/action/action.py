@@ -93,7 +93,7 @@ class Action(list):
             self.top_entity = self.config.get("syn_top")
         else:
             logging.error("Unknown requested action: %s", action)
-            quit()
+            quit(1)
 
     def new_module(self, parent, url, source, fetchto):
         """Add new module to the pool.

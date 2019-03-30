@@ -26,7 +26,7 @@ def load_syn_tool(tool_name):
     else:
         logging.error("Unknown synthesis tool: %s", tool_name)
         logging.error("    Supported synthesis tools are %s", available_tools.keys())
-        quit()
+        quit(1)
 
 
 def load_sim_tool(tool_name):
@@ -52,4 +52,4 @@ def load_sim_tool(tool_name):
     else:
         logging.error("Unknown simulation tool: %s", tool_name)
         logging.error("    Supported simulation tools are %s", available_tools.keys())
-        quit()
+        quit(1)

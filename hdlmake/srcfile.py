@@ -438,5 +438,5 @@ def create_source_file(path, module, library=None,
     else:
         logging.error("Cannot create source file %s, "
                       "unknown file extension %s", path, extension)
-        quit()
+        quit(1)
     return new_file

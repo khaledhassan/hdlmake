@@ -169,7 +169,7 @@ PARSE START: %s
                 logging.error(
                     "Error while parsing {0}:\n{1}: {2}.".format(
                         self.path, type(name_error), name_error))
-                quit()
+                quit(1)
             self.manifest_dict = opt_map
         else:
             self.manifest_dict = {}

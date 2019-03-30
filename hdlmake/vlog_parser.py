@@ -136,7 +136,7 @@ class VerilogPreprocessor(object):
             params = []
         if name in self.vpp_keywords:
             logging.error("Attempt to `define a reserved preprocessor keyword")
-            quit()
+            quit(1)
         mdef = self.VLDefine(name, params, expansion)
         self.vpp_macros.append(mdef)
         return mdef

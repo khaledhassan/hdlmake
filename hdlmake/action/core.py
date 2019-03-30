@@ -56,7 +56,7 @@ class ActionCore(Action):
                 "The following modules remains unfetched:\n"
                 "%s",
                 "\n".join([str(m) for m in self if not m.isfetched]))
-            quit()
+            quit(1)
     def makefile(self):
         """Write the Makefile for the current design"""
         self._check_all_fetched()

@@ -311,12 +311,12 @@ types:[<type 'int'>]
             logging.error("Invalid syntax in the manifest file " +
                           self.config_file + ":\n" + str(error_syntax))
             logging.error(content)
-            quit()
+            quit(1)
         except SystemExit as error_exit:
             logging.error("Exit requested by the manifest file " +
                           self.config_file + ":\n" + str(error_exit))
             logging.error(content)
-            quit()
+            quit(1)
         except:
             logging.error("Encountered unexpected error while parsing " +
                           self.config_file)

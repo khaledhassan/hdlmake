@@ -213,7 +213,7 @@ class ToolQuartus(ToolSyn):
                 logging.error("quartus_preflow file listed in "
                               + os.getcwd() + " doesn't exist: "
                               + path + ".\nExiting.")
-                quit()
+                quit(1)
             preflow = '"' + 'quartus_sh:' + path + '"'
             command_list.append(self._emit_property(self.SET_GLOBAL_ASSIGNMENT,
                                 {'name_type': 'PRE_FLOW_SCRIPT_FILE',
@@ -226,7 +226,7 @@ class ToolQuartus(ToolSyn):
                 logging.error("quartus_postmodule file listed in "
                               + os.getcwd() + " doesn't exist: "
                               + path + ".\nExiting.")
-                quit()
+                quit(1)
             postmodule = '"' + 'quartus_sh:' + path + '"'
             command_list.append(self._emit_property(self.SET_GLOBAL_ASSIGNMENT,
                                 {'name_type': 'POST_MODULE_SCRIPT_FILE',
@@ -238,7 +238,7 @@ class ToolQuartus(ToolSyn):
                 logging.error("quartus_postflow file listed in "
                               + os.getcwd() + " doesn't exist: "
                               + path + ".\nExiting.")
-                quit()
+                quit(1)
             postflow = '"' + 'quartus_sh:' + path + '"'
             command_list.append(self._emit_property(self.SET_GLOBAL_ASSIGNMENT,
                                 {'name_type': 'POST_FLOW_SCRIPT_FILE',

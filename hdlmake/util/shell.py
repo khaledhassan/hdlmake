@@ -47,7 +47,7 @@ def run(command):
     except CalledProcessError as process_error:
         logging.error("Cannot execute the shell command: %s",
             process_error.output)
-        quit()
+        quit(1)
 
 
 def tclpath(path):

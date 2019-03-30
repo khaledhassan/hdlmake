@@ -62,7 +62,7 @@ def _action_runner(modules_pool):
     options = modules_pool.options
     if options.command == "manifest-help":
         ManifestParser().print_help()
-        quit()
+        quit(0)
     elif options.command == "makefile":
         modules_pool.makefile()
     elif options.command == "fetch":

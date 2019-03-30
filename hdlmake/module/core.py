@@ -78,7 +78,7 @@ class ModuleConfig(object):
                 logging.error(
                     "Path to the local module doesn't exist:\n" + url
                     + "\nThis module was instantiated in: " + str(self.parent))
-                quit()
+                quit(1)
             self.path = path_mod.relpath(url)
             self.isfetched = True
 

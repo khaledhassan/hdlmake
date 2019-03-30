@@ -1272,6 +1272,9 @@ In this point, if everything goes OK, Modelsim window will open and we will see 
    :figclass: align-center
 
 
+.. note:: When working with Verilog and SystemVerilog included files in Modelsim and derivatives, you will need to use the ``include_dirs`` parameter in ``Manifest.py`` to specify the directories in which the files to be included can be stored. It's important to know that the ``+incdir+`` directives will automatically be stripped from ``vlog_opt`` by ``hdlmake``.
+
+
 hdlmake supported actions/commands
 ==================================
 

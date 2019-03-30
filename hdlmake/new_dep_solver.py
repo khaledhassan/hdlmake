@@ -135,6 +135,8 @@ def make_dependency_set(fileset, top_level_entity, extra_modules=None):
 
     def _check_entity(test_file, entity_name):
         """ Check if the input file provides the entity pointed by the name"""
+        if entity_name == None:
+            return False
         entity_rel_vhdl = DepRelation(
             entity_name,
             DepRelation.PROVIDE, DepRelation.ENTITY)
@@ -156,9 +158,15 @@ def make_dependency_set(fileset, top_level_entity, extra_modules=None):
                 if _check_entity(chk_file, entity_aux):
                     extra_files.append(chk_file)
     if top_file is None:
-        logging.critical('Could not find a top level file that provides the '
-                         'top_module="%s". Continuing with the full file set.',
-                         top_level_entity)
+        if top_level_entity is None:
+            logging.critical(
+                    'Could not find a top level file because the top '
+                    'module is undefined. Continuing with the full file set.')
+        else:
+            logging.critical(
+                    'Could not find a top level file that provides the '
+                    'top_module="%s". Continuing with the full file set.',
+                     top_level_entity)
         return fileset
     # Collect only the files that the top level entity is dependant on, by
     # walking the dependancy tree.

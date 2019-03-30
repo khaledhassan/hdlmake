@@ -20,28 +20,32 @@ module counter  (
     input clock, clear, count;
 
 //--------- Internal Variables ------------------------
-    reg ready = 0;
     reg [23:0] divider;
     reg [7:0] Q;
 
 //--------- Code Starts Here --------------------------
 
     always @(posedge clock) begin
-       if (ready)
+       if (clear)
          begin
-            if (divider == cycles_per_second)
-              begin
-                 divider <= 0;
-                 Q <= {Q[6:0], Q[7]};
-              end
-            else
-              divider <= divider + 1;
+           Q <= 0;
+           divider <= 0;
          end
        else
          begin
-            ready <= 1;
-            Q <= 8'b00010001;
-            divider <= 0;
+           if (count)
+             begin
+               if (divider == cycles_per_second)
+                 begin
+                   divider <= 0;
+                   Q <= Q + 1;
+                 end
+               else
+                 begin
+                   divider <= divider + 1;
+                   Q <= Q;
+                 end
+             end
          end
     end
 

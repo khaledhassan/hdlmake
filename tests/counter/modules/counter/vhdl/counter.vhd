@@ -24,7 +24,6 @@ end counter;
 -------------------------------------------------------
 
 architecture behv of counter is		 	  
-    signal ready: std_logic;
     signal Pre_Q: unsigned(7 downto 0);
     signal divider: unsigned(23 downto 0);
 
@@ -33,18 +32,19 @@ begin
     process(clock, count, clear)
     begin
 	if (clock='1' and clock'event) then
-            if ready = '1' then
-                if divider = cycles_per_second then
-                    divider <= (others => '0');
-                    Pre_Q(7 downto 1) <= Pre_Q(6 downto 0);
-                    Pre_Q(0) <= Pre_Q(7);
-                else
-                    divider <= divider + 1;
-                end if;
-            else
-                ready <= '1';
-                Pre_Q <= "00010001";
+            if clear = '1' then
+                Pre_Q <= (others => '0');
                 divider <= (others => '0');
+            else
+                if count = '1' then
+                    if divider = cycles_per_second then
+                        divider <= (others => '0');
+                        Pre_Q <= Pre_Q + 1;
+                    else
+                        divider <= divider + 1;
+                        Pre_Q <= Pre_Q;
+                    end if;
+                end if;
             end if;
 	end if;
     end process;

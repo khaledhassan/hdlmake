@@ -1605,7 +1605,7 @@ As an example, this command will generate the Makefile and will try to print ``H
 
 .. code-block:: bash
 
-   hdlmake -p "print('Hello hdlmake')"
+   hdlmake -p "print('Hello hdlmake')" makefile
 
 
 ``-s, --sufix ARBITRARY_CODE``
@@ -1616,5 +1616,5 @@ As an example, this command will generate the Makefile but will try to print ``B
 
 .. code-block:: bash
 
-   hdlmake -s "print('Bye, bye hdlmake')"
+   hdlmake -s "print('Bye, bye hdlmake')" makefile
 

@@ -190,15 +190,9 @@ class ModuleContent(ModuleCore):
         srcs = SourceFileSet()
         # Check if this is the top module and grab the include_dirs
         if self.parent is None:
-            if 'include_dirs' in self.manifest_dict:
-                include_dirs = self.manifest_dict['include_dirs']
-            else:
-                include_dirs = []
+            include_dirs = self.manifest_dict.get('include_dirs', [])
         else:
-            if 'include_dirs' in self.manifest_dict:
-                include_dirs = self.top_module.manifest_dict['include_dirs']
-            else:
-                include_dirs = []
+            include_dirs = self.top_module.manifest_dict.get('include_dirs', [])
         for path_aux in paths:
             if os.path.isdir(path_aux):
                 dir_ = os.listdir(path_aux)

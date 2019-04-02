@@ -200,6 +200,10 @@ class ToolQuartus(ToolSyn):
             self.SET_GLOBAL_ASSIGNMENT,
             {'name_type': 'TOP_LEVEL_ENTITY',
             'name': '\\"$(TOP_MODULE)\\"'}))
+        for inc in self.manifest_dict.get("include_dirs", []):
+            command_list.append(self._emit_property(self.SET_GLOBAL_ASSIGNMENT,
+                                {'name_type': 'SEARCH_PATH',
+                                'name': '\\"%s\\"' % inc}))
         self._tcl_controls["project"] = '\n'.join(command_list)
         super(ToolQuartus, self)._makefile_syn_tcl()
 

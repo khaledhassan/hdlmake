@@ -8,6 +8,8 @@ import string
 from .makefile import ToolMakefile
 from hdlmake.util import shell
 
+from hdlmake.srcfile import VerilogFile, SVFile
+
 
 def _check_synthesis_manifest(manifest_dict):
     """Check the manifest contains all the keys for a synthesis project"""
@@ -114,7 +116,8 @@ endif""")
             file_list = []
             for file_aux in self.fileset:
                 if isinstance(file_aux, filetype):
-                    file_list.append(shell.tclpath(file_aux.rel_path()))
+                    if not (filetype == VerilogFile and isinstance(file_aux, SVFile)):
+                        file_list.append(shell.tclpath(file_aux.rel_path()))
             if not file_list == []:
                 ret.append(
                    'SOURCES_{0} := \\\n'

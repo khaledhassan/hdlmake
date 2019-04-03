@@ -1201,6 +1201,41 @@ If you want to use a different Intel Quartus version, you will need to fix the I
     -- Retrieval info: 	<generic name="number_of_reconfig_interfaces" value="2" />
     -- Retrieval info: 	<generic name="gui_split_sizes" value="" />
 
+
+If you want to regenerate the Quartus project by using your **custom Quartus properties**, you may replace the provided ``Manifest.py`` with the following one and edit it accordingly. Note that this will generate ``set_global_assignment`` statements in which the first input specify the ``name`` of the property and the second input its value. As an example, we force the VHDL and Verilog input version and optimize the synthesis for speed:
+
+.. code-block:: python
+
+   target = "altera"
+   action = "synthesis"
+
+   syn_family  = "Arria V"
+   syn_device  = "5agxmb1g4f"
+   syn_grade   = "c4"
+   syn_package = "40"
+   syn_top     = "vfchd_wr_ref_top"
+   syn_project = "vfchd_wr_ref"
+   syn_tool = "quartus"
+   syn_properties = [
+       ["VHDL_INPUT_VERSION", "VHDL_2008"],
+       ["VERILOG_INPUT_VERSION", "SYSTEMVERILOG_2005"],
+       ["optimization_technique", "speed"]]
+
+   quartus_preflow = "quartus_preflow.tcl"
+
+   files = [
+       "vfchd_wr_ref.sdc",
+       "quartus_preflow.tcl",
+   ]
+
+   modules = {
+       "local" : [
+           "../../top/vfchd_ref_design/",
+       ]
+   }
+
+
+
 Mentor Modelsim
 ~~~~~~~~~~~~~~~
 

@@ -200,10 +200,10 @@ class ToolQuartus(ToolSyn):
             self.SET_GLOBAL_ASSIGNMENT,
             {'name_type': 'TOP_LEVEL_ENTITY',
             'name': '\\"$(TOP_MODULE)\\"'}))
-        command_list.append(self._emit_property(
-            self.SET_GLOBAL_ASSIGNMENT,
-            {'name_type': 'VERILOG_INPUT_VERSION',
-            'name': 'SYSTEMVERILOG_2005'}))
+        for user_property in self.manifest_dict.get("syn_properties", []):
+            command_list.append(self._emit_property(self.SET_GLOBAL_ASSIGNMENT,
+                                {'name_type': user_property[0],
+                                'name': user_property[1]}))
         for inc in self.manifest_dict.get("include_dirs", []):
             command_list.append(self._emit_property(self.SET_GLOBAL_ASSIGNMENT,
                                 {'name_type': 'SEARCH_PATH',

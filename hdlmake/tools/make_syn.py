@@ -116,7 +116,12 @@ endif""")
             file_list = []
             for file_aux in self.fileset:
                 if isinstance(file_aux, filetype):
-                    if not (filetype == VerilogFile and isinstance(file_aux, SVFile)):
+                    if (
+                           not (filetype == VerilogFile and
+                               isinstance(file_aux, SVFile)) and
+                           not (isinstance(file_aux, VerilogFile) and
+                               file_aux.is_include)
+                       ):
                         file_list.append(shell.tclpath(file_aux.rel_path()))
             if not file_list == []:
                 ret.append(

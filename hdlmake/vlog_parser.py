@@ -182,7 +182,7 @@ class VerilogPreprocessor(object):
                 "define":
                 re.compile(r"^\s*`define\s+(\w+)(?:\(([\w\s,]*)\))?(.*)"),
                 "ifdef_elsif":
-                re.compile(r"^\s*`(ifdef|ifndef|elsif)\s+(\w+)\s*$"),
+                re.compile(r"^\s*`(ifdef|ifndef|elsif)\s+(\w+)[\s\S]*$"),
                 "endif_else": re.compile(r"^\s*`(endif|else)\s*$"),
                 "begin_protected":
                 re.compile(r"^\s*`pragma\s*protect\s*begin_protected\s*$"),

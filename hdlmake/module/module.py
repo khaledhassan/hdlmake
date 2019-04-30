@@ -166,10 +166,9 @@ PARSE START: %s
             try:
                 opt_map = manifest_parser.parse(extra_context=extra_context)
             except NameError as name_error:
-                logging.error(
+                raise Exception(
                     "Error while parsing {0}:\n{1}: {2}.".format(
                         self.path, type(name_error), name_error))
-                quit(1)
             self.manifest_dict = opt_map
         else:
             self.manifest_dict = {}

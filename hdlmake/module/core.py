@@ -75,10 +75,9 @@ class ModuleConfig(object):
             self.url, self.branch, self.revision = url, None, None
 
             if not os.path.exists(url):
-                logging.error(
+                raise Exception(
                     "Path to the local module doesn't exist:\n" + url
                     + "\nThis module was instantiated in: " + str(self.parent))
-                quit(1)
             self.path = path_mod.relpath(url)
             self.isfetched = True
 

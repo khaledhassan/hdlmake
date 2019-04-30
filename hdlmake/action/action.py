@@ -92,8 +92,7 @@ class Action(list):
                 self.config["syn_top"] = self.config["top_module"]
             self.top_entity = self.config.get("syn_top")
         else:
-            logging.error("Unknown requested action: %s", action)
-            quit(1)
+            raise Exception("Unknown requested action: %s", action)
 
     def new_module(self, parent, url, source, fetchto):
         """Add new module to the pool.

@@ -183,8 +183,8 @@ def _get_parser():
         default="",
         help="Python code executed before every Manifest.py")
     parser.add_argument(
-        "-s", "--sufix",
-        dest="sufix_code",
+        "-s", "--suffix",
+        dest="suffix_code",
         default="",
         help="Python code executed after every Manifest.py")
     return parser

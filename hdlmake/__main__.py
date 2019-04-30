@@ -187,6 +187,12 @@ def _get_parser():
         dest="sufix_code",
         default="",
         help="Python code executed after every Manifest.py")
+    parser.add_argument(
+        "--full-error",
+        default=False,
+        action="store_true",
+        dest="full_error",
+        help="display full error log with traceback")
     return parser
 
 
@@ -204,4 +210,12 @@ def _get_options(sys_aux, parser):
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        import traceback
+        logging.error(e)
+        if global_mod.options.full_error:
+            logging.error("Trace:")
+            traceback.print_exc()
+        quit(2)

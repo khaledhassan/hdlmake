@@ -373,8 +373,8 @@ types:[<type 'int'>]
             opt = self[opt_name]
             if type(val) not in opt.types:
                 raise RuntimeError(
-                    "Given option (%s) doesn't match specified types: (%s)" %
-                    (str(type(val)), str(opt.types)))
+                    "Given option '%s' is of type %s: '%s', it doesn't match allowed types: (%s), file %s" %
+                    (opt_name, str(type(val)), val, str(opt.types), self.config_file))
             ret[opt_name] = val
             # Thi is only for the options of the dictionary class:
             if isinstance(val, type(dict())):

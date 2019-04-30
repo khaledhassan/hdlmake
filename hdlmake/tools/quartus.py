@@ -135,9 +135,8 @@ class ToolQuartus(ToolSyn):
                             "Auto-guessed syn_family to be %s (%s => %s)",
                             family, device, key)
             if family is None:
-                logging.error("Could not auto-guess device family, please "
-                              "specify in Manifest.py using syn_family!")
-                sys.exit("\nExiting")
+                raise Exception("Could not auto-guess device family, please "
+                                "specify in Manifest.py using syn_family!")
             return family
 
         family_string = __get_family_string(

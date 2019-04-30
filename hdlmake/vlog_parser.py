@@ -119,10 +119,9 @@ class VerilogPreprocessor(object):
             probable_file = os.path.join(searchdir, filename)
             if os.path.isfile(probable_file):
                 return os.path.abspath(probable_file)
-        logging.error("Can't find %s for %s in any of the include "
-                      "directories: %s", filename, self.vlog_file.file_path,
-                      ', '.join(self.vlog_file.include_dirs))
-        sys.exit("\nExiting")
+        raise Exception("Can't find %s for %s in any of the include "
+                        "directories: %s", filename, self.vlog_file.file_path,
+                        ', '.join(self.vlog_file.include_dirs))
 
     def _parse_macro_def(self, macro):
         """Parse the provided 'macro' and, if it's not a reserved keyword,

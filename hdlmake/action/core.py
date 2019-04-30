@@ -83,8 +83,7 @@ class ActionCore(Action):
             elif module.source is LOCAL:
                 result = self.local_backend.fetch(module)
             if result is False:
-                logging.error("Unable to fetch module %s", str(module.url))
-                sys.exit("Exiting")
+                raise Exception("Unable to fetch module %s", str(module.url))
             module.parse_manifest()
             new_modules.extend(module.local)
             new_modules.extend(module.svn)

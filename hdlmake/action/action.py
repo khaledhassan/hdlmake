@@ -38,7 +38,7 @@ def set_logging_level(options):
     """Set the log level and config (A.K.A. log verbosity)"""
     numeric_level = getattr(logging, options.log.upper(), None)
     if not isinstance(numeric_level, int):
-        sys.exit('Invalid log level: %s' % options.log)
+        raise Exception('Invalid log level: %s' % options.log)
 
     if not shell.check_windows() and options.logfile == None:
         logging.basicConfig(
@@ -117,11 +117,10 @@ class Action(list):
     def _check_manifest_variable_is_set(self, name):
         """Method to check if a specific manifest variable is set"""
         if getattr(self.top_module, name) is None:
-            logging.error(
+            raise Exception(
                 "Variable %s must be set in the manifest "
                 "to perform current action (%s)",
                 name, self.__class__.__name__)
-            sys.exit("\nExiting")
 
     def _check_manifest_variable_value(self, name, value):
         """Method to check if a manifest variable is set to a specific value"""
@@ -131,10 +130,9 @@ class Action(list):
             variable_match = True
 
         if variable_match is False:
-            logging.error(
+            raise Exception(
                 "Variable %s must be set in the manifest and equal to '%s'.",
                 name, value)
-            sys.exit("Exiting")
 
     def build_complete_file_set(self):
         """Build file set with all the files listed in the complete pool"""

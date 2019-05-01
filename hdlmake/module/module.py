@@ -148,8 +148,8 @@ PARSE START: %s
 
         manifest_parser.add_prefix_code(
             self.pool.options.prefix_code)
-        manifest_parser.add_sufix_code(
-            self.pool.options.sufix_code)
+        manifest_parser.add_suffix_code(
+            self.pool.options.suffix_code)
 
         parser_tmp = manifest_parser.add_manifest(self.path)
 

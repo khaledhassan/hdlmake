@@ -85,11 +85,6 @@ class ModuleConfig(object):
     def _check_filepath(self, filepath):
         """Check the provided filepath against several conditions"""
         if filepath:
-            if path_mod.is_abs_path(filepath):
-                logging.warning(
-                    "Specified path seems to be an absolute path: " +
-                    filepath + "\nOmitting.")
-                return False
             filepath = os.path.join(self.path, filepath)
             if not os.path.exists(filepath):
                 logging.error(

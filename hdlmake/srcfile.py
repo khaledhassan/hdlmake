@@ -194,10 +194,13 @@ class VEOFile(File):
     pass
 
 
-class XCIFile(File):
+class XCIFile(SourceFile):
     """Xilinx Core IP File"""
-    pass
 
+    def __init__(self, path, module, library=None):
+        SourceFile.__init__(self, path=path, module=module, library=library)
+        from hdlmake.xci_parser import XCIParser
+        self.parser = XCIParser(self)
 
 XILINX_FILE_DICT = {
     'xise': XISEFile,

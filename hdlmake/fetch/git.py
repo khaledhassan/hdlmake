@@ -129,7 +129,7 @@ class Git(Fetcher):
                                       stdin=PIPE,
                                       close_fds=not shell.check_windows(),
                                       shell=True)
-            config_lines = [line.strip() for line
+            config_lines = [line.strip().decode('utf-8') for line
                             in config_content.stdout.readlines()]
             config_submodule_lines = [line for line in config_lines
                                       if line.startswith("submodule")]

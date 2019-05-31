@@ -43,7 +43,7 @@ def run(command):
         lines = command_out.stdout.readlines()
         if len(lines) == 0:
             return None
-        return lines[0].strip()
+        return lines[0].strip().decode('utf-8')
     except CalledProcessError as process_error:
         logging.error("Cannot execute the shell command: %s",
             process_error.output)

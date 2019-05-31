@@ -138,6 +138,12 @@ def test_gitsm_fetch():
 def test_xci():
     run_compare(path="023xci")
 
+def test_vlog_parser():
+    run_compare(path="024vlog_parser")
+
+def test_vlog_parser025():
+    run_compare(path="025vlog_parser")
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""

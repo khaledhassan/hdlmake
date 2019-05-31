@@ -149,6 +149,9 @@ def test_gitsm_fetch026():
         hdlmake.__main__.hdlmake(['fetch'])
         shutil.rmtree('ipcores')
 
+def test_vhdl_parser():
+    run_compare(path="027vhdl_parser")
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""

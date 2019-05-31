@@ -1,0 +1,3 @@
+[run]
+source = ../hdlmake
+omit = ../hdlmake/util/termcolor.py

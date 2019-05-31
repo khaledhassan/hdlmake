@@ -43,6 +43,7 @@ class ToolSim(ToolMakefile):
         self._makefile_sim_command()
         self._makefile_sim_clean()
         self._makefile_sim_phony()
+        self.makefile_close()
 
     def _makefile_sim_top(self):
         """Generic method to write the simulation Makefile top section"""

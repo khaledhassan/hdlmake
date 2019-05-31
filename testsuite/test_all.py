@@ -144,6 +144,11 @@ def test_vlog_parser():
 def test_vlog_parser025():
     run_compare(path="025vlog_parser")
 
+def test_gitsm_fetch026():
+    with Config(path="026gitsm_fetch") as _:
+        hdlmake.__main__.hdlmake(['fetch'])
+        shutil.rmtree('ipcores')
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""

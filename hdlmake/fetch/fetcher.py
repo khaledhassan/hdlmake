@@ -33,13 +33,3 @@ class Fetcher(object):
     def fetch(self, module):
         """Stub method, this must be implemented by the code fetcher"""
         pass
-
-    @staticmethod
-    def check_id(path, command):
-        """Use the provided command to get the specific ID from
-        the repository at path"""
-        cur_dir = os.getcwd()
-        os.chdir(path)
-        identifier = shell.run(command)
-        os.chdir(cur_dir)
-        return identifier

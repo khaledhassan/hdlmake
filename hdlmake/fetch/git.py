@@ -107,12 +107,6 @@ class Git(Fetcher):
         return True
 
     @staticmethod
-    def check_git_commit(path):
-        """Get the revision number for the Git repository at path"""
-        git_cmd = 'git log -1 --format="%H" | cut -c1-32'
-        return Fetcher.check_id(path, git_cmd)
-
-    @staticmethod
     def get_git_submodules(module):
         """Get a dictionary containing the git submodules
         that are listed in the module's path"""

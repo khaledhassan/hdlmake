@@ -40,6 +40,10 @@ def run_compare(**kwargs):
         hdlmake.__main__.hdlmake([])
         compare_makefile()
 
+def run(args, **kwargs):
+    with Config(**kwargs) as _:
+        hdlmake.__main__.hdlmake(args)
+
 def test_makefile_001():
     run_compare(path="001ise")
 
@@ -53,20 +57,16 @@ def test_makefile_004():
     run_compare(path="004msim")
     
 def test_fetch():
-    with Config(path="001ise") as _:
-        hdlmake.__main__.hdlmake(['fetch'])
+    run(['fetch'], path="001ise")
 
 def test_clean():
-    with Config(path="001ise") as _:
-        hdlmake.__main__.hdlmake(['clean'])
+    run(['clean'], path="001ise")
 
 def test_list_mods():
-    with Config(path="001ise") as _:
-        hdlmake.__main__.hdlmake(['list-mods'])
+    run(['list-mods'], path="001ise")
 
 def test_list_files():
-    with Config(path="001ise") as _:
-        hdlmake.__main__.hdlmake(['list-files'])
+    run(['list-files'], path="001ise")
 
 def test_noact():
     with Config(path="005noact") as _:
@@ -151,6 +151,28 @@ def test_gitsm_fetch026():
 
 def test_vhdl_parser():
     run_compare(path="027vhdl_parser")
+
+def test_manifest_print():
+    run([], path="028manifest_print")
+    os.remove('028manifest_print/Makefile')
+
+def test_manifest_quit():
+    with pytest.raises(SystemExit) as _:
+        run([], path="029manifest_quit")
+        assert False
+
+def test_manifest_syntax():
+    with pytest.raises(SystemExit) as _:
+        run([], path="030manifest_syntax")
+        assert False
+
+def test_manifest_except():
+    with pytest.raises(AssertionError) as _:
+        run([], path="031manifest_except")
+        assert False
+
+def test_manifest_vars():
+    run([], path="032manifest_vars")
 
 @pytest.mark.xfail
 def test_xfail():

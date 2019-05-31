@@ -206,6 +206,9 @@ def test_manifest_except():
 def test_manifest_vars():
     run([], path="032manifest_vars")
 
+def test_srcfiles():
+    run_compare(path="040srcfiles")
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""

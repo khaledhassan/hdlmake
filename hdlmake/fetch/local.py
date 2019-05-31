@@ -30,11 +30,3 @@ class Local(Fetcher):
 
     def __init__(self):
         pass
-
-    def fetch(self, module):
-        pass
-
-    @staticmethod
-    def check_md5sum(path):
-        """Get the ID for Local sources... maybe sha256 or md5sum?"""
-        pass

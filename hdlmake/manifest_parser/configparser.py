@@ -194,7 +194,7 @@ types:[<type 'int'>]
         self.description = description
         self.options = []
         self.prefix_code = ""
-        self.sufix_code = ""
+        self.suffix_code = ""
         self.config_file = None
 
     def __setitem__(self, name, value):
@@ -280,9 +280,9 @@ types:[<type 'int'>]
         """Add the arbitrary Python to be executed just before the Manifest"""
         self.prefix_code += code + '\n'
 
-    def add_sufix_code(self, code):
+    def add_suffix_code(self, code):
         """Add the arbitrary Python to be executed just after the Manifest"""
-        self.sufix_code += code + '\n'
+        self.suffix_code += code + '\n'
 
     def __names(self):
         """A method that returns a list containing the name for every non
@@ -350,7 +350,7 @@ types:[<type 'int'>]
         # Now, grab the options coming from Manifest.py plus arbitrary_code:
         # - extra_context as global variables.
         # - options as local variables.
-        content = self.prefix_code + '\n' + content + '\n' + self.sufix_code
+        content = self.prefix_code + '\n' + content + '\n' + self.suffix_code
         options = self.__parser_runner(content, extra_context)
         # Check the options that were defined in the local context
         ret = {}
@@ -376,7 +376,7 @@ types:[<type 'int'>]
                     "Given option (%s) doesn't match specified types: (%s)" %
                     (str(type(val)), str(opt.types)))
             ret[opt_name] = val
-            # Thi is only for the options of the dictionary class:
+            # This is only for the options of the dictionary class:
             if isinstance(val, type(dict())):
                 try:
                     for key in val:

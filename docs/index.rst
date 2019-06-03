@@ -726,7 +726,7 @@ This case was very trivial. Let's try now to complicate the situation a bit. Let
 
 Now we can see that the ``local`` key just has an associated path (i.e. this is a 1-element list), while we have two additional key identifiers: ``svn``, pointing to a list of two remote SVN repositories, and ``git``, pointing to a single remote GIT repository.
 
-Regarding the SVN repositories, ``module2`` is pointing to the ``default/head`` revision while ``module3`` SVN repository is pointing to revision number 25 by appending the ``@25`` sufix to the repository URL..
+Regarding the SVN repositories, ``module2`` is pointing to the ``default/head`` revision while ``module3`` SVN repository is pointing to revision number 25 by appending the ``@25`` suffix to the repository URL..
 
 Finally, the Git repository ``module4`` is the only entry for the GIT module list and it is pointing to the ``default/master`` branch, but we can introduce the following extra modifiers to force a specific ``branch``, ``tag`` or ``commit``:
 
@@ -939,12 +939,12 @@ The first one is to include this as a new variable in the top Manifest.py, i.e.:
        "local" : [ "../../../testbench/counter_tb/verilog" ],
    }
 
-But we can also define the variable value by injecting custom prefix or sufix Python code from the command line
+But we can also define the variable value by injecting custom prefix or suffix Python code from the command line
 when ``hdlmake`` is executed, e.g.:
 
 .. code-block:: bash
 
-   hdlmake --sufix "simulate_vhdl = False" makefile
+   hdlmake --suffix "simulate_vhdl = False" makefile
 
 
 
@@ -1644,7 +1644,7 @@ As an example, this command will generate the Makefile and will try to print ``H
    hdlmake -p "print('Hello hdlmake')" makefile
 
 
-``-s, --sufix ARBITRARY_CODE``
+``-s, --suffix ARBITRARY_CODE``
 ------------------------------
 Add arbitrary Python code from the command line that **will be evaluated after each Manifest.py** parse action across the hierarchy.
 

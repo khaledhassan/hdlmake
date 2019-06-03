@@ -114,26 +114,6 @@ class Action(list):
                 new_module.parse_manifest()
         return new_module
 
-    def _check_manifest_variable_is_set(self, name):
-        """Method to check if a specific manifest variable is set"""
-        if getattr(self.top_module, name) is None:
-            raise Exception(
-                "Variable %s must be set in the manifest "
-                "to perform current action (%s)",
-                name, self.__class__.__name__)
-
-    def _check_manifest_variable_value(self, name, value):
-        """Method to check if a manifest variable is set to a specific value"""
-        variable_match = False
-        manifest_value = getattr(self.top_module, name)
-        if manifest_value == value:
-            variable_match = True
-
-        if variable_match is False:
-            raise Exception(
-                "Variable %s must be set in the manifest and equal to '%s'.",
-                name, value)
-
     def build_complete_file_set(self):
         """Build file set with all the files listed in the complete pool"""
         logging.debug("Begin build complete file set")

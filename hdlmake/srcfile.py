@@ -194,10 +194,13 @@ class VEOFile(File):
     pass
 
 
-class XCIFile(File):
+class XCIFile(SourceFile):
     """Xilinx Core IP File"""
-    pass
 
+    def __init__(self, path, module, library=None):
+        SourceFile.__init__(self, path=path, module=module, library=library)
+        from hdlmake.xci_parser import XCIParser
+        self.parser = XCIParser(self)
 
 XILINX_FILE_DICT = {
     'xise': XISEFile,
@@ -369,27 +372,6 @@ class SourceFileSet(set):
             if isinstance(file_aux, filetype):
                 out.add(file_aux)
         return out
-
-    def inversed_filter(self, filetype):
-        """Method that filters and returns all of the HDL source files
-        contained in the instance SourceFileSet NOT matching the provided
-        type"""
-        out = SourceFileSet()
-        for file_aux in self:
-            if not isinstance(file_aux, filetype):
-                out.add(file_aux)
-        return out
-
-    def get_libs(self):
-        """Method that returns a set containing all of the libraries that are
-        provided by any of the source files in the SourceFileSet"""
-        ret = set()
-        for file_aux in self:
-            try:
-                ret.add(file_aux.library)
-            except TypeError:
-                pass
-        return ret
 
 
 def create_source_file(path, module, library=None,

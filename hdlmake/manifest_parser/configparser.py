@@ -222,9 +222,7 @@ types:[<type 'int'>]
 
             line = '  {0:15}; {1:29}; {2:45}{3}{4:10}'
             try:
-                tmp_def = opt.default
-                if tmp_def == "":
-                    tmp_def = '""'
+                tmp_def = opt.default or '""'
                 line = line.format(
                     opt.name,
                     str(opt.types),

@@ -107,12 +107,6 @@ class Git(Fetcher):
         return True
 
     @staticmethod
-    def check_git_commit(path):
-        """Get the revision number for the Git repository at path"""
-        git_cmd = 'git log -1 --format="%H" | cut -c1-32'
-        return Fetcher.check_id(path, git_cmd)
-
-    @staticmethod
     def get_git_submodules(module):
         """Get a dictionary containing the git submodules
         that are listed in the module's path"""
@@ -135,7 +129,7 @@ class Git(Fetcher):
                                       stdin=PIPE,
                                       close_fds=not shell.check_windows(),
                                       shell=True)
-            config_lines = [line.strip() for line
+            config_lines = [line.strip().decode('utf-8') for line
                             in config_content.stdout.readlines()]
             config_submodule_lines = [line for line in config_lines
                                       if line.startswith("submodule")]

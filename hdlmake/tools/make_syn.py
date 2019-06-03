@@ -52,6 +52,7 @@ class ToolSyn(ToolMakefile):
         self._makefile_syn_build()
         self._makefile_syn_clean()
         self._makefile_syn_phony()
+        self.makefile_close()
         logging.info(self._tool_info['name'] + " synthesis makefile generated.")
 
     def _makefile_syn_top(self):

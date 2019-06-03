@@ -33,7 +33,7 @@ from .module_pool import ModulePool
 from ._version import __version__
 
 
-def main():
+def hdlmake(args):
     """This is the main function, where HDLMake starts.
     Here, we make the next processes:
         -- parse command
@@ -49,7 +49,7 @@ def main():
     #
     # PARSE & GET OPTIONS
     #
-    options = _get_options(sys, parser)
+    options = _get_options(args, parser)
 
     try:
         # Create a ModulePool object, this will become our workspace
@@ -71,7 +71,6 @@ def _action_runner(modules_pool):
     options = modules_pool.options
     if options.command == "manifest-help":
         ManifestParser().print_help()
-        quit(0)
     elif options.command == "makefile":
         modules_pool.makefile()
     elif options.command == "fetch":
@@ -205,18 +204,22 @@ def _get_parser():
     return parser
 
 
-def _get_options(sys_aux, parser):
+def _get_options(args, parser):
     """Function that decodes and set the provided command user options"""
     options = None
-    if len(sys_aux.argv[1:]) == 0:
+    if len(args) == 0:
         options = parser.parse_args(['makefile'])
-    elif len(sys_aux.argv[1:]) == 2 and (
-             sys_aux.argv[1] == '-f' or sys_aux.argv[1] == '--filename'):
-        options = parser.parse_args(['makefile'] + sys_aux.argv[1:])
+    elif len(args) == 2 and (
+             args[0] == '-f' or args[0] == '--filename'):
+        options = parser.parse_args(['makefile'] + args)
     else:
-        options = parser.parse_args(sys_aux.argv[1:])
+        options = parser.parse_args(args)
     return options
 
+
+def main():
+    """Entry point used by the executable"""
+    hdlmake(sys.argv[1:])
 
 if __name__ == "__main__":
     main()

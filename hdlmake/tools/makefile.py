@@ -177,6 +177,10 @@ class ToolMakefile(object):
         elif not self._file:
             self._file = open(self._filename, "a+")
 
+    def makefile_close(self):
+        self._file.close()
+        self._file = None
+
     def write(self, line=None):
         """Write a string in the manifest, no new line"""
         if not self._initialized:

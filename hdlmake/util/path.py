@@ -83,40 +83,6 @@ def svn_basename(url):
         return None
 
 
-def pathsplit(path, rest=None):
-    """
-    Split the provided path and return as a tuple
-    """
-    if rest is None:
-        rest = []
-    (head, tail) = os.path.split(path)
-    if len(head) < 1:
-        return [tail] + rest
-    if len(tail) < 1:
-        return [head] + rest
-    return pathsplit(head, [tail] + rest)
-
-
-def commonpath(path1, path2, common=None):
-    """
-    Return the common path for the provided paths
-    """
-    if common is None:
-        common = []
-    if len(path1) < 1:
-        return (common, path1, path2)
-    if len(path2) < 1:
-        return (common, path1, path2)
-    if path1[0] != path2[0]:
-        return (common, path1, path2)
-    return commonpath(path1[1:], path2[1:], common + [path1[0]])
-
-
-def is_rel_path(path):
-    """Check if the given path is relative"""
-    return not os.path.isabs(path)
-
-
 def is_abs_path(path):
     """Check if the given path is absolute"""
     return os.path.isabs(path)

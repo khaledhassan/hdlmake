@@ -26,6 +26,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 import argparse
 import sys
+import logging
 
 from .manifest_parser import ManifestParser
 from .module_pool import ModulePool
@@ -50,11 +51,19 @@ def main():
     #
     options = _get_options(sys, parser)
 
-    # Create a ModulePool object, this will become our workspace
-    modules_pool = ModulePool(options)
+    try:
+        # Create a ModulePool object, this will become our workspace
+        modules_pool = ModulePool(options)
 
-    # Execute the appropriated action for the freshly created modules pool
-    _action_runner(modules_pool)
+        # Execute the appropriated action for the freshly created modules pool
+        _action_runner(modules_pool)
+    except Exception as e:
+        import traceback
+        logging.error(e)
+        if options.full_error:
+            logging.error("Trace:")
+            traceback.print_exc()
+        quit(2)
 
 
 def _action_runner(modules_pool):
@@ -187,6 +196,12 @@ def _get_parser():
         dest="sufix_code",
         default="",
         help="Python code executed after every Manifest.py")
+    parser.add_argument(
+        "--full-error",
+        default=False,
+        action="store_true",
+        dest="full_error",
+        help="display full error log with traceback")
     return parser
 
 

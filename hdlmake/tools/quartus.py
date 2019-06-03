@@ -135,9 +135,8 @@ class ToolQuartus(ToolSyn):
                             "Auto-guessed syn_family to be %s (%s => %s)",
                             family, device, key)
             if family is None:
-                logging.error("Could not auto-guess device family, please "
-                              "specify in Manifest.py using syn_family!")
-                sys.exit("\nExiting")
+                raise Exception("Could not auto-guess device family, please "
+                                "specify in Manifest.py using syn_family!")
             return family
 
         family_string = __get_family_string(
@@ -202,9 +201,8 @@ class ToolQuartus(ToolSyn):
             'value': '$(TOP_MODULE)'}))
         for user_property in self.manifest_dict.get("syn_properties", []):
             if not isinstance(user_property, dict):
-                logging.error("Quartus property should be defined as dict: "
-                              + str(user_property))
-                quit(1)
+                raise Exception("Quartus property should be defined as dict: "
+                                + str(user_property))
             command_list.append(self._emit_property(self.SET_GLOBAL_ASSIGNMENT,
                                 user_property))
         for inc in self.manifest_dict.get("include_dirs", []):
@@ -221,10 +219,9 @@ class ToolQuartus(ToolSyn):
             path = shell.tclpath(path_mod.compose(
                 self.manifest_dict["quartus_preflow"], os.getcwd()))
             if not os.path.exists(path):
-                logging.error("quartus_preflow file listed in "
-                              + os.getcwd() + " doesn't exist: "
-                              + path + ".\nExiting.")
-                quit(1)
+                raise Exception("quartus_preflow file listed in "
+                                + os.getcwd() + " doesn't exist: "
+                                + path + ".\nExiting.")
             preflow = '"' + 'quartus_sh:' + path + '"'
             command_list.append(self._emit_property(self.SET_GLOBAL_ASSIGNMENT,
                                 {'name': 'PRE_FLOW_SCRIPT_FILE',
@@ -234,10 +231,9 @@ class ToolQuartus(ToolSyn):
                 self.manifest_dict["quartus_postmodule"],
                 os.getcwd()))
             if not os.path.exists(path):
-                logging.error("quartus_postmodule file listed in "
-                              + os.getcwd() + " doesn't exist: "
-                              + path + ".\nExiting.")
-                quit(1)
+                raise Exception("quartus_postmodule file listed in "
+                                + os.getcwd() + " doesn't exist: "
+                                + path + ".\nExiting.")
             postmodule = '"' + 'quartus_sh:' + path + '"'
             command_list.append(self._emit_property(self.SET_GLOBAL_ASSIGNMENT,
                                 {'name': 'POST_MODULE_SCRIPT_FILE',
@@ -246,10 +242,9 @@ class ToolQuartus(ToolSyn):
             path = shell.tclpath(path_mod.compose(
                 self.manifest_dict["quartus_postflow"], os.getcwd()))
             if not os.path.exists(path):
-                logging.error("quartus_postflow file listed in "
-                              + os.getcwd() + " doesn't exist: "
-                              + path + ".\nExiting.")
-                quit(1)
+                raise Exception("quartus_postflow file listed in "
+                                + os.getcwd() + " doesn't exist: "
+                                + path + ".\nExiting.")
             postflow = '"' + 'quartus_sh:' + path + '"'
             command_list.append(self._emit_property(self.SET_GLOBAL_ASSIGNMENT,
                                 {'name': 'POST_FLOW_SCRIPT_FILE',

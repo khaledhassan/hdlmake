@@ -100,9 +100,8 @@ class ModuleContent(ModuleCore):
                 local_mods = []
                 for path in local_paths:
                     if path_mod.is_abs_path(path):
-                        logging.error("Found an absolute path (" + path +
-                                      ") in a manifest(" + self.path + ")")
-                        quit(1)
+                        raise Exception("Found an absolute path (" + path +
+                                        ") in a manifest(" + self.path + ")")
                     path = path_mod.rel2abs(path, self.path)
                     local_mods.append(self.pool.new_module(parent=self,
                                                            url=path,

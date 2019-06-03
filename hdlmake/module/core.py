@@ -75,10 +75,9 @@ class ModuleConfig(object):
             self.url, self.branch, self.revision = url, None, None
 
             if not os.path.exists(url):
-                logging.error(
+                raise Exception(
                     "Path to the local module doesn't exist:\n" + url
                     + "\nThis module was instantiated in: " + str(self.parent))
-                quit(1)
             self.path = path_mod.relpath(url)
             self.isfetched = True
 
@@ -92,10 +91,9 @@ class ModuleConfig(object):
                 return False
             filepath = os.path.join(self.path, filepath)
             if not os.path.exists(filepath):
-                logging.error(
+                raise Exception(
                     "Path specified in manifest in %s doesn't exist: %s",
                     self.path, filepath)
-                sys.exit("Exiting")
 
             filepath = path_mod.rel2abs(filepath, self.path)
             if os.path.isdir(filepath):

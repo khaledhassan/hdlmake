@@ -14,11 +14,9 @@ from hdlmake.srcfile import VerilogFile, VHDLFile, SVFile
 def _check_simulation_manifest(manifest_dict):
     """Check if the simulation keys are provided by the top manifest"""
     if not manifest_dict["sim_top"]:
-        logging.error("sim_top variable must be set in the top manifest.")
-        sys.exit("Exiting")
+        raise Exception("sim_top variable must be set in the top manifest.")
     if not manifest_dict["sim_tool"]:
-        logging.error("sim_tool variable must be set in the top manifest.")
-        sys.exit("Exiting")
+        raise Exception("sim_tool variable must be set in the top manifest.")
 
 
 class ToolSim(ToolMakefile):

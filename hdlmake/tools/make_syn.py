@@ -14,21 +14,17 @@ from hdlmake.srcfile import VerilogFile, SVFile
 def _check_synthesis_manifest(manifest_dict):
     """Check the manifest contains all the keys for a synthesis project"""
     if not manifest_dict["syn_tool"]:
-        logging.error(
+        raise Exception(
             "syn_tool variable must be set in the top manifest.")
-        sys.exit("Exiting")
     if not manifest_dict["syn_device"]:
-        logging.error(
+        raise Exception(
             "syn_device variable must be set in the top manifest.")
-        sys.exit("Exiting")
     if not manifest_dict["syn_grade"]:
-        logging.error(
+        raise Exception(
             "syn_grade variable must be set in the top manifest.")
-        sys.exit("Exiting")
     if not manifest_dict["syn_package"]:
-        logging.error(
+        raise Exception(
             "syn_package variable must be set in the top manifest.")
-        sys.exit("Exiting")
     if not manifest_dict["syn_top"]:
         logging.error(
             "syn_top variable must be set in the top manifest.")

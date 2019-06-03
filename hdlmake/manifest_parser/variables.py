@@ -276,11 +276,10 @@ class ManifestParser(ConfigParser):
             logging.debug("Looking for manifest in " + path)
             dir_files = os.listdir(path)
             if "manifest.py" in dir_files and "Manifest.py" in dir_files:
-                logging.error(
+                raise Exception(
                     "Both manifest.py and Manifest.py" +
                     "found in the module directory: %s",
                     path)
-                quit(1)
             for filename in dir_files:
                 if filename == "manifest.py" or filename == "Manifest.py":
                     if not os.path.isdir(filename):
@@ -296,8 +295,7 @@ class ManifestParser(ConfigParser):
             return None
         manifest = _search_for_manifest(path)
         if manifest is None:
-            logging.error("No manifest found in path: %s", path)
-            quit(1)
+            raise Exception("No manifest found in path: %s", path)
         else:
             logging.debug("Parse manifest in: %s", manifest)
             return self.add_config_file(manifest)

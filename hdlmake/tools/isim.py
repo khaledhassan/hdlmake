@@ -75,8 +75,7 @@ class ToolISim(ToolSim):
                 xilinx_dir = str(os.path.join(
                     self.manifest_dict["sim_path"], "..", ".."))
             else:
-                logging.error("Cannot calculate xilinx tools base directory")
-                quit(1)
+                raise Exception("Cannot calculate xilinx tools base directory")
             hdl_language = 'vhdl'  # 'verilog'
             if shell.check_windows():
                 os_prefix = 'nt'

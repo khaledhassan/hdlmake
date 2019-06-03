@@ -51,12 +51,11 @@ class ActionCore(Action):
         """Check if every module in the pool is fetched"""
 
         if not len([m for m in self if not m.isfetched]) == 0:
-            logging.error(
+            raise Exception(
                 "Fetching should be done before continuing.\n"
                 "The following modules remains unfetched:\n"
                 "%s",
                 "\n".join([str(m) for m in self if not m.isfetched]))
-            quit(1)
     def makefile(self):
         """Write the Makefile for the current design"""
         self._check_all_fetched()
@@ -84,8 +83,7 @@ class ActionCore(Action):
             elif module.source is LOCAL:
                 result = self.local_backend.fetch(module)
             if result is False:
-                logging.error("Unable to fetch module %s", str(module.url))
-                sys.exit("Exiting")
+                raise Exception("Unable to fetch module %s", str(module.url))
             module.parse_manifest()
             new_modules.extend(module.local)
             new_modules.extend(module.svn)

@@ -24,9 +24,8 @@ def load_syn_tool(tool_name):
         logging.debug("Synthesis tool to be used found: %s", tool_name)
         return available_tools[tool_name]()
     else:
-        logging.error("Unknown synthesis tool: %s", tool_name)
-        logging.error("    Supported synthesis tools are %s", available_tools.keys())
-        quit(1)
+        raise Exception("Unknown synthesis tool: %s" + tool_name
+                        + "    Supported synthesis tools are %s" + available_tools.keys())
 
 
 def load_sim_tool(tool_name):
@@ -50,6 +49,5 @@ def load_sim_tool(tool_name):
         logging.debug("Simulation tool to be used found: %s", tool_name)
         return available_tools[tool_name]()
     else:
-        logging.error("Unknown simulation tool: %s", tool_name)
-        logging.error("    Supported simulation tools are %s", available_tools.keys())
-        quit(1)
+        raise Exception("Unknown simulation tool: %s" + tool_name
+                        + "    Supported simulation tools are %s" + available_tools.keys())

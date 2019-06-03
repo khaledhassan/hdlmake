@@ -139,10 +139,9 @@ $(TCL_CLOSE)'''
             syn_family = FAMILY_NAMES.get(
                 self.manifest_dict["syn_device"][0:4].upper())
             if syn_family is None:
-                logging.error(
+                raise Exception(
                     "syn_family is not defined in Manifest.py"
                     " and can not be guessed!")
-                quit(-1)
         self.manifest_dict["syn_family"] = syn_family
         super(ToolISE, self)._makefile_syn_top()
 

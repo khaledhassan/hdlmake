@@ -308,15 +308,13 @@ types:[<type 'int'>]
                 for line in printed.split('\n'):
                     print("> " + line)
         except SyntaxError as error_syntax:
-            logging.error("Invalid syntax in the manifest file " +
-                          self.config_file + ":\n" + str(error_syntax))
-            logging.error(content)
-            quit(1)
+            raise Exception("Invalid syntax in the manifest file " +
+                            self.config_file + ":\n" + str(error_syntax) +
+                            content)
         except SystemExit as error_exit:
-            logging.error("Exit requested by the manifest file " +
-                          self.config_file + ":\n" + str(error_exit))
-            logging.error(content)
-            quit(1)
+            raise Exception("Exit requested by the manifest file " +
+                            self.config_file + ":\n" + str(error_exit) +
+                            content)
         except:
             logging.error("Encountered unexpected error while parsing " +
                           self.config_file)

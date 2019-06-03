@@ -199,7 +199,7 @@ def test_manifest_syntax():
         assert False
 
 def test_manifest_except():
-    with pytest.raises(AssertionError) as _:
+    with pytest.raises(SystemExit) as _:
         run([], path="031manifest_except")
         assert False
 

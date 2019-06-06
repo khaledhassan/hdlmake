@@ -34,6 +34,7 @@ from subprocess import PIPE, Popen, CalledProcessError
 def run(command):
     """Execute a command in the shell and print the output lines as a list"""
     try:
+        logging.debug("run: {}".format(command))
         command_out = Popen(command,
             stdout=PIPE,
             stdin=PIPE,

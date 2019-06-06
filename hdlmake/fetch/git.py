@@ -74,10 +74,7 @@ class Git(Fetcher):
             basename = basename[:-4]  # remove trailing .git
         if not module.isfetched:
             logging.info("Fetching git module %s", mod_path)
-            cmd = "(cd {0} && git clone {1})"
-            cmd = cmd.format(fetchto, module.url)
-            if os.system(cmd) != 0:
-                return False
+            shell.run("(cd {0} && git clone {1})".format(fetchto, module.url))
         else:
             logging.info("Updating git module %s", mod_path)
         checkout_id = None
@@ -115,8 +112,7 @@ class Git(Fetcher):
             logging.debug("Cannot check submodules, module %s is not fetched",
                 submodule_dir)
             return {}
-        logging.debug("Checking git submodules in %s",
-            submodule_dir)
+        logging.debug("Checking git submodules in %s", submodule_dir)
         cur_dir = os.getcwd()
         try:
             os.chdir(submodule_dir)

@@ -64,8 +64,7 @@ class ModuleContent(ModuleCore):
         if "files" not in self.manifest_dict:
             self.files = SourceFileSet()
             try:
-                logging.debug("No files in the manifest at %s",
-                              self.path)
+                logging.debug("No files in the manifest at %s", self.path)
             except AttributeError:
                 pass
         else:
@@ -93,7 +92,6 @@ class ModuleContent(ModuleCore):
         # Process required modules
         fetchto = self._get_fetchto()
         if "modules" in self.manifest_dict:
-
             if "local" in self.manifest_dict["modules"]:
                 local_paths = path_mod.flatten_list(
                     self.manifest_dict["modules"]["local"])

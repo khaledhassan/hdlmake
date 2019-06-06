@@ -214,6 +214,8 @@ def test_no_syn_tool():
         run([], path="041err_syn")
         assert False
 
+def test_no_files():
+    run([], path="042nofiles")
 
 @pytest.mark.xfail
 def test_xfail():

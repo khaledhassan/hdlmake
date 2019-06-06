@@ -66,18 +66,6 @@ class DepRelation(object):
             return True
         return False
 
-    def library(self):
-        """If the current relation type is PACKAGE, it returns the base name of
-        the library, e.g. for work.counter it returns work."""
-        if self.rel_type == DepRelation.PACKAGE:
-            libdotpackage = self.obj_name
-            try:
-                return libdotpackage.split('.')[0]
-            except ValueError:
-                return None
-        else:
-            return None
-
     def __repr__(self):
         dstr = {self.USE: "Use", self.PROVIDE: "Provide"}
         ostr = {
@@ -162,14 +150,6 @@ class File(object):
 
     def __ne__(self, other):
         return not self.__eq__(other)
-
-    def isdir(self):
-        """Check if the defined file path is a directory"""
-        return os.path.isdir(self.path)
-
-    def show(self):
-        """Print the file path to stdout"""
-        print(self.path)
 
     def extension(self):
         """Method that gets the extension for the file instance"""

@@ -77,22 +77,26 @@ class Action(list):
         self.config = self._get_config_dict()
         action = self.config.get("action")
         if action == None:
-            self.tool = None            
+            self.tool = None
             self.top_entity = self.config.get("top_module", None)
         elif action == "simulation":
-            self.tool = load_sim_tool(self.config.get("sim_tool"))
-            if (self.config.get("sim_top") == None and
-                    not self.config.get("top_module") == None):
-                self.config["sim_top"] = self.config["top_module"]
-            self.top_entity = self.config.get("sim_top")
+            tool = self.config.get("sim_tool")
+            if tool is None:
+                raise Exception("'sim_tool' variable is not defined")
+            self.tool = load_sim_tool(tool)
+            self.top_entity = self.config.get("sim_top") \
+                or self.config["top_module"]
+            self.config["sim_top"] = self.top_entity
         elif action == "synthesis":
-            self.tool = load_syn_tool(self.config.get("syn_tool"))
-            if (self.config.get("syn_top") == None and
-                    not self.config.get("top_module") == None):
-                self.config["syn_top"] = self.config["top_module"]
-            self.top_entity = self.config.get("syn_top")
+            tool = self.config.get("syn_tool")
+            if tool is None:
+                raise Exception("'syn_tool' variable is not defined")
+            self.tool = load_syn_tool(tool)
+            self.top_entity = self.config.get("syn_top") \
+                or self.config["top_module"]
+            self.config["syn_top"] = self.top_entity
         else:
-            raise Exception("Unknown requested action: %s", action)
+            raise Exception("Unknown requested action: {}".format(action))
 
     def new_module(self, parent, url, source, fetchto):
         """Add new module to the pool.

@@ -29,7 +29,7 @@ import sys
 import logging
 
 from .manifest_parser import ManifestParser
-from .module_pool import ModulePool
+from .action.core import ActionCore
 from ._version import __version__
 
 
@@ -53,10 +53,12 @@ def hdlmake(args):
 
     try:
         # Create a ModulePool object, this will become our workspace
-        modules_pool = ModulePool(options)
+        action = ActionCore(options)
+        action.load_top_module()
+        action.run()
 
         # Execute the appropriated action for the freshly created modules pool
-        _action_runner(modules_pool)
+        _action_runner(action)
     except Exception as e:
         import traceback
         logging.error(e)

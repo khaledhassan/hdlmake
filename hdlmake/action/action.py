@@ -70,11 +70,16 @@ class Action(list):
         self._deps_solved = False
         self.options = options
         set_logging_level(options)
+
+    def load_top_module(self):
+        # Top level module.
         self.new_module(parent=None,
                          url=os.getcwd(),
                          source=None,
                          fetchto=".")
         self.config = self._get_config_dict()
+
+    def run(self):
         action = self.config.get("action")
         if action == None:
             self.tool = None

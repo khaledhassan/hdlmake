@@ -73,10 +73,12 @@ class Action(list):
 
     def load_top_module(self):
         # Top level module.
-        self.new_module(parent=None,
-                         url=os.getcwd(),
-                         source=None,
-                         fetchto=".")
+        assert self.top_module is None
+        self.top_module = self.new_module(parent=None,
+                                          url=os.getcwd(),
+                                          source=None,
+                                          fetchto=".")
+        self.top_module.parse_manifest()
         self.config = self._get_config_dict()
 
     def run(self):
@@ -118,9 +120,6 @@ class Action(list):
         new_module = Module(new_module_args, self)
         if not self.__contains(new_module):
             self._add(new_module)
-            if not self.top_module:
-                self.top_module = new_module
-                new_module.parse_manifest()
         return new_module
 
     def build_complete_file_set(self):
@@ -197,8 +196,7 @@ class Action(list):
     def _add(self, new_module):
         """Add the given new module if this is not already in the pool"""
         from hdlmake.module import Module
-        if not isinstance(new_module, Module):
-            raise RuntimeError("Expecting a Module instance")
+        assert isinstance(new_module, Module), "Expect a Module instance"
         if self.__contains(new_module):
             return False
         if new_module.isfetched:

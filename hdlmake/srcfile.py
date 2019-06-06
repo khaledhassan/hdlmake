@@ -46,9 +46,7 @@ class SourceFile(DepFile):
         self.library = library
         if not library:
             self.library = "work"
-        DepFile.__init__(self,
-                         file_path=path,
-                         module=module)
+        DepFile.__init__(self, file_path=path, module=module)
 
     def __hash__(self):
         return hash(self.path + self.library)

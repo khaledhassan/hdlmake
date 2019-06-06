@@ -135,9 +135,8 @@ class ModuleCore(ModuleConfig):
         super(ModuleCore, self).process_manifest()
 
     def _process_manifest_universal(self):
-        """Method processing the universal manifest directives"""
-        # if "top_module" in self.manifest_dict:
-        #    self.top_module = self.manifest_dict["top_module"]
+        """Method processing the universal manifest directives;
+           set library (inherited if not set) and action"""
         # Libraries
         if "library" in self.manifest_dict:
             self.library = self.manifest_dict["library"]

@@ -217,6 +217,14 @@ def test_no_syn_tool():
 def test_no_files():
     run([], path="042nofiles")
 
+def test_local043():
+    run_compare(path="043local_fetch")
+
+def test_files_dir():
+    # Not sure we want to keep this feature: allow to specify a directory
+    # as a file (will be replaced by all the files in the directory)
+    run_compare(path="044files_dir")
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""

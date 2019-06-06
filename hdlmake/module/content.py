@@ -24,15 +24,8 @@ class ModuleArgs(object):
         """Set the module arguments"""
         self.parent = parent
         self.url = url
-        if source == None:
-            self.source = fetch.LOCAL
-        else:
-            self.source = source
+        self.source = source or fetch.LOCAL
         self.fetchto = fetchto
-
-    def get_args(self):
-        """Get the module arguments"""
-        return self.parent, self.url, self.source, self.fetchto
 
 
 class ModuleContent(ModuleCore):

@@ -62,7 +62,7 @@ def test_fetch():
 def test_clean():
     run(['clean'], path="001ise")
 
-def test_list_mods():
+def test_list_mods_none():
     run(['list-mods'], path="001ise")
 
 def test_list_files():
@@ -153,18 +153,24 @@ def test_vivado_sim():
 
 def test_git_fetch():
     with Config(path="020git_fetch") as _:
+        hdlmake.__main__.hdlmake(['list-files'])
         hdlmake.__main__.hdlmake(['fetch'])
+        hdlmake.__main__.hdlmake(['list-mods'])
         shutil.rmtree('ipcores.old', ignore_errors=True)
         shutil.move('ipcores', 'ipcores.old')
 
 def test_svn_fetch():
     with Config(path="021svn_fetch") as _:
+        hdlmake.__main__.hdlmake(['list-mods'])
         hdlmake.__main__.hdlmake(['fetch'])
+        hdlmake.__main__.hdlmake(['list-mods', '--with-files'])
         shutil.rmtree('ipcores')
 
 def test_gitsm_fetch():
     with Config(path="022gitsm_fetch") as _:
         hdlmake.__main__.hdlmake(['fetch'])
+        hdlmake.__main__.hdlmake(['list-mods'])
+        hdlmake.__main__.hdlmake(['clean'])
         shutil.rmtree('ipcores')
 
 def test_xci():
@@ -224,6 +230,17 @@ def test_files_dir():
     # Not sure we want to keep this feature: allow to specify a directory
     # as a file (will be replaced by all the files in the directory)
     run_compare(path="044files_dir")
+
+def test_incl_makefile():
+    run_compare(path="045incl_makefile")
+
+def test_incl_makefiles():
+    run_compare(path="046incl_makefiles")
+
+def test_abs_local():
+    with pytest.raises(SystemExit) as _:
+        run([], path="047err_abs_local")
+        assert False
 
 @pytest.mark.xfail
 def test_xfail():

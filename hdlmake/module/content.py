@@ -56,10 +56,7 @@ class ModuleContent(ModuleCore):
         # HDL files provided by the module
         if "files" not in self.manifest_dict:
             self.files = SourceFileSet()
-            try:
-                logging.debug("No files in the manifest at %s", self.path)
-            except AttributeError:
-                pass
+            logging.debug("No files in the manifest at %s", self.path or '?')
         else:
             self.manifest_dict["files"] = path_mod.flatten_list(
                 self.manifest_dict["files"])

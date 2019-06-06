@@ -115,14 +115,6 @@ def which(filename):
     return candidates
 
 
-def which_cmd():
-    """Get a string with the O.S. specific which command"""
-    if check_windows():
-        return "where"
-    else:
-        return "which"
-
-
 def slash_char():
     """Get a string with the O.S. specific path separator"""
     if check_windows():

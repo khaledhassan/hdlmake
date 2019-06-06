@@ -91,31 +91,6 @@ class Module(ModuleContent):
         logging.debug("Process manifest at: " + os.path.dirname(self.path))
         super(Module, self).process_manifest()
 
-    def get_include_dirs_list(self):
-        """Private method that processes the included directory list"""
-        # Include dirs
-        include_dirs = []
-        if "include_dirs" in self.manifest_dict:
-            if isinstance(self.manifest_dict["include_dirs"],
-                          six.string_types):
-                dir_list = path_mod.compose(
-                    self.path, self.manifest_dict["include_dirs"])
-                include_dirs.append(dir_list)
-            else:
-                dir_list = [path_mod.compose(x, self.path) for
-                            x in self.manifest_dict["include_dirs"]]
-                include_dirs.extend(dir_list)
-            # Analyze included dirs and report if any issue is found
-            for dir_ in include_dirs:
-                if path_mod.is_abs_path(dir_):
-                    logging.warning("%s contains absolute path to an include "
-                                    "directory: %s", self.path, dir_)
-                if not os.path.exists(dir_):
-                    logging.warning(self.path +
-                                    " has an unexisting include directory: " +
-                                    dir_)
-        return include_dirs
-
     def parse_manifest(self):
         """
         Create a dictionary from the module Manifest.py and assign it

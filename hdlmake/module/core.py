@@ -92,8 +92,8 @@ class ModuleConfig(object):
             filepath = os.path.join(self.path, filepath)
             if not os.path.exists(filepath):
                 raise Exception(
-                    "Path specified in manifest in %s doesn't exist: %s",
-                    self.path, filepath)
+                    "Path specified in manifest {} doesn't exist: {}".format(
+                    self.path, filepath))
 
             filepath = path_mod.rel2abs(filepath, self.path)
             if os.path.isdir(filepath):

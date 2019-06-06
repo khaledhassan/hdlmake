@@ -54,8 +54,9 @@ class ActionCore(Action):
             raise Exception(
                 "Fetching should be done before continuing.\n"
                 "The following modules remains unfetched:\n"
-                "%s",
-                "\n".join([str(m) for m in self if not m.isfetched]))
+                " {}".format(
+                    "\n ".join([str(m) for m in self if not m.isfetched])))
+
     def makefile(self):
         """Write the Makefile for the current design"""
         self._check_all_fetched()

@@ -13,7 +13,7 @@ class Config(object):
         self.prev_env_path = os.environ['PATH']
         self.prev_check_windows = hdlmake.util.shell.check_windows
         self.check_windows = check_windows
-    
+
     def __enter__(self):
         os.environ['PATH'] = ("../linux_fakebin:"
             + os.path.abspath('linux_fakebin') + ':'
@@ -52,10 +52,10 @@ def test_makefile_002():
 
 def test_makefile_003():
     run_compare(path="003msim")
-    
+
 def test_makefile_004():
     run_compare(path="004msim")
-    
+
 def test_fetch():
     run(['fetch'], path="001ise")
 
@@ -208,6 +208,12 @@ def test_manifest_vars():
 
 def test_srcfiles():
     run_compare(path="040srcfiles")
+
+def test_no_syn_tool():
+    with pytest.raises(SystemExit) as _:
+        run([], path="041err_syn")
+        assert False
+
 
 @pytest.mark.xfail
 def test_xfail():

@@ -149,6 +149,9 @@ def test_riviera():
 def test_vivado():
     run_compare(path="018vivado")
 
+def test_vivado_props():
+    run_compare(path="054vivado_props")
+
 def test_vivado_sim():
     run_compare(path="019vsim")
 

@@ -85,6 +85,8 @@ def _action_runner(modules_pool):
         modules_pool.list_files()
     elif options.command == "tree":
         modules_pool.generate_tree()
+    elif options.command is None:
+        logging.info("No command selected")
 
 
 def _get_parser():

@@ -304,6 +304,11 @@ def test_err_manifest_key():
 def test_svlog_parser():
     run_compare(path="052svlog_parser")
 
+def test_dep_level():
+    run(['list-files'], path="053vlog_dep_level")
+    run(['list-files', '--delimiter', ','], path="053vlog_dep_level")
+    run(['list-files', '--reverse'], path="053vlog_dep_level")
+    run(['list-files', '--top', 'level2'], path="053vlog_dep_level")
 
 @pytest.mark.xfail
 def test_xfail():

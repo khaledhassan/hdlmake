@@ -276,12 +276,6 @@ class VerilogPreprocessor(object):
             if n_expansions == 0:
                 return new_buf
 
-    def _define(self, name, expansion):
-        """Define a new expansion Verilog macro and add it to the macro
-        collection"""
-        mdef = self.VLDefine(name, [], expansion)
-        self.vpp_macros.append(mdef)
-
     def add_path(self, path):
         """Add a new path to the search directory list so that HDLMake
         will search for found includes on it"""
@@ -298,15 +292,6 @@ class VerilogPreprocessor(object):
         return self._preprocess_file(file_content=buf,
                                      file_name=file_path,
                                      library=vlog_file.library)
-
-    def get_file_deps(self):
-        """Look for all of the defined preprocessor filedeps and return a list
-        containing all of them"""
-        deps = []
-        for filedep_key in six.iterkeys(self.vpp_filedeps):
-            for filedep in self.vpp_filedeps[filedep_key]:
-                deps.append(filedep)
-        return list(set(deps))
 
 
 class VerilogParser(DepParser):

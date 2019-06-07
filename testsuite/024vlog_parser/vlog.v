@@ -13,6 +13,8 @@ module gate;
   wire \
   w3;
 `endif
+  wire a, b, c;
+  xor a1(a,b,c);
 endmodule
 
 `pragma protect begin_protected

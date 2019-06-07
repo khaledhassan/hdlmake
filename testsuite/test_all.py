@@ -301,6 +301,10 @@ def test_err_manifest_key():
     with pytest.raises(SystemExit) as _:
         run([], path="051err_manifest_key")
 
+def test_svlog_parser():
+    run_compare(path="052svlog_parser")
+
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""

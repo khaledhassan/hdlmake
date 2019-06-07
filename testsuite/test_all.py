@@ -163,6 +163,16 @@ def test_git_fetch():
         shutil.rmtree('ipcores.old', ignore_errors=True)
         shutil.move('ipcores', 'ipcores.old')
 
+def test_git_fetch_branch():
+    with Config(path="055git_fetch_branch") as _:
+        hdlmake.__main__.hdlmake(['fetch'])
+        shutil.rmtree('ipcores')
+
+def test_git_fetch_rev():
+    with Config(path="056git_fetch_rev") as _:
+        hdlmake.__main__.hdlmake(['fetch'])
+        shutil.rmtree('ipcores')
+
 def test_svn_fetch():
     with Config(path="021svn_fetch") as _:
         hdlmake.__main__.hdlmake(['list-mods'])

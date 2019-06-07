@@ -2,6 +2,7 @@
 # Just run 'pytest' in this directory.
 
 import hdlmake.__main__
+from hdlmake.manifest_parser.configparser import ConfigParser
 import os
 import os.path
 import pytest
@@ -253,6 +254,52 @@ def test_two_manifest():
 def test_no_manifest():
     with pytest.raises(SystemExit) as _:
         run([], path="049err_no_manifest")
+
+def test_configparser_bad_descr():
+    # More like a unittest
+    with pytest.raises(ValueError) as _:
+        _ = ConfigParser(description=1)
+
+def test_configparser_dup_option():
+    p = ConfigParser()
+    p.add_option("a", type={})
+    with pytest.raises(ValueError) as _:
+        p.add_option("a", type=0)
+
+def test_configparser_bad_option():
+    p = ConfigParser()
+    with pytest.raises(ValueError) as _:
+        p.add_option("a", type=0, unknown=True)
+
+def test_configparser_key():
+    p = ConfigParser()
+    p.add_option("a", type={})
+    p.add_allowed_key("a", key="k")
+    with pytest.raises(ValueError) as _:
+        p.add_allowed_key("a", key=1)
+
+def test_configparser_bad_type():
+    # More like a unittest
+    p = ConfigParser()
+    with pytest.raises(RuntimeError) as _:
+        p.add_type("a", type_new=[])
+
+def test_configparser_unexpected_key():
+    # More like a unittest
+    p = ConfigParser()
+    with pytest.raises(RuntimeError) as _:
+        p.add_allowed_key("a", key="k1")
+    p.add_option("a", type=[])
+    with pytest.raises(RuntimeError) as _:
+        p.add_allowed_key("a", key="k")
+
+def test_err_manifest_type():
+    with pytest.raises(SystemExit) as _:
+        run([], path="050err_manifest_type")
+
+def test_err_manifest_key():
+    with pytest.raises(SystemExit) as _:
+        run([], path="051err_manifest_key")
 
 @pytest.mark.xfail
 def test_xfail():

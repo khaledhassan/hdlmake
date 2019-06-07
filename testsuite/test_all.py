@@ -242,6 +242,18 @@ def test_abs_local():
         run([], path="047err_abs_local")
         assert False
 
+def test_two_manifest():
+    d = "048err_two_manifest"
+    # Create manifest.py dynamically so that you can clone the
+    # repo on windows/macosx
+    shutil.copy(d + "/Manifest.py", d + "/manifest.py")
+    with pytest.raises(SystemExit) as _:
+        run([], path=d)
+
+def test_no_manifest():
+    with pytest.raises(SystemExit) as _:
+        run([], path="049err_no_manifest")
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""

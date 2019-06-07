@@ -329,15 +329,13 @@ types:[<type 'int'>]
                     (opt_name, str(type(val)), val, str(opt.types), self.config_file))
             ret[opt_name] = val
             # This is only for the options of the dictionary class:
-            if isinstance(val, type(dict())):
-                try:
-                    for key in val:
-                        if key not in self[opt_name].keys:
-                            raise RuntimeError("Encountered unallowed key: "
-                                               "%s for option '%s'" %
-                                               (key, opt_name))
-                except AttributeError:  # no allowed_keys member - don't check
-                    pass
+            if isinstance(val, dict):
+                for key in val:
+                    if key not in self[opt_name].keys:
+                        raise RuntimeError(
+                            "Unallowed key: '{}' for option '{}'".format(
+                                key, opt_name))
+
         # Set the default values for those values that were not produced
         # by the Python exec operation.
         #for opt in self.options:
@@ -347,12 +345,3 @@ types:[<type 'int'>]
         #    except AttributeError:  # no default value in the option
         #        pass
         return ret
-
-
-def _test():
-    """This funtion provides an embedded test for the Manifest parser"""
-    import doctest
-    doctest.testmod()
-
-if __name__ == "__main__":
-    _test()

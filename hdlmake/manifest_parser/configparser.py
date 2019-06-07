@@ -156,8 +156,7 @@ types:[<type 'int'>]
             self.keys = []
             self.types = []
             self.help = ""
-            self.arbitrary_code = ""
-            self.global_code = ""
+            self.default = None
 
             for key in others:
                 if key == "help":
@@ -178,13 +177,9 @@ types:[<type 'int'>]
             the option's value is a dict!!"""
             if not isinstance(key, str):
                 raise ValueError("Allowed key must be a string")
-            try:
-                self.keys.append(key)
-            except AttributeError:
-                if type(dict()) not in self.types:
-                    raise RuntimeError(
-                        "Allowing a key makes sense for dictionaries only")
-                self.keys = [key]
+            if dict not in self.types:
+                raise RuntimeError(
+                    "Allowing a key makes sense for dictionaries only, {}".format(self.types))
             self.keys.append(key)
 
     def __init__(self, description=None):
@@ -196,14 +191,6 @@ types:[<type 'int'>]
         self.prefix_code = ""
         self.suffix_code = ""
         self.config_file = None
-
-    def __setitem__(self, name, value):
-        if name in self.__names():
-            for option_x in self.options:
-                if option_x.name == name:
-                    option_x = value
-        else:
-            self.options.append(value)
 
     def __getitem__(self, name):
         if name in self.__names():
@@ -219,19 +206,8 @@ types:[<type 'int'>]
             if opt is None:
                 print("")
                 continue
-
-            line = '  {0:15}; {1:29}; {2:45}{3}{4:10}'
-            try:
-                tmp_def = opt.default or '""'
-                line = line.format(
-                    opt.name,
-                    str(opt.types),
-                    opt.help,
-                    ', default=',
-                    tmp_def)
-            except AttributeError:  # no default value
-                line = line.format(opt.name, str(opt.types), opt.help, "", "")
-            print(line)
+            print('  {0:15}; {1:29}; {2:45}, default={3:10}'.format(
+                opt.name, str(opt.types), opt.help, opt.default or '""'))
 
     def add_option(self, name, **others):
         """Add a new Option object and add it to the parser's option list"""
@@ -252,25 +228,10 @@ types:[<type 'int'>]
     def add_allowed_key(self, name, key):
         """Grab the specified option from parser's list and add a new dict key.
         Note that this is only allowed when the option's value is a dict!!"""
-        if not isinstance(key, str):
-            raise ValueError("Allowed key must be a string")
-        try:
-            self[name].allowed_keys.append(key)
-        except AttributeError:
-            if type(dict()) not in self[name].types:
-                raise RuntimeError(
-                    "Allowing a key makes sense for dictionaries only")
-            self[name].allowed_keys = [key]
-        self[name].allowed_keys.append(key)
-
         self[name].add_key(key)
 
     def add_config_file(self, config_file):
         """Add the Manifest to be processed by the parser"""
-        if self.config_file is not None:
-            raise RuntimeError("Config file should be added only once")
-        if not os.path.exists(config_file):
-            raise RuntimeError("Config file doesn't exists: " + config_file)
         self.config_file = config_file
         return True
 
@@ -324,13 +285,8 @@ types:[<type 'int'>]
     def __read_config_content(self):
         """Load the Manifest.py file content in a local variable and return
         the obtained value as a string"""
-        if self.config_file is not None:
-            with open(self.config_file, "r") as config_file:
-                content = config_file.readlines()
-                content = ''.join(content)
-        else:
-            content = ''
-        return content
+        assert self.config_file is not None
+        return open(self.config_file, "r").read()
 
     def parse(self, extra_context=None):
         """Parse the stored manifest plus arbitrary code"""
@@ -376,7 +332,7 @@ types:[<type 'int'>]
             if isinstance(val, type(dict())):
                 try:
                     for key in val:
-                        if key not in self[opt_name].allowed_keys:
+                        if key not in self[opt_name].keys:
                             raise RuntimeError("Encountered unallowed key: "
                                                "%s for option '%s'" %
                                                (key, opt_name))

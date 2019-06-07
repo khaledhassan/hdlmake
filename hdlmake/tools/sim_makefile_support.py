@@ -137,8 +137,9 @@ class VsimMakefileWriter(ToolSim):
                 ".%s_%s" % (vlog.purename, vlog.extension())),
                 vlog.rel_path()))
             # list dependencies, do not include the target file
-            for dep_file in [dfile for dfile
-                             in vlog.depends_on if dfile is not vlog]:
+            for dep_file in sorted([dfile for dfile
+                                    in vlog.depends_on if dfile is not vlog],
+                                   key=(lambda x: x.file_path)):
                 if dep_file in fileset and not dep_file.is_include:
                     name = dep_file.purename
                     extension = dep_file.extension()

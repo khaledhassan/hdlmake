@@ -369,6 +369,10 @@ class SourceFileSet(set):
                 out.add(file_aux)
         return out
 
+    def sort(self):
+        """Return a sorted list of the fileset.  This is useful to have always
+        the same output"""
+        return sorted(self, key=(lambda x: x.file_path))
 
 def create_source_file(path, module, library=None,
                        include_dirs=None, is_include=False):

@@ -129,7 +129,7 @@ class VsimMakefileWriter(ToolSim):
             self.write(' '.join(["||", shell.del_command(), lib, "\n"]))
             self.write('\n\n')
         # rules for all _primary.dat files for sv
-        for vlog in fileset.filter(VerilogFile):
+        for vlog in fileset.filter(VerilogFile).sort():
             if vlog.is_include:
               continue
             self.write("%s: %s" % (os.path.join(
@@ -158,7 +158,7 @@ class VsimMakefileWriter(ToolSim):
             self.writeln(" && " + shell.touch_command() + " $@ \n\n")
             self.writeln()
         # list rules for all _primary.dat files for vhdl
-        for vhdl in fileset.filter(VHDLFile):
+        for vhdl in fileset.filter(VHDLFile).sort():
             lib = vhdl.library
             purename = vhdl.purename
             # each .dat depends on corresponding .vhd file

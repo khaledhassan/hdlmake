@@ -17,11 +17,11 @@ local: sim_pre_cmd simulation sim_post_cmd
 
 VERILOG_SRC := 
 VERILOG_OBJ := 
-VHDL_SRC := pkg.vhdl \
-gate.vhdl \
+VHDL_SRC := gate.vhdl \
+pkg.vhdl \
 
-VHDL_OBJ := work/pkg/.pkg_vhdl \
-work/gate/.gate_vhdl \
+VHDL_OBJ := work/gate/.gate_vhdl \
+work/pkg/.pkg_vhdl \
 
 INCLUDE_DIRS :=
 LIBS := work
@@ -37,13 +37,13 @@ work/.work:
 	(vlib work && vmap $(VMAP_FLAGS) work && touch work/.work )|| rm -rf work 
 
 
-work/pkg/.pkg_vhdl: pkg.vhdl
+work/gate/.gate_vhdl: gate.vhdl \
+work/pkg/.pkg_vhdl
 		vcom $(VCOM_FLAGS) -work work $< 
 		@mkdir -p $(dir $@) && touch $@ 
 
 
-work/gate/.gate_vhdl: gate.vhdl \
-work/pkg/.pkg_vhdl
+work/pkg/.pkg_vhdl: pkg.vhdl
 		vcom $(VCOM_FLAGS) -work work $< 
 		@mkdir -p $(dir $@) && touch $@ 
 

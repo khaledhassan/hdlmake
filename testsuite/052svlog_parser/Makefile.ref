@@ -15,11 +15,11 @@ VMAP_FLAGS := -modelsimini modelsim.ini
 #target for performing local simulation
 local: sim_pre_cmd simulation sim_post_cmd
 
-VERILOG_SRC := vlog.sv \
-pkg.sv \
+VERILOG_SRC := pkg.sv \
+vlog.sv \
 
-VERILOG_OBJ := work/vlog/.vlog_sv \
-work/pkg/.pkg_sv \
+VERILOG_OBJ := work/pkg/.pkg_sv \
+work/vlog/.vlog_sv \
 
 VHDL_SRC := 
 VHDL_OBJ := 
@@ -37,14 +37,14 @@ work/.work:
 	(vlib work && vmap $(VMAP_FLAGS) work && touch work/.work )|| rm -rf work 
 
 
-work/vlog/.vlog_sv: vlog.sv \
-work/pkg/.pkg_sv
+work/pkg/.pkg_sv: pkg.sv
 		vlog -work work $(VLOG_FLAGS) -sv ${INCLUDE_DIRS} $<
 		@mkdir -p $(dir $@) && touch $@ 
 
 
 
-work/pkg/.pkg_sv: pkg.sv
+work/vlog/.vlog_sv: vlog.sv \
+work/pkg/.pkg_sv
 		vlog -work work $(VLOG_FLAGS) -sv ${INCLUDE_DIRS} $<
 		@mkdir -p $(dir $@) && touch $@ 
 

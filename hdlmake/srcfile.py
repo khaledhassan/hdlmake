@@ -63,16 +63,6 @@ class VHDLFile(SourceFile):
         from hdlmake.vhdl_parser import VHDLParser
         self.parser = VHDLParser(self)
 
-    def _check_encryption(self):
-        """Check if the VHDL is encrypted (in Xilinx toolchain)"""
-        file_aux = open(self.path, "rb")
-        text = file_aux.read(3)
-        file_aux.close()
-        if text == b'Xlx':
-            return True
-        else:
-            return False
-
 
 class VerilogFile(SourceFile):
 

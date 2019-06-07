@@ -285,17 +285,11 @@ class ManifestParser(ConfigParser):
                     if not os.path.isdir(filename):
                         logging.debug("Found manifest for module %s: %s",
                                       path, filename)
-                        path_aux = os.path.join(path, filename)
-                        if not isinstance(path_aux, str):
-                            raise ValueError("Path must be an instance of str")
-                        #if not path_mod.is_abs_path(path_aux):
-                        #    raise ValueError(
-                        #        "Manifest path must be absolute path")
-                        return path_aux
+                        return os.path.join(path, filename)
             return None
         manifest = _search_for_manifest(path)
         if manifest is None:
-            raise Exception("No manifest found in path: %s", path)
+            raise Exception("No manifest found in path: {}".format(path))
         else:
             logging.debug("Parse manifest in: %s", manifest)
             return self.add_config_file(manifest)

@@ -73,6 +73,7 @@ def test_noact():
     with Config(path="005noact") as _:
         hdlmake.__main__.hdlmake(['manifest-help'])
         hdlmake.__main__.hdlmake(['list-files'])
+        hdlmake.__main__.hdlmake(['list-mods', '--with-files'])
 
 def test_ahdl():
     run_compare(path="006ahdl", check_windows=True)

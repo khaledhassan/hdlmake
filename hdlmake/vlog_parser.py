@@ -92,8 +92,6 @@ class VerilogPreprocessor(object):
     def __init__(self):
         self.vpp_stack = self.VLStack()
         self.vlog_file = None
-        # List of `include search paths
-        self.vpp_searchdir = ["."]
         # List of macro definitions
         self.vpp_macros = []
         # Dictionary of files sub-included by each file parsed
@@ -275,11 +273,6 @@ class VerilogPreprocessor(object):
             buf = new_buf
             if n_expansions == 0:
                 return new_buf
-
-    def add_path(self, path):
-        """Add a new path to the search directory list so that HDLMake
-        will search for found includes on it"""
-        self.vpp_searchdir.append(path)
 
     def preprocess(self, vlog_file):
         """Assign the provided 'vlog_file' to the associated class property
@@ -542,12 +535,6 @@ class VerilogParser(DepParser):
     def __init__(self, dep_file):
         DepParser.__init__(self, dep_file)
         self.preprocessor = VerilogPreprocessor()
-        self.preprocessed = False
-
-    def add_search_path(self, path):
-        """Add a new candidate path to the Verilog preprocessor list
-        containing the include dir candidates"""
-        self.preprocessor.add_path(path)
 
     def parse(self, dep_file):
         """Parse the provided Verilog file and add to its properties

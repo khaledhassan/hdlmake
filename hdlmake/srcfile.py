@@ -87,8 +87,6 @@ class VerilogFile(SourceFile):
             self.include_dirs.extend(include_dirs)
         self.include_dirs.append(path_mod.relpath(self.dirname))
         self.parser = VerilogParser(self)
-        for dir_aux in self.include_paths:
-            self.parser.add_search_path(dir_aux)
         self.is_include = is_include
 
 

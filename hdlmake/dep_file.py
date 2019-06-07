@@ -171,8 +171,6 @@ class DepFile(File):
         self.depends_on = set()
         self.dep_level = None
         self.is_parsed = False
-        self.file_path = file_path
-        self.include_paths = []
 
     def add_relation(self, rel):
         """Add a new relation to the set provided by the file"""

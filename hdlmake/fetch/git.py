@@ -70,8 +70,6 @@ class Git(Fetcher):
             os.mkdir(fetchto)
         basename = path_utils.url_basename(module.url)
         mod_path = os.path.join(fetchto, basename)
-        if basename.endswith(".git"):
-            basename = basename[:-4]  # remove trailing .git
         if not module.isfetched:
             logging.info("Fetching git module %s", mod_path)
             shell.run("(cd {0} && git clone {1})".format(fetchto, module.url))

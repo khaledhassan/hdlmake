@@ -127,29 +127,8 @@ class File(object):
     def __str__(self):
         return self.path
 
-    def __eq__(self, other):
-        _not_found = object()
-        path_self, path_other = [getattr(obj, "path", _not_found)
-                                 for obj in [self, other]]
-        if path_self is _not_found or path_other is _not_found:
-            return False
-        elif path_self != path_other:
-            return False
-        return True
-
     def __hash__(self):
         return hash(self.path)
-
-    def __cmp__(self, other):
-        if self.path < other.path:
-            return -1
-        if self.path == other.path:
-            return 0
-        if self.path > other.path:
-            return 1
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
 
     def extension(self):
         """Method that gets the extension for the file instance"""
@@ -182,18 +161,6 @@ class DepFile(File):
         assert isinstance(rel_b, DepRelation)
         # self._parse_if_needed()
         return any([x.satisfies(rel_b) for x in self.rels])
-
-    def show_relations(self):
-        """Print the file relations to stdout: can be used for logging"""
-        # self._parse_if_needed()
-        for relation in self.rels:
-            print(str(relation))
-
-    @property
-    def filename(self):
-        """Property defined as a method that checks the basename of the file
-        path in the host, i.e. the name of the last directory on the path"""
-        return os.path.basename(self.file_path)
 
     def get_dep_level(self):
         """Get the dependency level for the file instance, so we can order

@@ -290,9 +290,8 @@ class ManifestParser(ConfigParser):
         manifest = _search_for_manifest(path)
         if manifest is None:
             raise Exception("No manifest found in path: {}".format(path))
-        else:
-            logging.debug("Parse manifest in: %s", manifest)
-            return self.add_config_file(manifest)
+        logging.debug("Parse manifest in: %s", manifest)
+        self.add_config_file(manifest)
 
     def print_help(self):
         """Print the help for the Manifest parser object"""

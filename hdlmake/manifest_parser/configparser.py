@@ -233,7 +233,6 @@ types:[<type 'int'>]
     def add_config_file(self, config_file):
         """Add the Manifest to be processed by the parser"""
         self.config_file = config_file
-        return True
 
     def add_prefix_code(self, code):
         """Add the arbitrary Python to be executed just before the Manifest"""

@@ -72,8 +72,7 @@ class Module(ModuleContent):
 
     def remove_dir_from_disk(self):
         """Delete the module dir if it is already fetched and available"""
-        if not self.isfetched:
-            return
+        assert self.isfetched
         logging.debug("Removing " + self.path)
         command_tmp = shell.rmdir_command() + " " + self.path
         shell.run(command_tmp)
@@ -106,8 +105,7 @@ class Module(ModuleContent):
 
         if self.manifest_dict or self.isfetched is False:
             return
-        if self.path is None:
-            raise RuntimeError()
+        assert self.path is not None
 
         logging.debug("""
 ***********************************************************
@@ -119,33 +117,31 @@ PARSE START: %s
         manifest_parser.add_prefix_code(self.pool.options.prefix_code)
         manifest_parser.add_suffix_code(self.pool.options.suffix_code)
 
-        parser_tmp = manifest_parser.add_manifest(self.path)
+        # Look for the Manifest.py file
+        manifest_parser.add_manifest(self.path)
 
-        if not parser_tmp == None:
-
-            if self.parent is None:
-                extra_context = {}
-            else:
-                extra_context = dict(self.top_module.manifest_dict)
-            extra_context["__manifest"] = self.path
-
-            # The parse method is where most of the parser action takes place!
-            opt_map = None
-            try:
-                opt_map = manifest_parser.parse(extra_context=extra_context)
-            except NameError as name_error:
-                raise Exception(
-                    "Error while parsing {0}:\n{1}: {2}.".format(
-                        self.path, type(name_error), name_error))
-            self.manifest_dict = opt_map
+        # Parse and extract variables from it.
+        if self.parent is None:
+            extra_context = {}
         else:
-            self.manifest_dict = {}
+            extra_context = dict(self.top_module.manifest_dict)
+        extra_context["__manifest"] = self.path
+
+        # The parse method is where most of the parser action takes place!
+        opt_map = None
+        try:
+            opt_map = manifest_parser.parse(extra_context=extra_context)
+        except NameError as name_error:
+            raise Exception(
+                "Error while parsing {0}:\n{1}: {2}.".format(
+                    self.path, type(name_error), name_error))
+        self.manifest_dict = opt_map
 
         # Process the parsed manifest_dict to assign the module properties
         self.process_manifest()
         self.process_git_submodules()
 
-        # Parse every detected submodule
+        # Recurse: parse every detected submodule
         for module_aux in self.submodules():
             module_aux.parse_manifest()
 

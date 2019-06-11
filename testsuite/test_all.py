@@ -200,6 +200,11 @@ def test_git_fetch_url2():
         hdlmake.__main__.hdlmake(['fetch'])
         shutil.rmtree('ipcores')
 
+def test_git_fetch_err():
+    with pytest.raises(SystemExit) as _:
+        run(['fetch'], path="075err_git")
+    shutil.rmtree('ipcores', ignore_errors=True)
+
 def test_svn_fetch():
     with Config(path="021svn_fetch") as _:
         hdlmake.__main__.hdlmake(['list-mods'])

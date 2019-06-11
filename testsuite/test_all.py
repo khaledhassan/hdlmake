@@ -53,8 +53,11 @@ def run(args, **kwargs):
     with Config(**kwargs) as _:
         hdlmake.__main__.hdlmake(args)
 
-def test_makefile_001():
+def test_ise():
     run_compare(path="001ise")
+
+def test_ise_windows():
+    run_compare(path="071ise_windows", check_windows=True)
 
 def test_makefile_002():
     run_compare(path="002msim")
@@ -375,6 +378,24 @@ def test_all_files():
 def test_err_notop():
     with pytest.raises(SystemExit) as _:
         run([], path="066err_top")
+
+def test_err_syn_dev():
+    with pytest.raises(SystemExit) as _:
+        run([], path="067err_syndev")
+        assert False
+
+def test_err_syn_grade():
+    with pytest.raises(SystemExit) as _:
+        run([], path="068err_syngrade")
+        assert False
+
+def test_err_syn_package():
+    with pytest.raises(SystemExit) as _:
+        run([], path="069err_synpackage")
+        assert False
+
+def test_err_syn_top():
+    run_compare(path="070err_syntop")
 
 @pytest.mark.xfail
 def test_xfail():

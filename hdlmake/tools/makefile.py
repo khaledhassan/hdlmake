@@ -85,7 +85,7 @@ class ToolMakefile(object):
         bin_name = self._get_name_bin()
         locations = shell.which(bin_name)
         if len(locations) == 0:
-            return
+            return None
         logging.debug("location for %s: %s", bin_name, locations[0])
         return os.path.dirname(locations[0])
 
@@ -93,20 +93,11 @@ class ToolMakefile(object):
         """Check if the directory is in the system path"""
         path = self.manifest_dict.get(path_key)
         bin_name = self._get_name_bin()
-        if path is not None:
-            return os.path.exists(os.path.join(path, bin_name))
-        else:
-            assert isinstance(bin_name, six.string_types)
-            path = self._get_path()
-            return len(path) > 0
+        return os.path.exists(os.path.join(path, bin_name))
 
     def _check_in_system_path(self):
         """Check if if in the system path exists a file named (name)"""
-        path = self._get_path()
-        if path:
-            return True
-        else:
-            return False
+        return self._get_path() is not None
 
     def makefile_check_tool(self, path_key):
         """Check if the binary is available in the O.S. environment"""

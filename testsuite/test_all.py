@@ -390,9 +390,9 @@ def test_err_noaction():
 def test_all_files():
     run(['-a', 'makefile'], path="002msim")
 
-def test_err_notop():
+def test_err_sim_top():
     with pytest.raises(SystemExit) as _:
-        run([], path="066err_top")
+        run([], path="066err_sim_top")
 
 def test_err_syn_dev():
     with pytest.raises(SystemExit) as _:

@@ -15,8 +15,6 @@ def _check_simulation_manifest(manifest_dict):
     """Check if the simulation keys are provided by the top manifest"""
     if manifest_dict.get("sim_top") is None:
         raise Exception("sim_top variable must be set in the top manifest.")
-    if manifest_dict.get("sim_tool") is None:
-        raise Exception("sim_tool variable must be set in the top manifest.")
 
 
 class ToolSim(ToolMakefile):

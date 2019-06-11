@@ -80,10 +80,9 @@ class ActionCore(Action):
                 result = self.svn_backend.fetch(module)
             elif module.source == 'git':
                 result = self.git_backend.fetch(module)
-            elif module.source == 'gitsm':
-                result = self.gitsm_backend.fetch(module)
             else:
-                assert False, "unknown source"
+                assert module.source == 'gitsm'
+                result = self.gitsm_backend.fetch(module)
             if result is False:
                 raise Exception("Unable to fetch module %s", str(module.url))
             module.parse_manifest()

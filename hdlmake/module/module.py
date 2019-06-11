@@ -59,11 +59,6 @@ class Module(ModuleContent):
     def __str__(self):
         return self.module_args.url
 
-    @property
-    def is_fetched_to(self):
-        """Get the path where the module instance resides"""
-        return os.path.dirname(self.path)
-
     def submodules(self):
         """Get a list with all the submodules this module instance requires"""
         def __nonull(submodule_list):

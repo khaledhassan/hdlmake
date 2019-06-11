@@ -32,6 +32,7 @@ from hdlmake.tools.makefile_writer import load_syn_tool, load_sim_tool
 from hdlmake.util import shell
 from hdlmake import new_dep_solver as dep_solver
 from hdlmake.srcfile import SourceFileSet, VHDLFile, VerilogFile, SVFile
+from hdlmake.module import Module, ModuleArgs
 
 class Action(list):
 
@@ -87,7 +88,6 @@ class Action(list):
 
         NOTE: the first module added to the pool will become the top_module!.
         """
-        from hdlmake.module import Module, ModuleArgs
         self._deps_solved = False
         new_module_args = ModuleArgs()
         new_module_args.set_args(parent, url, source, fetchto)
@@ -169,7 +169,6 @@ class Action(list):
 
     def _add(self, new_module):
         """Add the given new module if this is not already in the pool"""
-        from hdlmake.module import Module
         assert isinstance(new_module, Module), "Expect a Module instance"
         if self.__contains(new_module):
             return False

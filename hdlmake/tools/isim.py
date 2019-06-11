@@ -71,11 +71,8 @@ class ToolISim(ToolSim):
 
         def __get_xilinxsim_ini_dir():
             """Get Xilinx ISim ini simulation file"""
-            if "sim_path" in self.manifest_dict:
-                xilinx_dir = str(os.path.join(
-                    self.manifest_dict["sim_path"], "..", ".."))
-            else:
-                raise Exception("Cannot calculate xilinx tools base directory")
+            xilinx_dir = str(os.path.join(
+                self.manifest_dict["sim_path"], "..", ".."))
             hdl_language = 'vhdl'  # 'verilog'
             if shell.check_windows():
                 os_prefix = 'nt'
@@ -104,8 +101,6 @@ XILINX_INI_PATH := """ + __get_xilinxsim_ini_dir() +
         """Print the Xilinx ISim simulation options in the Makefile"""
         def __get_rid_of_isim_incdirs(vlog_opt):
             """Clean the vlog options from include dirs"""
-            if not vlog_opt:
-                vlog_opt = ""
             vlogs = vlog_opt.split(' ')
             ret = []
             skip = False

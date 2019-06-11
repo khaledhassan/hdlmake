@@ -252,8 +252,7 @@ def test_no_files():
     run([], path="042nofiles")
 
 def test_no_bin():
-    with Config(path="061err_nobin", fakebin="no_fakebin") as _:
-        hdlmake.__main__.hdlmake([])
+    run_compare(path="061err_nobin", fakebin="no_fakebin")
 
 def test_local043():
     run_compare(path="043local_fetch")

@@ -82,8 +82,8 @@ class ActionCore(Action):
                 result = self.git_backend.fetch(module)
             elif module.source == 'gitsm':
                 result = self.gitsm_backend.fetch(module)
-            elif module.source == 'local':
-                result = self.local_backend.fetch(module)
+            else:
+                assert False, "unknown source"
             if result is False:
                 raise Exception("Unable to fetch module %s", str(module.url))
             module.parse_manifest()

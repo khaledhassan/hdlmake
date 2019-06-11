@@ -372,6 +372,10 @@ def test_err_noaction():
 def test_all_files():
     run(['-a', 'makefile'], path="002msim")
 
+def test_err_notop():
+    with pytest.raises(SystemExit) as _:
+        run([], path="066err_top")
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""

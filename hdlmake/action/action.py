@@ -67,7 +67,7 @@ class Action(list):
                 raise Exception("'sim_tool' variable is not defined")
             self.tool = load_sim_tool(tool)
             self.top_entity = self.config.get("sim_top") \
-                or self.config["top_module"]
+                or self.config.get("top_module")
             self.config["sim_top"] = self.top_entity
         elif action == "synthesis":
             tool = self.config.get("syn_tool")
@@ -75,7 +75,7 @@ class Action(list):
                 raise Exception("'syn_tool' variable is not defined")
             self.tool = load_syn_tool(tool)
             self.top_entity = self.config.get("syn_top") \
-                or self.config["top_module"]
+                or self.config.get("top_module")
             self.config["syn_top"] = self.top_entity
         else:
             raise Exception("Unknown requested action: {}".format(action))

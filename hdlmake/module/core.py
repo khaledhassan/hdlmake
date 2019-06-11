@@ -118,14 +118,14 @@ class ModuleCore(ModuleConfig):
         self.library = "work"
         self.action = None
         self.pool = None
-        self.top_module = None
+        self.top_manifest = None
         self.manifest_dict = None
         super(ModuleCore, self).__init__()
 
     def set_pool(self, pool):
         """Set the associated pool for the module instance"""
         self.pool = pool
-        self.top_module = pool.get_top_module()
+        self.top_manifest = pool.get_top_manifest()
 
     def process_manifest(self):
         """Method that process the core manifest section"""

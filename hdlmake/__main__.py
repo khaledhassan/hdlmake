@@ -52,7 +52,7 @@ def hdlmake(args):
 
         # Create a ModulePool object, this will become our workspace
         action = ActionCore(options)
-        action.load_top_module()
+        action.load_top_manifest()
         action.run()
 
         # Execute the appropriated action for the freshly created modules pool

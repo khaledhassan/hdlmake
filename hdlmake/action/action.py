@@ -40,20 +40,20 @@ class Action(list):
 
     def __init__(self, options):
         super(Action, self).__init__()
-        self.top_module = None
+        self.top_manifest = None
         self.parseable_fileset = SourceFileSet()
         self.privative_fileset = SourceFileSet()
         self._deps_solved = False
         self.options = options
 
-    def load_top_module(self):
+    def load_top_manifest(self):
         # Top level module.
-        assert self.top_module is None
-        self.top_module = self.new_module(parent=None,
-                                          url=os.getcwd(),
-                                          source=None,
-                                          fetchto=".")
-        self.top_module.parse_manifest()
+        assert self.top_manifest is None
+        self.top_manifest = self.new_module(parent=None,
+                                            url=os.getcwd(),
+                                            source=None,
+                                            fetchto=".")
+        self.top_manifest.parse_manifest()
         self.config = self._get_config_dict()
 
     def run(self):
@@ -85,8 +85,6 @@ class Action(list):
 
         This is the only way to add new modules to the pool
         Thanks to it the pool can easily control its content
-
-        NOTE: the first module added to the pool will become the top_module!.
         """
         self._deps_solved = False
         new_module_args = ModuleArgs()
@@ -149,9 +147,9 @@ class Action(list):
             logging.info("Detected %d supported files that can be parsed",
                          len(self.parseable_fileset))
 
-    def get_top_module(self):
+    def get_top_manifest(self):
         """Get the Top module from the pool"""
-        return self.top_module
+        return self.top_manifest
 
     def _get_config_dict(self):
         """Get the combined hierarchical Manifest dictionary from the pool"""

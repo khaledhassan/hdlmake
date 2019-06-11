@@ -118,7 +118,7 @@ PARSE START: %s
         if self.parent is None:
             extra_context = {}
         else:
-            extra_context = dict(self.top_module.manifest_dict)
+            extra_context = dict(self.top_manifest.manifest_dict)
         extra_context["__manifest"] = self.path
 
         # The parse method is where most of the parser action takes place!

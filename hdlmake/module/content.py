@@ -137,7 +137,8 @@ class ModuleContent(ModuleCore):
         if self.parent is None:
             include_dirs = self.manifest_dict.get('include_dirs', [])
         else:
-            include_dirs = self.top_module.manifest_dict.get('include_dirs', [])
+            include_dirs = self.top_manifest.manifest_dict.get(
+                'include_dirs', [])
         for path_aux in paths:
             if os.path.isdir(path_aux):
                 dir_ = os.listdir(path_aux)

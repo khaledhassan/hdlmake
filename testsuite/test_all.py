@@ -197,6 +197,11 @@ def test_svn_fetch():
         hdlmake.__main__.hdlmake(['list-mods', '--with-files'])
         shutil.rmtree('ipcores')
 
+def test_svn_fetch_rev():
+    with Config(path="072svn_fetch_rev") as _:
+        hdlmake.__main__.hdlmake(['fetch'])
+        shutil.rmtree('ipcores')
+
 def test_gitsm_fetch():
     with Config(path="022gitsm_fetch") as _:
         hdlmake.__main__.hdlmake(['fetch'])

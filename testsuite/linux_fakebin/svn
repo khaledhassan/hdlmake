@@ -12,6 +12,8 @@ if sys.argv[1] == 'checkout':
         # Get the basename of the module
         name = sys.argv[2]
         name = name[name.rfind('/') + 1:]
+        if name.find('@') >= 0:
+            name = name[:name.find('@')]
         assert name == sys.argv[3]
         modpath = os.path.join(os.path.dirname(__file__), '..', 'modules', name)
         if os.path.exists(name):

@@ -344,6 +344,14 @@ def test_modelsim_windows():
     assert hdlmake.util.shell.check_windows() is False
     run_compare(path="057msim_windows", check_windows=True)
 
+def test_nosim_tool():
+    with pytest.raises(SystemExit) as _:
+        run([], path="063err_nosim_tool")
+
+def test_err_action():
+    with pytest.raises(SystemExit) as _:
+        run([], path="064err_action")
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""

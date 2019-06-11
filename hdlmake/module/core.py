@@ -29,7 +29,7 @@ class ModuleConfig(object):
 
     def basename(self):
         """Get the basename for the module"""
-        if self.source == fetch.SVN:
+        if self.source == 'svn':
             return path_mod.svn_basename(self.url)
         else:
             return path_mod.url_basename(self.url)
@@ -49,13 +49,11 @@ class ModuleConfig(object):
         self.source = source
         self.parent = parent
 
-        if self.source != fetch.LOCAL:
-            if self.source == fetch.SVN:
-                self.url, self.revision = \
-                    path_mod.svn_parse(url)
+        if self.source != 'local':
+            if self.source == 'svn':
+                self.url, self.revision = path_mod.svn_parse(url)
             else:
-                self.url, self.branch, self.revision = \
-                    path_mod.url_parse(url)
+                self.url, self.branch, self.revision = path_mod.url_parse(url)
             basename = self.basename()
             path = path_mod.relpath(os.path.abspath(
                 os.path.join(fetchto, basename)))

@@ -31,8 +31,9 @@ import os.path
 import hdlmake.fetch as fetch
 import hdlmake.new_dep_solver as dep_solver
 from hdlmake.util import path as path_mod
-from hdlmake.fetch import Svn, Git, GitSM, Local
-from hdlmake.fetch import SVN, GIT, GITSM, LOCAL
+from hdlmake.fetch.svn import Svn
+from hdlmake.fetch.git import Git, GitSM
+from hdlmake.fetch.local import Local
 from .action import Action
 
 
@@ -75,13 +76,13 @@ class ActionCore(Action):
             """Fetch the given module from the remote origin"""
             new_modules = []
             logging.debug("Fetching module: %s", str(module))
-            if module.source is SVN:
+            if module.source == 'svn':
                 result = self.svn_backend.fetch(module)
-            elif module.source is GIT:
+            elif module.source == 'git':
                 result = self.git_backend.fetch(module)
-            elif module.source is GITSM:
+            elif module.source == 'gitsm':
                 result = self.gitsm_backend.fetch(module)
-            elif module.source is LOCAL:
+            elif module.source == 'local':
                 result = self.local_backend.fetch(module)
             if result is False:
                 raise Exception("Unable to fetch module %s", str(module.url))
@@ -129,7 +130,7 @@ class ActionCore(Action):
         """Delete the local copy of the fetched modules"""
         logging.info("Removing fetched modules..")
         remove_list = [mod_aux for mod_aux in self
-                       if mod_aux.source in [fetch.GIT, fetch.GITSM, fetch.SVN]
+                       if mod_aux.source in ['git', 'gitsm', 'svn']
                        and mod_aux.isfetched]
         remove_list.reverse()  # we will remove modules in backward order
         if len(remove_list):
@@ -180,34 +181,22 @@ class ActionCore(Action):
     def list_modules(self):
         """List the modules that are contained by the pool"""
 
-        def _convert_to_source_name(source_code):
-            """Private function that returns a string with the source type"""
-            if source_code == fetch.GIT:
-                return "git"
-            elif source_code == fetch.GITSM:
-                return "gitsm"
-            elif source_code == fetch.SVN:
-                return "svn"
-            elif source_code == fetch.LOCAL:
-                return "local"
-
         for mod_aux in self:
             if not mod_aux.isfetched:
                 logging.warning("Module not fetched: %s", mod_aux.url)
                 self._print_comment("# MODULE UNFETCHED! -> %s" % mod_aux.url)
             else:
                 self._print_comment("# MODULE START -> %s" % mod_aux.url)
-                if mod_aux.source in [fetch.SVN, fetch.GIT, fetch.GITSM]:
+                if mod_aux.source in ['svn', 'git', 'gitsm']:
                     self._print_comment("# * URL: " + mod_aux.url)
                 if (mod_aux.source
-                        in [fetch.SVN, fetch.GIT, fetch.GITSM, fetch.LOCAL]
+                        in ['svn', 'git', 'gitsm', 'local']
                         and mod_aux.parent):
                     self._print_comment("# * The parent for this module is: %s"
                                         % mod_aux.parent.url)
                 else:
                     self._print_comment("# * This is the root module")
-                print("%s\t%s" % (mod_aux.path,
-                                  _convert_to_source_name(mod_aux.source)))
+                print("%s\t%s" % (mod_aux.path, mod_aux.source))
                 if self.options.withfiles:
                     self._print_file_list(mod_aux.files)
                 self._print_comment("# MODULE END -> %s" % mod_aux.url)

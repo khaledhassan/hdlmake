@@ -9,15 +9,16 @@ import pytest
 import shutil
 
 class Config(object):
-    def __init__(self, path=None, check_windows=False):
+    def __init__(self, path=None, check_windows=False, fakebin="linux_fakebin"):
         self.path = path
         self.prev_env_path = os.environ['PATH']
         self.prev_check_windows = hdlmake.util.shell.check_windows
         self.check_windows = check_windows
+        self.fakebin = fakebin
 
     def __enter__(self):
-        os.environ['PATH'] = ("../linux_fakebin:"
-            + os.path.abspath('linux_fakebin') + ':'
+        os.environ['PATH'] = ("../" + self.fakebin + ":"
+            + os.path.abspath(self.fakebin) + ':'
             + self.prev_env_path)
         if self.path is not None:
             os.chdir(self.path)
@@ -35,6 +36,13 @@ def compare_makefile():
     assert out == ref
     os.remove('Makefile')
 
+def compare_makefile_xilinx():
+    ref = open('Makefile.ref', 'r').readlines()
+    out = open('Makefile', 'r').readlines()
+    # HDLmake make the path absolute.  Remove this line.
+    out = [l for l in out if not l.startswith("XILINX_INI_PATH")]
+    assert out == ref
+    os.remove('Makefile')
 
 def run_compare(**kwargs):
     with Config(**kwargs) as _:
@@ -90,12 +98,13 @@ def test_icestorm():
 def test_isim():
     with Config(path="010isim") as _:
         hdlmake.__main__.hdlmake([])
-        ref = open('Makefile.ref', 'r').readlines()
-        out = open('Makefile', 'r').readlines()
-        # HDLmake make the path absolute.  Remove this line.
-        out = [l for l in out if not l.startswith("XILINX_INI_PATH")]
-        assert out == ref
-        os.remove('Makefile')
+        compare_makefile_xilinx()
+
+def test_isim_windows():
+    with Config(path="060isim_windows",
+                check_windows=True, fakebin="windows_fakebin") as _:
+        hdlmake.__main__.hdlmake([])
+        compare_makefile_xilinx()
 
 def test_icarus():
     run_compare(path="012icarus")

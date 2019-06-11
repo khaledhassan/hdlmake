@@ -3,7 +3,7 @@
 #  http://ohwr.org/projects/hdl-make/  #
 ########################################
 
-TOP_MODULE := gate
+TOP_MODULE := gate3
 PWD := $(shell pwd)
 
 GHDL := ghdl
@@ -15,14 +15,22 @@ local: sim_pre_cmd simulation sim_post_cmd
 VERILOG_SRC := 
 VERILOG_OBJ := 
 VHDL_SRC := ../files/gate.vhdl \
+../files/gate3.vhd \
 
 VHDL_OBJ := work/gate/.gate_vhdl \
+work/gate3/.gate3_vhd \
 
 simulation: $(VERILOG_OBJ) $(VHDL_OBJ)
 		$(GHDL) -e $(GHDL_OPT) $(TOP_MODULE)
 
 
 work/gate/.gate_vhdl: ../files/gate.vhdl
+		$(GHDL) -a $(GHDL_OPT) $<
+		@mkdir -p $(dir $@) && touch $@ 
+
+
+work/gate3/.gate3_vhd: ../files/gate3.vhd \
+work/gate/.gate_vhdl
 		$(GHDL) -a $(GHDL_OPT) $<
 		@mkdir -p $(dir $@) && touch $@ 
 

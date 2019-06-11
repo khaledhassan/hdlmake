@@ -31,7 +31,7 @@ from hdlmake.util import shell
 from hdlmake.util.termcolor import colored
 
 from .manifest_parser.variables import ManifestParser
-from .action.core import ActionCore
+from .action.commands import ActionCore
 from ._version import __version__
 
 

@@ -34,7 +34,7 @@ import logging
 
 from hdlmake.util import path as path_mod
 from hdlmake.util import shell
-from hdlmake.manifest_parser import ManifestParser
+from hdlmake.manifest_parser.variables import ManifestParser
 from .content import ModuleContent, ModuleArgs
 import six
 
@@ -121,10 +121,8 @@ PARSE START: %s
 
         manifest_parser = ManifestParser()
 
-        manifest_parser.add_prefix_code(
-            self.pool.options.prefix_code)
-        manifest_parser.add_suffix_code(
-            self.pool.options.suffix_code)
+        manifest_parser.add_prefix_code(self.pool.options.prefix_code)
+        manifest_parser.add_suffix_code(self.pool.options.suffix_code)
 
         parser_tmp = manifest_parser.add_manifest(self.path)
 

@@ -201,6 +201,16 @@ def test_gitsm_fetch():
         hdlmake.__main__.hdlmake(['clean'])
         shutil.rmtree('ipcores')
 
+def test_git_fetch_cmds():
+    with Config(path="065fetch_pre_post") as _:
+        hdlmake.__main__.hdlmake(['fetch'])
+        shutil.rmtree('ipcores')
+
+def test_err_fetch():
+    with pytest.raises(SystemExit) as _:
+        run([], path="065fetch_pre_post")
+        assert False
+
 def test_xci():
     run_compare(path="023xci")
 
@@ -358,6 +368,9 @@ def test_err_loglevel():
 
 def test_err_noaction():
     run(['--log', 'warning'], path="002msim")
+
+def test_all_files():
+    run(['-a', 'makefile'], path="002msim")
 
 @pytest.mark.xfail
 def test_xfail():

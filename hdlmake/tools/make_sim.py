@@ -84,16 +84,12 @@ PWD := $$(shell pwd)
                 os.path.join(
                     vlog.library,
                     vlog.purename,
-                    "." +
-                    vlog.purename +
-                    "_" +
-                    vlog.extension(
-                    )) +
+                    ".{}_{}".format(vlog.purename, vlog.extension())) +
                 " \\")
         self.writeln()
         self.write("VHDL_SRC := ")
         for vhdl in fileset.filter(VHDLFile).sort():
-            self.write(vhdl.rel_path() + " \\\n")
+            self.writeln(vhdl.rel_path() + " \\")
         self.writeln()
         # list vhdl objects (_primary.dat files)
         self.write("VHDL_OBJ := ")
@@ -103,11 +99,7 @@ PWD := $$(shell pwd)
                 os.path.join(
                     vhdl.library,
                     vhdl.purename,
-                    "." +
-                    vhdl.purename +
-                    "_" +
-                    vhdl.extension(
-                    )) +
+                    ".{}_{}".format(vhdl.purename, vhdl.extension())) +
                 " \\")
         self.writeln()
 

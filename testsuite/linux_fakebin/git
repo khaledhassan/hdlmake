@@ -44,6 +44,9 @@ elif argv[0] == 'submodule':
         sys.exit(0)
     elif argv[1:] == ['update', '--recursive']:
         sys.exit(0)
+    elif argv[1] == 'status':
+        print('+abcdef {} (remote/origin/master)'.format(argv[2]))
+        sys.exit(0)
 elif argv == ['config', '-f', '.gitmodules', '--list']:
     sys.stdout.write(open('.gitmodules', 'r').read())
     sys.exit(0)

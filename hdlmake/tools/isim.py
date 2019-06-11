@@ -176,7 +176,7 @@ fuse:
         # rules for all _primary.dat files for sv
         # incdir = ""
         objs = []
-        for vl_file in fileset.filter(VerilogFile):
+        for vl_file in fileset.filter(VerilogFile).sort():
             comp_obj = os.path.join(vl_file.library, vl_file.purename)
             objs.append(comp_obj)
             # self.write(os.path.join(vl_file.library, vl_file.purename,
@@ -211,7 +211,7 @@ fuse:
             self.writeln(" && " + shell.touch_command() + " $@ \n\n")
         self.write("\n")
         # list rules for all _primary.dat files for vhdl
-        for vhdl_file in fileset.filter(VHDLFile):
+        for vhdl_file in fileset.filter(VHDLFile).sort():
             lib = vhdl_file.library
             purename = vhdl_file.purename
             comp_obj = os.path.join(lib, purename)

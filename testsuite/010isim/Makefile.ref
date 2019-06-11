@@ -5,7 +5,7 @@
 
 ## variables #############################
 PWD := $(shell pwd)
-TOP_MODULE := gate_tb
+TOP_MODULE := gate3_tb
 FUSE_OUTPUT ?= isim_proj
 
 
@@ -14,13 +14,15 @@ VLOGCOMP_FLAGS := -intstyle default -incremental -initfile xilinxsim.ini
 #target for performing local simulation
 local: sim_pre_cmd simulation sim_post_cmd
 
-VERILOG_SRC := ../files/gate_tb.v \
+VERILOG_SRC := ../files/gate3_tb.v \
 
-VERILOG_OBJ := work/gate_tb/.gate_tb_v \
+VERILOG_OBJ := work/gate3_tb/.gate3_tb_v \
 
 VHDL_SRC := ../files/gate.vhdl \
+../files/gate3.vhd \
 
 VHDL_OBJ := work/gate/.gate_vhdl \
+work/gate3/.gate3_vhd \
 
 LIBS := work
 LIB_IND := work/.work
@@ -38,7 +40,7 @@ fuse:
 work/.work:
 	(mkdir -p work && touch work/.work && echo work=work  >> xilinxsim.ini) || rm -rf work 
 
-work/gate_tb/.gate_tb_v: ../files/gate_tb.v ../files/gate.vhdl
+work/gate3_tb/.gate3_tb_v: ../files/gate3_tb.v ../files/gate3.vhd
 		vlogcomp -work work=./work $(VLOGCOMP_FLAGS)  -i ../files $<
 		@mkdir -p $(dir $@) && touch $@ 
 
@@ -50,6 +52,15 @@ work/gate/.gate_vhdl: ../files/gate.vhdl work/gate/.gate
 
 
 work/gate/.gate:
+		@mkdir -p $(dir $@) && touch $@
+
+work/gate3/.gate3_vhd: ../files/gate3.vhd work/gate3/.gate3
+		vhpcomp $(VHPCOMP_FLAGS) -work work=./work $< 
+		@mkdir -p $(dir $@) && touch $@
+
+
+work/gate3/.gate3: \
+work/gate/.gate_vhdl
 		@mkdir -p $(dir $@) && touch $@
 
 # USER SIM COMMANDS

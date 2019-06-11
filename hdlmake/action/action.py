@@ -34,13 +34,14 @@ from hdlmake import new_dep_solver as dep_solver
 from hdlmake.srcfile import SourceFileSet, VHDLFile, VerilogFile, SVFile
 from hdlmake.module.module import Module, ModuleArgs
 
-class Action(list):
+class Action(object):
 
     """This is the base class providing the common Action methods"""
 
     def __init__(self, options):
         super(Action, self).__init__()
         self.top_manifest = None
+        self.manifests = []
         self.parseable_fileset = SourceFileSet()
         self.privative_fileset = SourceFileSet()
         self._deps_solved = False
@@ -98,8 +99,8 @@ class Action(list):
         """Build file set with all the files listed in the complete pool"""
         logging.debug("Begin build complete file set")
         all_manifested_files = SourceFileSet()
-        for module in self:
-            all_manifested_files.add(module.files)
+        for manifest in self.manifests:
+            all_manifested_files.add(manifest.files)
         logging.debug("End build complete file set")
         return all_manifested_files
 
@@ -154,7 +155,7 @@ class Action(list):
     def _get_config_dict(self):
         """Get the combined hierarchical Manifest dictionary from the pool"""
         config_dict = {}
-        for mod in self:
+        for mod in self.manifests:
             manifest_dict_tmp = mod.manifest_dict
             if not manifest_dict_tmp == None:
                 if 'fetchto' in manifest_dict_tmp:
@@ -173,12 +174,12 @@ class Action(list):
         if new_module.isfetched:
             for mod in new_module.submodules():
                 self._add(mod)
-        self.append(new_module)
+        self.manifests.append(new_module)
         return True
 
     def __contains(self, module):
         """Check if the pool contains the given module by checking the URL"""
-        for mod in self:
+        for mod in self.manifests:
             if mod.url == module.url:
                 return True
         return False

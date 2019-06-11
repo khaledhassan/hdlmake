@@ -51,7 +51,7 @@ class ActionCore(Action):
     def _check_all_fetched(self):
         """Check if every module in the pool is fetched"""
 
-        if not len([m for m in self if not m.isfetched]) == 0:
+        if not len([m for m in self.manifests if not m.isfetched]) == 0:
             raise Exception(
                 "Fetching should be done before continuing.\n"
                 "The following modules remains unfetched:\n"
@@ -91,7 +91,7 @@ class ActionCore(Action):
                 new_modules.extend(module.modules[m])
             return new_modules
 
-        fetch_queue = [m for m in self]
+        fetch_queue = [m for m in self.manifests]
 
         while len(fetch_queue) > 0:
             cur_mod = fetch_queue.pop()
@@ -113,12 +113,12 @@ class ActionCore(Action):
     def fetch(self):
         """Fetch the missing required modules from their remote origin"""
         logging.info("Fetching needed modules.")
-        for mod in self:
+        for mod in self.manifests:
             if mod.isfetched and not mod.manifest_dict == None:
                 if 'fetch_pre_cmd' in mod.manifest_dict:
                     os.system(mod.manifest_dict.get("fetch_pre_cmd", ''))
         self._fetch_all()
-        for mod in self:
+        for mod in self.manifests:
             if mod.isfetched and not mod.manifest_dict == None:
                 if 'fetch_post_cmd' in mod.manifest_dict:
                     os.system(mod.manifest_dict.get("fetch_post_cmd", ''))
@@ -127,7 +127,7 @@ class ActionCore(Action):
     def clean(self):
         """Delete the local copy of the fetched modules"""
         logging.info("Removing fetched modules..")
-        remove_list = [mod_aux for mod_aux in self
+        remove_list = [mod_aux for mod_aux in self.manifests
                        if mod_aux.source in ['git', 'gitsm', 'svn']
                        and mod_aux.isfetched]
         remove_list.reverse()  # we will remove modules in backward order
@@ -142,7 +142,7 @@ class ActionCore(Action):
 
     def list_files(self):
         """List the files added to the design across the pool hierarchy"""
-        unfetched_modules = [mod_aux for mod_aux in self
+        unfetched_modules = [mod_aux for mod_aux in self.manifests
                              if not mod_aux.isfetched]
         for mod_aux in unfetched_modules:
             logging.warning(
@@ -179,7 +179,7 @@ class ActionCore(Action):
     def list_modules(self):
         """List the modules that are contained by the pool"""
 
-        for mod_aux in self:
+        for mod_aux in self.manifests:
             if not mod_aux.isfetched:
                 logging.warning("Module not fetched: %s", mod_aux.url)
                 self._print_comment("# MODULE UNFETCHED! -> %s" % mod_aux.url)

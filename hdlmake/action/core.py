@@ -87,10 +87,8 @@ class ActionCore(Action):
             if result is False:
                 raise Exception("Unable to fetch module %s", str(module.url))
             module.parse_manifest()
-            new_modules.extend(module.local)
-            new_modules.extend(module.svn)
-            new_modules.extend(module.git)
-            new_modules.extend(module.gitsm)
+            for m in module.modules:
+                new_modules.extend(module.modules[m])
             return new_modules
 
         fetch_queue = [m for m in self]

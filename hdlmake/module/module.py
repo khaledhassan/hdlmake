@@ -61,14 +61,8 @@ class Module(ModuleContent):
 
     def submodules(self):
         """Get a list with all the submodules this module instance requires"""
-        def __nonull(submodule_list):
-            """Returns a list with the submodules, being empty if null"""
-            if not submodule_list:
-                return []
-            else:
-                return submodule_list
-        return __nonull(self.local) + __nonull(self.git) \
-            + __nonull(self.gitsm) + __nonull(self.svn)
+        return self.modules['local'] + self.modules['git'] \
+            + self.modules['gitsm'] + self.modules['svn']
 
     def remove_dir_from_disk(self):
         """Delete the module dir if it is already fetched and available"""

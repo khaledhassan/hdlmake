@@ -36,10 +36,7 @@ class ModuleContent(ModuleCore):
         # Manifest Files Properties
         self.files = None
         # Manifest Modules Properties
-        self.local = []
-        self.git = []
-        self.gitsm = []
-        self.svn = []
+        self.modules = {'local': [], 'git': [], 'gitsm': [], 'svn': []}
         self.incl_makefiles = []
         super(ModuleContent, self).__init__()
 
@@ -83,61 +80,21 @@ class ModuleContent(ModuleCore):
         if "modules" not in self.manifest_dict:
             return
         fetchto = self._get_fetchto()
-        if "local" in self.manifest_dict["modules"]:
-            local_paths = path_mod.flatten_list(
-                self.manifest_dict["modules"]["local"])
-            local_mods = []
-            for path in local_paths:
-                if path_mod.is_abs_path(path):
-                    raise Exception("Found an absolute path (" + path +
-                                    ") in a manifest(" + self.path + ")")
-                path = path_mod.rel2abs(path, self.path)
-                local_mods.append(self.pool.new_module(parent=self,
-                                                       url=path,
-                                                       source='local',
-                                                       fetchto=fetchto))
-            self.local = local_mods
-        else:
-            self.local = []
-
-        if "svn" in self.manifest_dict["modules"]:
-            self.manifest_dict["modules"]["svn"] = path_mod.flatten_list(
-                self.manifest_dict["modules"]["svn"])
-            svn_mods = []
-            for url in self.manifest_dict["modules"]["svn"]:
-                svn_mods.append(self.pool.new_module(parent=self,
-                                                     url=url,
-                                                     source='svn',
-                                                     fetchto=fetchto))
-            self.svn = svn_mods
-        else:
-            self.svn = []
-
-        if "git" in self.manifest_dict["modules"]:
-            self.manifest_dict["modules"]["git"] = path_mod.flatten_list(
-                self.manifest_dict["modules"]["git"])
-            git_mods = []
-            for url in self.manifest_dict["modules"]["git"]:
-                git_mods.append(self.pool.new_module(parent=self,
-                                                     url=url,
-                                                     source='git',
-                                                     fetchto=fetchto))
-            self.git = git_mods
-        else:
-            self.git = []
-
-        if "gitsm" in self.manifest_dict["modules"]:
-            self.manifest_dict["modules"]["gitsm"] = path_mod.flatten_list(
-                self.manifest_dict["modules"]["gitsm"])
-            gitsm_mods = []
-            for url in self.manifest_dict["modules"]["gitsm"]:
-                gitsm_mods.append(self.pool.new_module(parent=self,
-                                                       url=url,
-                                                       source='gitsm',
-                                                       fetchto=fetchto))
-            self.gitsm = gitsm_mods
-        else:
-            self.gitsm = []
+        for m in self.modules:
+            if m not in self.manifest_dict["modules"]:
+                continue
+            paths = path_mod.flatten_list(self.manifest_dict["modules"][m])
+            self.manifest_dict["modules"][m] = paths
+            mods = []
+            for path in paths:
+                if m == 'local':
+                    if path_mod.is_abs_path(path):
+                        raise Exception("Found an absolute path (" + path +
+                                        ") in a manifest(" + self.path + ")")
+                    path = path_mod.rel2abs(path, self.path)
+                mods.append(self.pool.new_module(
+                    parent=self, url=path, source=m, fetchto=fetchto))
+            self.modules[m] = mods
 
     def process_git_submodules(self):
         """Get the submodules if found in the Manifest path"""
@@ -150,10 +107,10 @@ class ModuleContent(ModuleCore):
             path = git_submodule_dict[submodule_key]["path"]
             path = os.path.join(git_toplevel, path)
             fetchto = os.path.sep.join(path.split(os.path.sep)[:-1])
-            self.git.append(self.pool.new_module(parent=self,
-                                                 url=url,
-                                                 fetchto=fetchto,
-                                                 source='git'))
+            self.modules['git'].append(self.pool.new_module(parent=self,
+                                                            url=url,
+                                                            fetchto=fetchto,
+                                                            source='git'))
 
     def _process_manifest_makefiles(self):
         """Get the extra makefiles defined in the HDLMake module"""

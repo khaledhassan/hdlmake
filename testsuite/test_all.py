@@ -324,6 +324,10 @@ def test_dep_level():
     run(['list-files', '--reverse'], path="053vlog_dep_level")
     run(['list-files', '--top', 'level2'], path="053vlog_dep_level")
 
+def test_modelsim_windows():
+    assert hdlmake.util.shell.check_windows() is False
+    run_compare(path="057msim_windows", check_windows=True)
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""

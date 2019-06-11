@@ -352,6 +352,13 @@ def test_err_action():
     with pytest.raises(SystemExit) as _:
         run([], path="064err_action")
 
+def test_err_loglevel():
+    with pytest.raises(SystemExit) as _:
+        run(['--log', 'unknown', 'makefile'], path="002msim")
+
+def test_err_noaction():
+    run(['--log', 'warning'], path="002msim")
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""

@@ -109,7 +109,7 @@ def solve(fileset, standard_libs=None):
             "Dependencies solved, all of the relations were satisfied!")
 
 
-def make_dependency_sorted_list(fileset, reverse=False):
+def make_dependency_sorted_list(fileset):
     """Sort files in order of dependency.
     Files with no dependencies first.
     All files that another depends on will be earlier in the list."""
@@ -119,10 +119,7 @@ def make_dependency_sorted_list(fileset, reverse=False):
     # Not necessary, but will tend to group files more nicely
     # in the output.
     dependable.sort(key=DepFile.get_dep_level)
-    sorted_list = non_dependable + dependable
-    if reverse:
-        sorted_list = list(reversed(sorted_list))
-    return sorted_list
+    return non_dependable + dependable
 
 
 def make_dependency_set(fileset, top_level_entity, extra_modules=None):

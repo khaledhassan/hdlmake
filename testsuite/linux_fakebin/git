@@ -15,7 +15,11 @@ if argv[0] == 'clone':
     if len(argv) == 2:
         # Get the basename of the module
         name = argv[1]
-        name = name[name.rfind('/') + 1:-4]
+        if name.endswith('.git'):
+            name = name[:-4]
+        elif name[-1] == '/':
+            name = name[:-1]
+        name = name[name.rfind('/') + 1:]
         modpath = os.path.join(os.path.dirname(__file__), '..', 'modules', name)
         if os.path.exists(name):
             sys.exit(0)

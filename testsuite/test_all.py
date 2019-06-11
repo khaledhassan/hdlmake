@@ -190,6 +190,16 @@ def test_git_fetch_rev():
         hdlmake.__main__.hdlmake(['fetch'])
         shutil.rmtree('ipcores')
 
+def test_git_fetch_url():
+    with Config(path="073git_fetch_url") as _:
+        hdlmake.__main__.hdlmake(['fetch'])
+        shutil.rmtree('ipcores')
+
+def test_git_fetch_url2():
+    with Config(path="074git_fetch_url") as _:
+        hdlmake.__main__.hdlmake(['fetch'])
+        shutil.rmtree('ipcores')
+
 def test_svn_fetch():
     with Config(path="021svn_fetch") as _:
         hdlmake.__main__.hdlmake(['list-mods'])

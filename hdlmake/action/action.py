@@ -30,33 +30,8 @@ import sys
 
 from hdlmake.tools.makefile_writer import load_syn_tool, load_sim_tool
 from hdlmake.util import shell
-from hdlmake.util.termcolor import colored
 from hdlmake import new_dep_solver as dep_solver
 from hdlmake.srcfile import SourceFileSet, VHDLFile, VerilogFile, SVFile
-
-def set_logging_level(options):
-    """Set the log level and config (A.K.A. log verbosity)"""
-    numeric_level = getattr(logging, options.log.upper(), None)
-    if not isinstance(numeric_level, int):
-        raise Exception('Invalid log level: %s' % options.log)
-
-    if not shell.check_windows() and options.logfile == None:
-        logging.basicConfig(
-            format=colored(
-                "%(levelname)s",
-                "yellow") + colored(
-                "\t%(filename)s:%(lineno)d: %(funcName)s()\t",
-                "blue") + "%(message)s",
-            level=numeric_level)
-    else:
-        logging.basicConfig(
-            format="%(levelname)s" +
-                   "\t%(filename)s:%(lineno)d: %(funcName)s()\t" +
-                   "%(message)s",
-            level=numeric_level,
-            filename=options.logfile)
-    logging.debug(str(options))
-
 
 class Action(list):
 
@@ -69,7 +44,6 @@ class Action(list):
         self.privative_fileset = SourceFileSet()
         self._deps_solved = False
         self.options = options
-        set_logging_level(options)
 
     def load_top_module(self):
         # Top level module.

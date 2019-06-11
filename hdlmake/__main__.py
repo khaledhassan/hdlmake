@@ -27,6 +27,8 @@ from __future__ import absolute_import
 import argparse
 import sys
 import logging
+from hdlmake.util import shell
+from hdlmake.util.termcolor import colored
 
 from .manifest_parser import ManifestParser
 from .action.core import ActionCore
@@ -41,17 +43,13 @@ def hdlmake(args):
         -- prepare the global module containing the heavy common stuff
     """
 
-    #
-    # SET & GET PARSER
-    #
+    # Options
     parser = _get_parser()
-
-    #
-    # PARSE & GET OPTIONS
-    #
     options = _get_options(args, parser)
 
     try:
+        set_logging_level(options)
+
         # Create a ModulePool object, this will become our workspace
         action = ActionCore(options)
         action.load_top_module()
@@ -207,6 +205,29 @@ def _get_parser():
         help="display full error log with traceback")
     return parser
 
+def set_logging_level(options):
+    """Set the log level and config (A.K.A. log verbosity)"""
+    numeric_level = getattr(logging, options.log.upper(), None)
+    if not isinstance(numeric_level, int):
+        raise Exception('Invalid log level: %s' % options.log)
+
+    if not shell.check_windows() and options.logfile == None:
+        logging.basicConfig(
+            format=colored(
+                "%(levelname)s",
+                "yellow") + colored(
+                "\t%(filename)s:%(lineno)d: %(funcName)s()\t",
+                "blue") + "%(message)s",
+            level=numeric_level)
+    else:
+        logging.basicConfig(
+            format="%(levelname)s" +
+                   "\t%(filename)s:%(lineno)d: %(funcName)s()\t" +
+                   "%(message)s",
+            level=numeric_level,
+            filename=options.logfile)
+    logging.debug(str(options))
+
 
 def _get_options(args, parser):
     """Function that decodes and set the provided command user options"""
@@ -224,6 +245,3 @@ def _get_options(args, parser):
 def main():
     """Entry point used by the executable"""
     hdlmake(sys.argv[1:])
-
-if __name__ == "__main__":
-    main()

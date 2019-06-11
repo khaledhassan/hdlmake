@@ -217,7 +217,7 @@ class ToolQuartus(ToolSyn):
         command_list = []
         if "quartus_preflow" in self.manifest_dict:
             path = shell.tclpath(path_mod.compose(
-                self.manifest_dict["quartus_preflow"], os.getcwd()))
+                self.manifest_dict["quartus_preflow"]))
             if not os.path.exists(path):
                 raise Exception("quartus_preflow file listed in "
                                 + os.getcwd() + " doesn't exist: "
@@ -228,8 +228,7 @@ class ToolQuartus(ToolSyn):
                                 'value': preflow}))
         if "quartus_postmodule" in self.manifest_dict:
             path = shell.tclpath(path_mod.compose(
-                self.manifest_dict["quartus_postmodule"],
-                os.getcwd()))
+                self.manifest_dict["quartus_postmodule"]))
             if not os.path.exists(path):
                 raise Exception("quartus_postmodule file listed in "
                                 + os.getcwd() + " doesn't exist: "
@@ -240,7 +239,7 @@ class ToolQuartus(ToolSyn):
                                 'value': postmodule}))
         if "quartus_postflow" in self.manifest_dict:
             path = shell.tclpath(path_mod.compose(
-                self.manifest_dict["quartus_postflow"], os.getcwd()))
+                self.manifest_dict["quartus_postflow"]))
             if not os.path.exists(path):
                 raise Exception("quartus_postflow file listed in "
                                 + os.getcwd() + " doesn't exist: "

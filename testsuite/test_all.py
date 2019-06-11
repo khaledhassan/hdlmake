@@ -65,6 +65,10 @@ def test_makefile_003():
 def test_makefile_004():
     run_compare(path="004msim")
 
+def test_filename_opt():
+    run(['-f', 'my.mk'], path="062filename_opt")
+    os.remove("062filename_opt/my.mk")
+
 def test_fetch():
     run(['fetch'], path="001ise")
 
@@ -246,6 +250,10 @@ def test_no_syn_tool():
 
 def test_no_files():
     run([], path="042nofiles")
+
+def test_no_bin():
+    with Config(path="061err_nobin", fakebin="no_fakebin") as _:
+        hdlmake.__main__.hdlmake([])
 
 def test_local043():
     run_compare(path="043local_fetch")

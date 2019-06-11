@@ -82,10 +82,8 @@ class ToolISim(ToolSim):
                 arch_suffix = ''
             else:
                 arch_suffix = '64'
-            xilinx_ini_path = str(os.path.join(xilinx_dir,
-                                  hdl_language,
-                                  "hdp",
-                                  os_prefix + arch_suffix))
+            xilinx_ini_path = os.path.join(
+                xilinx_dir, hdl_language, "hdp", os_prefix + arch_suffix)
             # Ensure the path is absolute and normalized
             return os.path.abspath(xilinx_ini_path)
         self.writeln("""## variables #############################

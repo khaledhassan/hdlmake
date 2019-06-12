@@ -89,7 +89,6 @@ def _action_runner(modules_pool):
 
 def _get_parser():
     """This is the parser function, where options and commands are defined.
-    Here, we make the next processes:
     """
     description = ("A tool designed to help FPGA designers to manage "
                  + "and share their HDL code by automatically finding file "
@@ -101,10 +100,8 @@ def _get_parser():
         "makefile",
         help="write the Makefile (default action for hdlmake)")
     makefile.add_argument(
-        "-f", "--filename",
-        help="name for the Makefile file to be created",
-        default=None,
-        dest="filename")
+        "-f", "--filename", default=None, dest="filename",
+        help="name for the Makefile file to be created")
     subparsers.add_parser(
         "fetch",
         help="fetch and/or update all of the remote modules")
@@ -115,93 +112,57 @@ def _get_parser():
         "list-mods",
         help="list all modules together with their files")
     listmod.add_argument(
-        "--with-files",
-        help="list modules together with their files",
-        default=False,
-        action="store_true",
-        dest="withfiles")
+        "--with-files", default=False, action="store_true", dest="withfiles",
+        help="list modules together with their files")
     listmod.add_argument(
-        "--terse",
-        help="do not print comments",
-        default=False,
-        action="store_true",
-        dest="terse")
+        "--terse", default=False, action="store_true", dest="terse",
+        help="do not print comments")
     listfiles = subparsers.add_parser(
         "list-files",
         help="list all of the files in the design hierarchy")
     listfiles.add_argument(
-        "--delimiter",
-        help="set delimitier for the list of files",
-        dest="delimiter",
-        default=None)
+        "--delimiter", dest="delimiter", default=None,
+        help="set delimitier for the list of files")
     listfiles.add_argument(
-        "--reverse",
-        help="reverse the order for the list of files",
-        dest="reverse",
-        default=False,
-        action="store_true")
+        "--reverse", dest="reverse", default=False, action="store_true",
+        help="reverse the order for the list of files")
     listfiles.add_argument(
-        "--top",
-        help="print only those files required to build 'top'",
-        dest="top",
-        default=None)
+        "--top", dest="top", default=None,
+        help="print only those files required to build 'top'")
     tree = subparsers.add_parser(
         "tree",
         help="generate a module hierarchy tree graph")
     tree.add_argument(
-        "--with-files",
-        help="add files to the module hierarchy tree",
-        default=False,
-        action="store_true",
-        dest="withfiles")
+        "--with-files", default=False, action="store_true", dest="withfiles",
+        help="add files to the module hierarchy tree")
     tree.add_argument(
-        "--mode",
-        dest="mode",
-        default="mods",
+        "--mode", dest="mode", default="mods",
         help="set the working mode for the tree generator: "
              "(mods, dfs, bfs)")
     subparsers.add_parser(
         "manifest-help",
         help="print manifest file variables description")
     parser.add_argument(
-        '-v',
-        '--version',
-        action='version',
+        '-v', '--version', action='version',
         help="print the version of this program",
-        version=parser.prog +
-        " " +
-        __version__)
+        version=parser.prog + " " + __version__)
     parser.add_argument(
-        '-a',
-        '--all',
-        action='store_true',
-        dest="all_files",
+        '-a', '--all', action='store_true', dest="all_files",
         help="use all the listed files, do not solve the fileset")
     parser.add_argument(
-        "--log",
-        dest="log",
-        default="info",
+        "--log", dest="log", default="info",
         help="logging level: debug, info, warning, error, critical")
     parser.add_argument(
-        "--logfile",
-        help="path to the optional log file",
-        default=None,
-        dest="logfile")
+        "--logfile", dest="logfile", default=None,
+        help="path to the optional log file")
     parser.add_argument(
-        "-p", "--prefix",
-        dest="prefix_code",
-        default="",
+        "-p", "--prefix", dest="prefix_code", default="",
         help="Python code executed before every Manifest.py")
     parser.add_argument(
-        "-s", "--suffix",
-        dest="suffix_code",
-        default="",
+        "-s", "--suffix", dest="suffix_code", default="",
         help="Python code executed after every Manifest.py")
     parser.add_argument(
-        "--full-error",
-        default=False,
-        action="store_true",
-        dest="full_error",
+        "--full-error", default=False, action="store_true", dest="full_error",
         help="display full error log with traceback")
     return parser
 

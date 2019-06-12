@@ -56,7 +56,8 @@ class ActionCore(Action):
                 "Fetching should be done before continuing.\n"
                 "The following modules remains unfetched:\n"
                 " {}".format(
-                    "\n ".join([str(m) for m in self if not m.isfetched])))
+                    "\n ".join([str(m) for m in self.manifests
+                                if not m.isfetched])))
 
     def makefile(self):
         """Write the Makefile for the current design"""

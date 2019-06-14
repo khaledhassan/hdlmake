@@ -186,4 +186,4 @@ class Action(object):
 
     def __str__(self):
         """Cast the module list as a list of strings"""
-        return str([str(m) for m in self])
+        return str([str(m) for m in self.manifests])

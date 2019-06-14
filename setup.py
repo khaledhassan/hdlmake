@@ -21,7 +21,7 @@ setup(
    packages=find_packages(),
    entry_points={
       'console_scripts': [
-         'hdlmake = hdlmake.__main__:main',
+         'hdlmake = hdlmake.main:main',
          ], 
    },
    include_package_data=True,  # use MANIFEST.in during install

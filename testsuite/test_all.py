@@ -1,7 +1,7 @@
 # HDLmake testsuite
 # Just run 'pytest' in this directory.
 
-import hdlmake.__main__
+import hdlmake.main
 from hdlmake.manifest_parser.configparser import ConfigParser
 import os
 import os.path
@@ -46,12 +46,12 @@ def compare_makefile_xilinx():
 
 def run_compare(**kwargs):
     with Config(**kwargs) as _:
-        hdlmake.__main__.hdlmake([])
+        hdlmake.main.hdlmake([])
         compare_makefile()
 
 def run(args, **kwargs):
     with Config(**kwargs) as _:
-        hdlmake.__main__.hdlmake(args)
+        hdlmake.main.hdlmake(args)
 
 def test_ise():
     run_compare(path="001ise")
@@ -86,9 +86,9 @@ def test_list_files():
 
 def test_noact():
     with Config(path="005noact") as _:
-        hdlmake.__main__.hdlmake(['manifest-help'])
-        hdlmake.__main__.hdlmake(['list-files'])
-        hdlmake.__main__.hdlmake(['list-mods', '--with-files'])
+        hdlmake.main.hdlmake(['manifest-help'])
+        hdlmake.main.hdlmake(['list-files'])
+        hdlmake.main.hdlmake(['list-mods', '--with-files'])
 
 def test_ahdl():
     run_compare(path="006ahdl", check_windows=True)
@@ -104,13 +104,13 @@ def test_icestorm():
 
 def test_isim():
     with Config(path="010isim") as _:
-        hdlmake.__main__.hdlmake([])
+        hdlmake.main.hdlmake([])
         compare_makefile_xilinx()
 
 def test_isim_windows():
     with Config(path="060isim_windows",
                 check_windows=True, fakebin="windows_fakebin") as _:
-        hdlmake.__main__.hdlmake([])
+        hdlmake.main.hdlmake([])
         compare_makefile_xilinx()
 
 def test_icarus():
@@ -174,30 +174,30 @@ def test_vivado_sim():
 
 def test_git_fetch():
     with Config(path="020git_fetch") as _:
-        hdlmake.__main__.hdlmake(['list-files'])
-        hdlmake.__main__.hdlmake(['fetch'])
-        hdlmake.__main__.hdlmake(['list-mods'])
+        hdlmake.main.hdlmake(['list-files'])
+        hdlmake.main.hdlmake(['fetch'])
+        hdlmake.main.hdlmake(['list-mods'])
         shutil.rmtree('ipcores.old', ignore_errors=True)
         shutil.move('ipcores', 'ipcores.old')
 
 def test_git_fetch_branch():
     with Config(path="055git_fetch_branch") as _:
-        hdlmake.__main__.hdlmake(['fetch'])
+        hdlmake.main.hdlmake(['fetch'])
         shutil.rmtree('ipcores')
 
 def test_git_fetch_rev():
     with Config(path="056git_fetch_rev") as _:
-        hdlmake.__main__.hdlmake(['fetch'])
+        hdlmake.main.hdlmake(['fetch'])
         shutil.rmtree('ipcores')
 
 def test_git_fetch_url():
     with Config(path="073git_fetch_url") as _:
-        hdlmake.__main__.hdlmake(['fetch'])
+        hdlmake.main.hdlmake(['fetch'])
         shutil.rmtree('ipcores')
 
 def test_git_fetch_url2():
     with Config(path="074git_fetch_url") as _:
-        hdlmake.__main__.hdlmake(['fetch'])
+        hdlmake.main.hdlmake(['fetch'])
         shutil.rmtree('ipcores')
 
 def test_git_fetch_err():
@@ -207,26 +207,26 @@ def test_git_fetch_err():
 
 def test_svn_fetch():
     with Config(path="021svn_fetch") as _:
-        hdlmake.__main__.hdlmake(['list-mods'])
-        hdlmake.__main__.hdlmake(['fetch'])
-        hdlmake.__main__.hdlmake(['list-mods', '--with-files'])
+        hdlmake.main.hdlmake(['list-mods'])
+        hdlmake.main.hdlmake(['fetch'])
+        hdlmake.main.hdlmake(['list-mods', '--with-files'])
         shutil.rmtree('ipcores')
 
 def test_svn_fetch_rev():
     with Config(path="072svn_fetch_rev") as _:
-        hdlmake.__main__.hdlmake(['fetch'])
+        hdlmake.main.hdlmake(['fetch'])
         shutil.rmtree('ipcores')
 
 def test_gitsm_fetch():
     with Config(path="022gitsm_fetch") as _:
-        hdlmake.__main__.hdlmake(['fetch'])
-        hdlmake.__main__.hdlmake(['list-mods'])
-        hdlmake.__main__.hdlmake(['clean'])
+        hdlmake.main.hdlmake(['fetch'])
+        hdlmake.main.hdlmake(['list-mods'])
+        hdlmake.main.hdlmake(['clean'])
         shutil.rmtree('ipcores')
 
 def test_git_fetch_cmds():
     with Config(path="065fetch_pre_post") as _:
-        hdlmake.__main__.hdlmake(['fetch'])
+        hdlmake.main.hdlmake(['fetch'])
         shutil.rmtree('ipcores')
 
 def test_err_fetch():
@@ -245,7 +245,7 @@ def test_vlog_parser025():
 
 def test_gitsm_fetch026():
     with Config(path="026gitsm_fetch") as _:
-        hdlmake.__main__.hdlmake(['fetch'])
+        hdlmake.main.hdlmake(['fetch'])
         shutil.rmtree('ipcores')
 
 def test_vhdl_parser():

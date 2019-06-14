@@ -371,6 +371,10 @@ def test_err_vlog_include():
     with pytest.raises(SystemExit) as _:
         run([], path="077err_vlg_include")
 
+def test_err_vlog_define():
+    with pytest.raises(SystemExit) as _:
+        run([], path="078err_vlg_define")
+
 def test_dep_level():
     run(['list-files'], path="053vlog_dep_level")
     run(['list-files', '--delimiter', ','], path="053vlog_dep_level")

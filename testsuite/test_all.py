@@ -367,6 +367,10 @@ def test_err_manifest_key():
 def test_svlog_parser():
     run_compare(path="052svlog_parser")
 
+def test_err_vlog_include():
+    with pytest.raises(SystemExit) as _:
+        run([], path="077err_vlg_include")
+
 def test_dep_level():
     run(['list-files'], path="053vlog_dep_level")
     run(['list-files', '--delimiter', ','], path="053vlog_dep_level")

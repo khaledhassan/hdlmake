@@ -417,6 +417,9 @@ def test_err_syn_package():
 def test_err_syn_top():
     run_compare(path="070err_syntop")
 
+def test_extra_modules():
+    run_compare(path="076extra_modules")
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""

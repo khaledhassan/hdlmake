@@ -174,16 +174,13 @@ class VerilogPreprocessor(object):
                     cline = None
                 lines.append(line_aux)
             return lines
-        exps = {"include": re.compile(r"^\s*`include\s+\"(.+)\""),
-                "define":
-                re.compile(r"^\s*`define\s+(\w+)(?:\(([\w\s,]*)\))?(.*)"),
-                "ifdef_elsif":
-                re.compile(r"^\s*`(ifdef|ifndef|elsif)\s+(\w+)[\s\S]*$"),
-                "endif_else": re.compile(r"^\s*`(endif|else)\s*$"),
-                "begin_protected":
-                re.compile(r"^\s*`pragma\s*protect\s*begin_protected\s*$"),
-                "end_protected":
-                re.compile(r"^\s*`pragma\s*protect\s*end_protected\s*$")}
+        exps = {
+            "include": re.compile(r"^\s*`include\s+\"(.+)\""),
+            "define": re.compile(r"^\s*`define\s+(\w+)(?:\(([\w\s,]*)\))?(.*)"),
+            "ifdef_elsif": re.compile(r"^\s*`(ifdef|ifndef|elsif)\s+(\w+)[\s\S]*$"),
+            "endif_else": re.compile(r"^\s*`(endif|else)\s*$"),
+            "begin_protected": re.compile(r"^\s*`pragma\s*protect\s*begin_protected\s*$"),
+            "end_protected": re.compile(r"^\s*`pragma\s*protect\s*end_protected\s*$")}
         vl_macro_expand = re.compile(r"`(\w+)(?:\(([\w\s,]*)\))?")
         # init dependencies
         self.vpp_filedeps[file_name + library] = []

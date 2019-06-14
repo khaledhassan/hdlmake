@@ -378,6 +378,10 @@ def test_err_vlog_define():
 def test_err_vlog_no_macro():
     run_compare(path="079err_vlg_macro")
 
+def test_err_vlog_recursion():
+    with pytest.raises(SystemExit) as _:
+        run([], path="080err_vlg_recursion")
+
 def test_dep_level():
     run(['list-files'], path="053vlog_dep_level")
     run(['list-files', '--delimiter', ','], path="053vlog_dep_level")

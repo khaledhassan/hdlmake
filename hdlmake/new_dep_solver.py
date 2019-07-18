@@ -77,10 +77,10 @@ def solve(fileset, standard_libs=None):
                         satisfied_by.add(dep_file)
                 if len(satisfied_by) > 1:
                     logging.warning(
-                        "Relation %s satisfied by multpiple (%d) files: %s",
+                        "Relation %s satisfied by multiple (%d) files:\n %s",
                         str(rel),
                         len(satisfied_by),
-                        '\n'.join([file_aux.path for
+                        '\n '.join([file_aux.path for
                                    file_aux in list(satisfied_by)]))
                 elif len(satisfied_by) == 0:
                     # if relation is a USE PACKAGE, check against

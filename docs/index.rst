@@ -26,18 +26,18 @@ Makefiles, and fetching IP-Core libraries from remote repositories.
 Contribute
 ----------
 
-- Wiki Pages: https://www.ohwr.org/projects/hdl-make/wiki
-- Issue Tracker: https://www.ohwr.org/projects/hdl-make/work_packages
-- Source Code: https://www.ohwr.org/projects/hdl-make/repository
+- Wiki Pages: https://ohwr.org/projects/hdl-make/wiki
+- Issue Tracker: https://ohwr.org/project/hdl-make/issues
+- Source Code: https://ohwr.org/project/hdl-make
 
 
 Support
 -------
 
 If you are experiencing any issues, please let us know.
-We have a mailing list located at:
+You can find a dedicated support forum located at:
 
-- http://www.ohwr.org/mailing_list/show?project_id=hdl-make
+- https://forums.ohwr.org/c/hdl-make
 
 If you are seeking for consultancy and training services on advanced ``hdlmake`` use cases, you can get **commercial support from GL Research**, the company on charge of maintaining and developing the tool.
 
@@ -119,7 +119,7 @@ Supported Tools
 +--------------------------+-----------+------------+
 | Lattice Semi. Diamond    | Yes       | n.a.       |
 +--------------------------+-----------+------------+
-| Xilinx ISim              | Yes       | n.a.       |
+| Xilinx ISim              | n.a.      | Yes        |
 +--------------------------+-----------+------------+
 | Mentor Graphics Modelsim | n.a.      | Yes        |
 +--------------------------+-----------+------------+
@@ -726,7 +726,7 @@ This case was very trivial. Let's try now to complicate the situation a bit. Let
 
 Now we can see that the ``local`` key just has an associated path (i.e. this is a 1-element list), while we have two additional key identifiers: ``svn``, pointing to a list of two remote SVN repositories, and ``git``, pointing to a single remote GIT repository.
 
-Regarding the SVN repositories, ``module2`` is pointing to the ``default/head`` revision while ``module3`` SVN repository is pointing to revision number 25 by appending the ``@25`` sufix to the repository URL..
+Regarding the SVN repositories, ``module2`` is pointing to the ``default/head`` revision while ``module3`` SVN repository is pointing to revision number 25 by appending the ``@25`` suffix to the repository URL..
 
 Finally, the Git repository ``module4`` is the only entry for the GIT module list and it is pointing to the ``default/master`` branch, but we can introduce the following extra modifiers to force a specific ``branch``, ``tag`` or ``commit``:
 
@@ -939,12 +939,12 @@ The first one is to include this as a new variable in the top Manifest.py, i.e.:
        "local" : [ "../../../testbench/counter_tb/verilog" ],
    }
 
-But we can also define the variable value by injecting custom prefix or sufix Python code from the command line
+But we can also define the variable value by injecting custom prefix or suffix Python code from the command line
 when ``hdlmake`` is executed, e.g.:
 
 .. code-block:: bash
 
-   hdlmake --sufix "simulate_vhdl = False" makefile
+   hdlmake --suffix "simulate_vhdl = False" makefile
 
 
 
@@ -1201,6 +1201,42 @@ If you want to use a different Intel Quartus version, you will need to fix the I
     -- Retrieval info: 	<generic name="number_of_reconfig_interfaces" value="2" />
     -- Retrieval info: 	<generic name="gui_split_sizes" value="" />
 
+
+If you want to regenerate the Quartus project by using your **custom Quartus properties**, you may replace the provided ``Manifest.py`` with the following one and edit it accordingly. Note that this will generate ``set_global_assignment`` statements in which the dictionary key ``name`` is the name of property and the key ``value`` its value. Other supported property keys are ``tag``, ``section_id``, ``to`` and ``from``. As an example, we force the VHDL and Verilog input version and optimize the synthesis for speed:
+
+.. code-block:: python
+
+   target = "altera"
+   action = "synthesis"
+
+   syn_family  = "Arria V"
+   syn_device  = "5agxmb1g4f"
+   syn_grade   = "c4"
+   syn_package = "40"
+   syn_top     = "vfchd_wr_ref_top"
+   syn_project = "vfchd_wr_ref"
+   syn_tool = "quartus"
+   syn_properties = [
+       {"name": "VHDL_INPUT_VERSION", "value": "VHDL_2008"},
+       {"name": "VERILOG_INPUT_VERSION", "value": "SYSTEMVERILOG_2005"},
+       {"name": "optimization_technique", "value": "speed"}
+   ]
+
+   quartus_preflow = "quartus_preflow.tcl"
+
+   files = [
+       "vfchd_wr_ref.sdc",
+       "quartus_preflow.tcl",
+   ]
+
+   modules = {
+       "local" : [
+           "../../top/vfchd_ref_design/",
+       ]
+   }
+
+
+
 Mentor Modelsim
 ~~~~~~~~~~~~~~~
 
@@ -1270,6 +1306,9 @@ In this point, if everything goes OK, Modelsim window will open and we will see 
    :scale: 100
    :align: center
    :figclass: align-center
+
+
+.. note:: When working with Verilog and SystemVerilog included files in Modelsim and derivatives, you will need to use the ``include_dirs`` parameter in ``Manifest.py`` to specify the directories in which the files to be included can be stored. It's important to know that the ``+incdir+`` directives will automatically be stripped from ``vlog_opt`` by ``hdlmake``.
 
 
 hdlmake supported actions/commands
@@ -1402,7 +1441,7 @@ Top Manifest variables
 +================+==============+=================================================================+===========+ 
 | action         | str          | What is the action that should be taken (simulation/synthesis)  | ""        | 
 +----------------+--------------+-----------------------------------------------------------------+-----------+
-| incl_makefiles | list, str    | List of .mk files appended to toplevel makefile                 | []        |
+| incl_makefiles | list         | List of .mk files included in the generated makefile            | []        |
 +----------------+--------------+-----------------------------------------------------------------+-----------+
 | language       | str          | Select the default HDL language if required (verilog, vhdl)     | "vhdl"    |
 +----------------+--------------+-----------------------------------------------------------------+-----------+
@@ -1602,10 +1641,10 @@ As an example, this command will generate the Makefile and will try to print ``H
 
 .. code-block:: bash
 
-   hdlmake -p "print('Hello hdlmake')"
+   hdlmake -p "print('Hello hdlmake')" makefile
 
 
-``-s, --sufix ARBITRARY_CODE``
+``-s, --suffix ARBITRARY_CODE``
 ------------------------------
 Add arbitrary Python code from the command line that **will be evaluated after each Manifest.py** parse action across the hierarchy.
 
@@ -1613,5 +1652,5 @@ As an example, this command will generate the Makefile but will try to print ``B
 
 .. code-block:: bash
 
-   hdlmake -s "print('Bye, bye hdlmake')"
+   hdlmake -s "print('Bye, bye hdlmake')" makefile
 

@@ -33,7 +33,7 @@ architecture testbench of counter_tb is
 begin
     
     U_counter: counter
-        generic map (cycles_per_second => 500)
+        generic map (cycles_per_second => 10)
         port map (t_clock, t_clear, t_count, t_Q);
 	
     process				 
@@ -47,12 +47,15 @@ begin
     process
     begin								
 			
-	t_clear <= '1';			-- start counting
-	t_count <= '1';
+	t_clear <= '1';			-- clear counter
+	t_count <= '0';
 	wait for 50 ns;	
 		
-	t_clear <= '0';			-- clear output
-	wait for 1000 ns;	
+	t_clear <= '0';			-- release clear
+	wait for 200 ns;
+
+	t_count <= '1';
+	wait for 1000 ns;		-- start counting
 	
 	report "Testbench of Adder completed successfully!" 
 	severity note; 

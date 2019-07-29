@@ -92,8 +92,6 @@ class VerilogPreprocessor(object):
     def __init__(self):
         self.vpp_stack = self.VLStack()
         self.vlog_file = None
-        # List of `include search paths
-        self.vpp_searchdir = ["."]
         # List of macro definitions
         self.vpp_macros = []
         # Dictionary of files sub-included by each file parsed
@@ -119,10 +117,9 @@ class VerilogPreprocessor(object):
             probable_file = os.path.join(searchdir, filename)
             if os.path.isfile(probable_file):
                 return os.path.abspath(probable_file)
-        logging.error("Can't find %s for %s in any of the include "
-                      "directories: %s", filename, self.vlog_file.file_path,
-                      ', '.join(self.vlog_file.include_dirs))
-        sys.exit("\nExiting")
+        raise Exception("Can't find {} for {} in any of the include "
+                        "directories: {}".format(filename, self.vlog_file.file_path,
+                        ', '.join(self.vlog_file.include_dirs)))
 
     def _parse_macro_def(self, macro):
         """Parse the provided 'macro' and, if it's not a reserved keyword,
@@ -135,8 +132,7 @@ class VerilogPreprocessor(object):
         else:
             params = []
         if name in self.vpp_keywords:
-            logging.error("Attempt to `define a reserved preprocessor keyword")
-            quit()
+            raise Exception("Attempt to `define a reserved preprocessor keyword")
         mdef = self.VLDefine(name, params, expansion)
         self.vpp_macros.append(mdef)
         return mdef
@@ -178,16 +174,13 @@ class VerilogPreprocessor(object):
                     cline = None
                 lines.append(line_aux)
             return lines
-        exps = {"include": re.compile(r"^\s*`include\s+\"(.+)\""),
-                "define":
-                re.compile(r"^\s*`define\s+(\w+)(?:\(([\w\s,]*)\))?(.*)"),
-                "ifdef_elsif":
-                re.compile(r"^\s*`(ifdef|ifndef|elsif)\s+(\w+)\s*$"),
-                "endif_else": re.compile(r"^\s*`(endif|else)\s*$"),
-                "begin_protected":
-                re.compile(r"^\s*`pragma\s*protect\s*begin_protected\s*$"),
-                "end_protected":
-                re.compile(r"^\s*`pragma\s*protect\s*end_protected\s*$")}
+        exps = {
+            "include": re.compile(r"^\s*`include\s+\"(.+)\""),
+            "define": re.compile(r"^\s*`define\s+(\w+)(?:\(([\w\s,]*)\))?(.*)"),
+            "ifdef_elsif": re.compile(r"^\s*`(ifdef|ifndef|elsif)\s+(\w+)[\s\S]*$"),
+            "endif_else": re.compile(r"^\s*`(endif|else)\s*$"),
+            "begin_protected": re.compile(r"^\s*`pragma\s*protect\s*begin_protected\s*$"),
+            "end_protected": re.compile(r"^\s*`pragma\s*protect\s*end_protected\s*$")}
         vl_macro_expand = re.compile(r"`(\w+)(?:\(([\w\s,]*)\))?")
         # init dependencies
         self.vpp_filedeps[file_name + library] = []
@@ -242,9 +235,7 @@ class VerilogPreprocessor(object):
                     line = self._preprocess_file(
                         file_content=open(included_file_path, "r").read(),
                         file_name=included_file_path, library=library)
-                    self.vpp_filedeps[
-                        file_name +
-                        library].append(
+                    self.vpp_filedeps[file_name + library].append(
                         included_file_path)
                     # add the whole include chain to the dependencies of the
                     # currently parsed file
@@ -278,17 +269,6 @@ class VerilogPreprocessor(object):
             if n_expansions == 0:
                 return new_buf
 
-    def _define(self, name, expansion):
-        """Define a new expansion Verilog macro and add it to the macro
-        collection"""
-        mdef = self.VLDefine(name, [], expansion)
-        self.vpp_macros.append(mdef)
-
-    def add_path(self, path):
-        """Add a new path to the search directory list so that HDLMake
-        will search for found includes on it"""
-        self.vpp_searchdir.append(path)
-
     def preprocess(self, vlog_file):
         """Assign the provided 'vlog_file' to the associated class property
         and then preprocess and return the Verilog code"""
@@ -300,15 +280,6 @@ class VerilogPreprocessor(object):
         return self._preprocess_file(file_content=buf,
                                      file_name=file_path,
                                      library=vlog_file.library)
-
-    def get_file_deps(self):
-        """Look for all of the defined preprocessor filedeps and return a list
-        containing all of them"""
-        deps = []
-        for filedep_key in six.iterkeys(self.vpp_filedeps):
-            for filedep in self.vpp_filedeps[filedep_key]:
-                deps.append(filedep)
-        return list(set(deps))
 
 
 class VerilogParser(DepParser):
@@ -559,12 +530,6 @@ class VerilogParser(DepParser):
     def __init__(self, dep_file):
         DepParser.__init__(self, dep_file)
         self.preprocessor = VerilogPreprocessor()
-        self.preprocessed = False
-
-    def add_search_path(self, path):
-        """Add a new candidate path to the Verilog preprocessor list
-        containing the include dir candidates"""
-        self.preprocessor.add_path(path)
 
     def parse(self, dep_file):
         """Parse the provided Verilog file and add to its properties
@@ -574,21 +539,18 @@ class VerilogParser(DepParser):
         logging.debug("Parsing %s", dep_file.path)
         # assert isinstance(dep_file, DepFile), print("unexpected type: " +
         # str(type(dep_file)))
+
+        # Preprocess the file and add included files as dependencies
         buf = self.preprocessor.preprocess(dep_file)
-        self.preprocessed = buf[:]
-        # add includes as dependencies
-        try:
-            includes = self.preprocessor.vpp_filedeps[
-                dep_file.path + dep_file.library]
-            for file_aux in includes:
-                dep_file.depends_on.add(
-                    create_source_file(path=file_aux,
-                                       module=dep_file.module,
-                                       is_include=True))
-            logging.debug("%s has %d includes.",
-                          str(dep_file), len(includes))
-        except KeyError:
-            logging.debug(str(dep_file) + " has no includes.")
+        includes = self.preprocessor.vpp_filedeps[
+            dep_file.path + dep_file.library]
+        for file_aux in includes:
+            dep_file.depends_on.add(
+                create_source_file(path=file_aux,
+                                   module=dep_file.module,
+                                   is_include=True))
+        logging.debug("%s has %d includes.", str(dep_file), len(includes))
+
         # look for packages used inside in file
         # it may generate false dependencies as package in SV can be used by:
         #    import my_package::*;
@@ -628,7 +590,8 @@ class VerilogParser(DepParser):
                 DepRelation("%s.%s" % (dep_file.library, text.group(1)),
                             DepRelation.PROVIDE, DepRelation.PACKAGE))
         re.subn(m_inside_package, do_package, buf)
-        # modules and instatniations
+
+        # modules and instantiations
         m_inside_module = re.compile(
             r"(?:module|interface)\s+(\w+)\s*(?:\(.*?\))?\s*(.+?)"
             r"(?:endmodule|endinterface)",
@@ -657,9 +620,9 @@ class VerilogParser(DepParser):
                 if mod_name in self.reserved_words:
                     return
                 logging.debug("-> instantiates %s.%s as %s",
-                              dep_file.library, text.group(1), text.group(2))
+                              dep_file.library, mod_name, text.group(2))
                 dep_file.add_relation(
-                    DepRelation("%s.%s" % (dep_file.library, text.group(1)),
+                    DepRelation("%s.%s" % (dep_file.library, mod_name),
                                 DepRelation.USE, DepRelation.MODULE))
             re.subn(m_instantiation, do_inst, text.group(2))
         re.subn(m_inside_module, do_module, buf)

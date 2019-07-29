@@ -1,0 +1,2 @@
+submodule.modules/module1.url=http://test.org/module1.git
+submodule.modules/module1.path=ipcores/module1

@@ -260,16 +260,15 @@ class VHDLParser(DepParser):
             """Function to be applied by re.sub to every match of the
             instance_pattern in the VHDL code -- group() returns positive
             matches as indexed plain strings. It adds the found USE
-            relations to the file"""            
-            lib = text.group("LIB")
-            if lib is not None: # else is a component instanciation. Assume declaration in scope already. Either earlier in file or in a used package.
-                if lib == "work":
-                    lib = dep_file.library
-                dep_file.add_relation(DepRelation(
-                    "%s.%s" % (lib, text.group("ENTITY")),
-                    DepRelation.USE, DepRelation.ENTITY))
+            relations to the file"""
             logging.debug("-> instantiates %s.%s(%s) as %s",
-                          lib, text.group("ENTITY"), text.group("ARCH"), text.group("LABEL"))
+                          text.group("LIB"), text.group("ENTITY"), text.group("ARCH"), text.group("LABEL"))
+            lib = text.group("LIB")
+            if not lib or lib == "work":
+                lib = dep_file.library
+            dep_file.add_relation(DepRelation(
+                "%s.%s" % (lib, text.group("ENTITY")),
+                DepRelation.USE, DepRelation.ENTITY))
             return "<hdlmake instance %s|%s|%s>" % (text.group("LABEL"),
                                                     lib,
                                                     text.group("ENTITY"))

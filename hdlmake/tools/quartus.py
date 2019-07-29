@@ -142,9 +142,8 @@ class ToolQuartus(ToolSyn):
                             "Auto-guessed syn_family to be %s (%s => %s)",
                             family, device, key)
             if family is None:
-                logging.error("Could not auto-guess device family, please "
-                              "specify in Manifest.py using syn_family!")
-                sys.exit("\nExiting")
+                raise Exception("Could not auto-guess device family, please "
+                                "specify in Manifest.py using syn_family!")
             return family
 
         family_string = __get_family_string(
@@ -162,11 +161,11 @@ class ToolQuartus(ToolSyn):
         property_dict = {
             'what': None,
             'name': None,
-            'name_type': None,
-            'from_': None,
-            'to_': None,
+            'type': None,
+            'from': None,
+            'to': None,
             'section_id': None,
-            'tag_': None}
+            'tag': None}
         property_dict.update(new_property)
         words = []
         words.append(dict([(b, a) for a, b in
@@ -175,17 +174,17 @@ class ToolQuartus(ToolSyn):
             words.append(property_dict['what'])
         if property_dict['name'] is not None:
             words.append("-name")
-            words.append(property_dict['name_type'])
             words.append(property_dict['name'])
-        if property_dict['from_'] is not None:
+            words.append('\\"%s\\"' % property_dict['value'])
+        if property_dict['from'] is not None:
             words.append("-from")
-            words.append(property_dict['from_'])
-        if property_dict['tag_'] is not None:
+            words.append(property_dict['from'])
+        if property_dict['tag'] is not None:
             words.append("-tag")
-            words.append(property_dict['to_'])
-        if property_dict['to_'] is not None:
+            words.append(property_dict['tag'])
+        if property_dict['to'] is not None:
             words.append("-to")
-            words.append(property_dict['to_'])
+            words.append(property_dict['to'])
         if property_dict['section_id'] is not None:
             words.append("-section_id")
             words.append(property_dict['section_id'])
@@ -197,16 +196,26 @@ class ToolQuartus(ToolSyn):
         command_list.append(self._tcl_controls["project"])
         command_list.append(self._emit_property(
             self.SET_GLOBAL_ASSIGNMENT,
-            {'name_type': 'FAMILY',
-            'name': '\\"$(SYN_FAMILY)\\"'}))
+            {'name': 'FAMILY',
+            'value': '$(SYN_FAMILY)'}))
         command_list.append(self._emit_property(
             self.SET_GLOBAL_ASSIGNMENT,
-            {'name_type': 'DEVICE',
-            'name':'\\"$(SYN_DEVICE)\\"'}))
+            {'name': 'DEVICE',
+            'value':'$(SYN_DEVICE)'}))
         command_list.append(self._emit_property(
             self.SET_GLOBAL_ASSIGNMENT,
-            {'name_type': 'TOP_LEVEL_ENTITY',
-            'name': '\\"$(TOP_MODULE)\\"'}))
+            {'name': 'TOP_LEVEL_ENTITY',
+            'value': '$(TOP_MODULE)'}))
+        for user_property in self.manifest_dict.get("syn_properties", []):
+            if not isinstance(user_property, dict):
+                raise Exception("Quartus property should be defined as dict: "
+                                + str(user_property))
+            command_list.append(self._emit_property(self.SET_GLOBAL_ASSIGNMENT,
+                                user_property))
+        for inc in self.manifest_dict.get("include_dirs", []):
+            command_list.append(self._emit_property(self.SET_GLOBAL_ASSIGNMENT,
+                                {'name': 'SEARCH_PATH',
+                                'value': inc}))
         self._tcl_controls["project"] = '\n'.join(command_list)
         super(ToolQuartus, self)._makefile_syn_tcl()
 
@@ -215,40 +224,36 @@ class ToolQuartus(ToolSyn):
         command_list = []
         if "quartus_preflow" in self.manifest_dict:
             path = shell.tclpath(path_mod.compose(
-                self.manifest_dict["quartus_preflow"], os.getcwd()))
+                self.manifest_dict["quartus_preflow"]))
             if not os.path.exists(path):
-                logging.error("quartus_preflow file listed in "
-                              + os.getcwd() + " doesn't exist: "
-                              + path + ".\nExiting.")
-                quit()
+                raise Exception("quartus_preflow file listed in "
+                                + os.getcwd() + " doesn't exist: "
+                                + path + ".\nExiting.")
             preflow = '"' + 'quartus_sh:' + path + '"'
             command_list.append(self._emit_property(self.SET_GLOBAL_ASSIGNMENT,
-                                {'name_type': 'PRE_FLOW_SCRIPT_FILE',
-                                'name': preflow}))
+                                {'name': 'PRE_FLOW_SCRIPT_FILE',
+                                'value': preflow}))
         if "quartus_postmodule" in self.manifest_dict:
             path = shell.tclpath(path_mod.compose(
-                self.manifest_dict["quartus_postmodule"],
-                os.getcwd()))
+                self.manifest_dict["quartus_postmodule"]))
             if not os.path.exists(path):
-                logging.error("quartus_postmodule file listed in "
-                              + os.getcwd() + " doesn't exist: "
-                              + path + ".\nExiting.")
-                quit()
+                raise Exception("quartus_postmodule file listed in "
+                                + os.getcwd() + " doesn't exist: "
+                                + path + ".\nExiting.")
             postmodule = '"' + 'quartus_sh:' + path + '"'
             command_list.append(self._emit_property(self.SET_GLOBAL_ASSIGNMENT,
-                                {'name_type': 'POST_MODULE_SCRIPT_FILE',
-                                'name': postmodule}))
+                                {'name': 'POST_MODULE_SCRIPT_FILE',
+                                'value': postmodule}))
         if "quartus_postflow" in self.manifest_dict:
             path = shell.tclpath(path_mod.compose(
-                self.manifest_dict["quartus_postflow"], os.getcwd()))
+                self.manifest_dict["quartus_postflow"]))
             if not os.path.exists(path):
-                logging.error("quartus_postflow file listed in "
-                              + os.getcwd() + " doesn't exist: "
-                              + path + ".\nExiting.")
-                quit()
+                raise Exception("quartus_postflow file listed in "
+                                + os.getcwd() + " doesn't exist: "
+                                + path + ".\nExiting.")
             postflow = '"' + 'quartus_sh:' + path + '"'
             command_list.append(self._emit_property(self.SET_GLOBAL_ASSIGNMENT,
-                                {'name_type': 'POST_FLOW_SCRIPT_FILE',
-                                'name': postflow}))
+                                {'name': 'POST_FLOW_SCRIPT_FILE',
+                                'value': postflow}))
         self._tcl_controls["files"] = '\n'.join(command_list)
         super(ToolQuartus, self)._makefile_syn_files()

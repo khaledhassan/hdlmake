@@ -8,7 +8,7 @@ module counter_tb();
 reg clock, clear, count;
 wire [7:0] Q;
 
-defparam U_counter.cycles_per_second = 500;
+defparam U_counter.cycles_per_second = 10;
 
 // Initialize all variables
 initial begin   
@@ -22,9 +22,8 @@ initial begin
   count = 0;       // initial value of count enable
   #5 clear = 1;    // Assert the clear signal
   #10 clear = 0;   // De-assert clear signal
-  #10 count = 1;   // Start count 
-  #10000 count = 0;  // De-assert count enable
-  #5 $finish;      // Terminate simulation
+  #40 count = 1;   // Start count 
+  #1000 $finish;      // Terminate simulation
 end
 
 // Clock generator

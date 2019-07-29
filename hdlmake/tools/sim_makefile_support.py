@@ -129,7 +129,7 @@ class VsimMakefileWriter(ToolSim):
             self.write(' '.join(["||", shell.del_command(), lib, "\n"]))
             self.write('\n\n')
         # rules for all _primary.dat files for sv
-        for vlog in fileset.filter(VerilogFile):
+        for vlog in fileset.filter(VerilogFile).sort():
             if vlog.is_include:
               continue
             self.write("%s: %s" % (os.path.join(
@@ -137,8 +137,9 @@ class VsimMakefileWriter(ToolSim):
                 ".%s_%s" % (vlog.purename, vlog.extension())),
                 vlog.rel_path()))
             # list dependencies, do not include the target file
-            for dep_file in [dfile for dfile
-                             in vlog.depends_on if dfile is not vlog]:
+            for dep_file in sorted([dfile for dfile
+                                    in vlog.depends_on if dfile is not vlog],
+                                   key=(lambda x: x.file_path)):
                 if dep_file in fileset and not dep_file.is_include:
                     name = dep_file.purename
                     extension = dep_file.extension()
@@ -158,7 +159,7 @@ class VsimMakefileWriter(ToolSim):
             self.writeln(" && " + shell.touch_command() + " $@ \n\n")
             self.writeln()
         # list rules for all _primary.dat files for vhdl
-        for vhdl in fileset.filter(VHDLFile):
+        for vhdl in fileset.filter(VHDLFile).sort():
             lib = vhdl.library
             purename = vhdl.purename
             # each .dat depends on corresponding .vhd file

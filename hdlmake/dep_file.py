@@ -66,18 +66,6 @@ class DepRelation(object):
             return True
         return False
 
-    def library(self):
-        """If the current relation type is PACKAGE, it returns the base name of
-        the library, e.g. for work.counter it returns work."""
-        if self.rel_type == DepRelation.PACKAGE:
-            libdotpackage = self.obj_name
-            try:
-                return libdotpackage.split('.')[0]
-            except ValueError:
-                return None
-        else:
-            return None
-
     def __repr__(self):
         dstr = {self.USE: "Use", self.PROVIDE: "Provide"}
         ostr = {
@@ -139,37 +127,8 @@ class File(object):
     def __str__(self):
         return self.path
 
-    def __eq__(self, other):
-        _not_found = object()
-        path_self, path_other = [getattr(obj, "path", _not_found)
-                                 for obj in [self, other]]
-        if path_self is _not_found or path_other is _not_found:
-            return False
-        elif path_self != path_other:
-            return False
-        return True
-
     def __hash__(self):
         return hash(self.path)
-
-    def __cmp__(self, other):
-        if self.path < other.path:
-            return -1
-        if self.path == other.path:
-            return 0
-        if self.path > other.path:
-            return 1
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
-    def isdir(self):
-        """Check if the defined file path is a directory"""
-        return os.path.isdir(self.path)
-
-    def show(self):
-        """Print the file path to stdout"""
-        print(self.path)
 
     def extension(self):
         """Method that gets the extension for the file instance"""
@@ -191,8 +150,6 @@ class DepFile(File):
         self.depends_on = set()
         self.dep_level = None
         self.is_parsed = False
-        self.file_path = file_path
-        self.include_paths = []
 
     def add_relation(self, rel):
         """Add a new relation to the set provided by the file"""
@@ -204,18 +161,6 @@ class DepFile(File):
         assert isinstance(rel_b, DepRelation)
         # self._parse_if_needed()
         return any([x.satisfies(rel_b) for x in self.rels])
-
-    def show_relations(self):
-        """Print the file relations to stdout: can be used for logging"""
-        # self._parse_if_needed()
-        for relation in self.rels:
-            print(str(relation))
-
-    @property
-    def filename(self):
-        """Property defined as a method that checks the basename of the file
-        path in the host, i.e. the name of the last directory on the path"""
-        return os.path.basename(self.file_path)
 
     def get_dep_level(self):
         """Get the dependency level for the file instance, so we can order

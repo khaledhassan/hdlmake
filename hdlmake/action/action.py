@@ -28,121 +28,79 @@ import os
 import logging
 import sys
 
-from hdlmake.tools import load_syn_tool, load_sim_tool
+from hdlmake.tools.makefile_writer import load_syn_tool, load_sim_tool
 from hdlmake.util import shell
-from hdlmake.util.termcolor import colored
 from hdlmake import new_dep_solver as dep_solver
 from hdlmake.srcfile import SourceFileSet, VHDLFile, VerilogFile, SVFile, IPFile, QSYSFile
+from hdlmake.module.module import Module, ModuleArgs
 
-def set_logging_level(options):
-    """Set the log level and config (A.K.A. log verbosity)"""
-    numeric_level = getattr(logging, options.log.upper(), None)
-    if not isinstance(numeric_level, int):
-        sys.exit('Invalid log level: %s' % options.log)
-
-    if not shell.check_windows() and options.logfile == None:
-        logging.basicConfig(
-            format=colored(
-                "%(levelname)s",
-                "yellow") + colored(
-                "\t%(filename)s:%(lineno)d: %(funcName)s()\t",
-                "blue") + "%(message)s",
-            level=numeric_level)
-    else:
-        logging.basicConfig(
-            format="%(levelname)s" +
-                   "\t%(filename)s:%(lineno)d: %(funcName)s()\t" +
-                   "%(message)s",
-            level=numeric_level,
-            filename=options.logfile)
-    logging.debug(str(options))
-
-
-class Action(list):
+class Action(object):
 
     """This is the base class providing the common Action methods"""
 
     def __init__(self, options):
         super(Action, self).__init__()
-        self.top_module = None
+        self.top_manifest = None
+        self.manifests = []
         self.parseable_fileset = SourceFileSet()
         self.privative_fileset = SourceFileSet()
         self._deps_solved = False
         self.options = options
-        set_logging_level(options)
-        self.new_module(parent=None,
-                         url=os.getcwd(),
-                         source=None,
-                         fetchto=".")
+
+    def load_top_manifest(self):
+        # Top level module.
+        assert self.top_manifest is None
+        self.top_manifest = self.new_module(parent=None,
+                                            url=os.getcwd(),
+                                            source=None,
+                                            fetchto=".")
+        self.top_manifest.parse_manifest()
         self.config = self._get_config_dict()
+
+    def run(self):
         action = self.config.get("action")
         if action == None:
-            self.tool = None            
+            self.tool = None
             self.top_entity = self.config.get("top_module", None)
         elif action == "simulation":
-            self.tool = load_sim_tool(self.config.get("sim_tool"))
-            if (self.config.get("sim_top") == None and
-                    not self.config.get("top_module") == None):
-                self.config["sim_top"] = self.config["top_module"]
-            self.top_entity = self.config.get("sim_top")
+            tool = self.config.get("sim_tool")
+            if tool is None:
+                raise Exception("'sim_tool' variable is not defined")
+            self.tool = load_sim_tool(tool)
+            self.top_entity = self.config.get("sim_top") \
+                or self.config.get("top_module")
+            self.config["sim_top"] = self.top_entity
         elif action == "synthesis":
-            self.tool = load_syn_tool(self.config.get("syn_tool"))
-            if (self.config.get("syn_top") == None and
-                    not self.config.get("top_module") == None):
-                self.config["syn_top"] = self.config["top_module"]
-            self.top_entity = self.config.get("syn_top")
+            tool = self.config.get("syn_tool")
+            if tool is None:
+                raise Exception("'syn_tool' variable is not defined")
+            self.tool = load_syn_tool(tool)
+            self.top_entity = self.config.get("syn_top") \
+                or self.config.get("top_module")
+            self.config["syn_top"] = self.top_entity
         else:
-            logging.error("Unknown requested action: %s", action)
-            quit()
+            raise Exception("Unknown requested action: {}".format(action))
 
     def new_module(self, parent, url, source, fetchto):
         """Add new module to the pool.
 
         This is the only way to add new modules to the pool
         Thanks to it the pool can easily control its content
-
-        NOTE: the first module added to the pool will become the top_module!.
         """
-        from hdlmake.module import Module, ModuleArgs
         self._deps_solved = False
         new_module_args = ModuleArgs()
         new_module_args.set_args(parent, url, source, fetchto)
         new_module = Module(new_module_args, self)
         if not self.__contains(new_module):
             self._add(new_module)
-            if not self.top_module:
-                self.top_module = new_module
-                new_module.parse_manifest()
         return new_module
-
-    def _check_manifest_variable_is_set(self, name):
-        """Method to check if a specific manifest variable is set"""
-        if getattr(self.top_module, name) is None:
-            logging.error(
-                "Variable %s must be set in the manifest "
-                "to perform current action (%s)",
-                name, self.__class__.__name__)
-            sys.exit("\nExiting")
-
-    def _check_manifest_variable_value(self, name, value):
-        """Method to check if a manifest variable is set to a specific value"""
-        variable_match = False
-        manifest_value = getattr(self.top_module, name)
-        if manifest_value == value:
-            variable_match = True
-
-        if variable_match is False:
-            logging.error(
-                "Variable %s must be set in the manifest and equal to '%s'.",
-                name, value)
-            sys.exit("Exiting")
 
     def build_complete_file_set(self):
         """Build file set with all the files listed in the complete pool"""
         logging.debug("Begin build complete file set")
         all_manifested_files = SourceFileSet()
-        for module in self:
-            all_manifested_files.add(module.files)
+        for manifest in self.manifests:
+            all_manifested_files.add(manifest.files)
         logging.debug("End build complete file set")
         return all_manifested_files
 
@@ -190,14 +148,14 @@ class Action(list):
             logging.info("Detected %d supported files that can be parsed",
                          len(self.parseable_fileset))
 
-    def get_top_module(self):
+    def get_top_manifest(self):
         """Get the Top module from the pool"""
-        return self.top_module
+        return self.top_manifest
 
     def _get_config_dict(self):
         """Get the combined hierarchical Manifest dictionary from the pool"""
         config_dict = {}
-        for mod in self:
+        for mod in self.manifests:
             manifest_dict_tmp = mod.manifest_dict
             if not manifest_dict_tmp == None:
                 if 'fetchto' in manifest_dict_tmp:
@@ -210,24 +168,22 @@ class Action(list):
 
     def _add(self, new_module):
         """Add the given new module if this is not already in the pool"""
-        from hdlmake.module import Module
-        if not isinstance(new_module, Module):
-            raise RuntimeError("Expecting a Module instance")
+        assert isinstance(new_module, Module), "Expect a Module instance"
         if self.__contains(new_module):
             return False
         if new_module.isfetched:
             for mod in new_module.submodules():
                 self._add(mod)
-        self.append(new_module)
+        self.manifests.append(new_module)
         return True
 
     def __contains(self, module):
         """Check if the pool contains the given module by checking the URL"""
-        for mod in self:
+        for mod in self.manifests:
             if mod.url == module.url:
                 return True
         return False
 
     def __str__(self):
         """Cast the module list as a list of strings"""
-        return str([str(m) for m in self])
+        return str([str(m) for m in self.manifests])

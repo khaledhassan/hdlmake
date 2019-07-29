@@ -34,6 +34,7 @@ from subprocess import PIPE, Popen, CalledProcessError
 def run(command):
     """Execute a command in the shell and print the output lines as a list"""
     try:
+        logging.debug("run: {}".format(command))
         command_out = Popen(command,
             stdout=PIPE,
             stdin=PIPE,
@@ -43,11 +44,11 @@ def run(command):
         lines = command_out.stdout.readlines()
         if len(lines) == 0:
             return None
-        return lines[0].strip()
+        return lines[0].strip().decode('utf-8')
     except CalledProcessError as process_error:
         logging.error("Cannot execute the shell command: %s",
             process_error.output)
-        quit()
+        quit(1)
 
 
 def tclpath(path):
@@ -112,14 +113,6 @@ def which(filename):
         if os.path.isfile(candidate.split()[0]):
             candidates.append(candidate)
     return candidates
-
-
-def which_cmd():
-    """Get a string with the O.S. specific which command"""
-    if check_windows():
-        return "where"
-    else:
-        return "which"
 
 
 def slash_char():

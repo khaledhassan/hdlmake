@@ -44,8 +44,7 @@ class ActionTree(Action):
             import networkx as nx
             from networkx.readwrite import json_graph
         except ImportError as error_import:
-            logging.error(error_import)
-            quit()
+            raise Exception(error_import)
         if self.options.mode == 'dfs':
             hierarchy = nx.dfs_tree(hierarchy, top_id)
         elif self.options.mode == 'bfs':
@@ -61,8 +60,7 @@ class ActionTree(Action):
         try:
             import networkx as nx
         except ImportError as error_import:
-            logging.error(error_import)
-            quit()
+            raise Exception(error_import)
         unfetched_modules = False
         hierarchy = nx.DiGraph()
 
@@ -116,8 +114,7 @@ class ActionTree(Action):
                                  top_level_entity)
 
         else:
-            logging.error('Unknown tree mode: %s', self.options.mode)
-            quit()
+            raise Exception('Unknown tree mode: %s', self.options.mode)
 
         if unfetched_modules:
             logging.warning("Some of the modules have not been fetched!")

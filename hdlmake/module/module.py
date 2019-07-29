@@ -34,7 +34,7 @@ import logging
 
 from hdlmake.util import path as path_mod
 from hdlmake.util import shell
-from hdlmake.manifest_parser import ManifestParser
+from hdlmake.manifest_parser.variables import ManifestParser
 from .content import ModuleContent, ModuleArgs
 import six
 
@@ -59,26 +59,14 @@ class Module(ModuleContent):
     def __str__(self):
         return self.url
 
-    @property
-    def is_fetched_to(self):
-        """Get the path where the module instance resides"""
-        return os.path.dirname(self.path)
-
     def submodules(self):
         """Get a list with all the submodules this module instance requires"""
-        def __nonull(submodule_list):
-            """Returns a list with the submodules, being empty if null"""
-            if not submodule_list:
-                return []
-            else:
-                return submodule_list
-        return __nonull(self.local) + __nonull(self.git) \
-            + __nonull(self.gitsm) + __nonull(self.svn)
+        return self.modules['local'] + self.modules['git'] \
+            + self.modules['gitsm'] + self.modules['svn']
 
     def remove_dir_from_disk(self):
         """Delete the module dir if it is already fetched and available"""
-        if not self.isfetched:
-            return
+        assert self.isfetched
         logging.debug("Removing " + self.path)
         command_tmp = shell.rmdir_command() + " " + self.path
         shell.run(command_tmp)
@@ -90,31 +78,6 @@ class Module(ModuleContent):
         """
         logging.debug("Process manifest at: " + os.path.dirname(self.path))
         super(Module, self).process_manifest()
-
-    def get_include_dirs_list(self):
-        """Private method that processes the included directory list"""
-        # Include dirs
-        include_dirs = []
-        if "include_dirs" in self.manifest_dict:
-            if isinstance(self.manifest_dict["include_dirs"],
-                          six.string_types):
-                dir_list = path_mod.compose(
-                    self.path, self.manifest_dict["include_dirs"])
-                include_dirs.append(dir_list)
-            else:
-                dir_list = [path_mod.compose(x, self.path) for
-                            x in self.manifest_dict["include_dirs"]]
-                include_dirs.extend(dir_list)
-            # Analyze included dirs and report if any issue is found
-            for dir_ in include_dirs:
-                if path_mod.is_abs_path(dir_):
-                    logging.warning("%s contains absolute path to an include "
-                                    "directory: %s", self.path, dir_)
-                if not os.path.exists(dir_):
-                    logging.warning(self.path +
-                                    " has an unexisting include directory: " +
-                                    dir_)
-        return include_dirs
 
     def parse_manifest(self):
         """
@@ -136,8 +99,7 @@ class Module(ModuleContent):
 
         if self.manifest_dict or self.isfetched is False:
             return
-        if self.path is None:
-            raise RuntimeError()
+        assert self.path is not None
 
         logging.debug("""
 ***********************************************************
@@ -146,40 +108,34 @@ PARSE START: %s
 
         manifest_parser = ManifestParser()
 
-        manifest_parser.add_prefix_code(
-            self.pool.options.prefix_code)
-        manifest_parser.add_sufix_code(
-            self.pool.options.sufix_code)
+        manifest_parser.add_prefix_code(self.pool.options.prefix_code)
+        manifest_parser.add_suffix_code(self.pool.options.suffix_code)
 
-        parser_tmp = manifest_parser.add_manifest(self.path)
+        # Look for the Manifest.py file
+        manifest_parser.add_manifest(self.path)
 
-        if not parser_tmp == None:
-
-            if self.parent is None:
-                extra_context = {}
-            else:
-                extra_context = dict(self.parent.manifest_dict)
-            extra_context["__manifest"] = self.path
-
-            # The parse method is where most of the parser action takes place!
-            opt_map = None
-            try:
-                opt_map = manifest_parser.parse(extra_context=extra_context)
-            except NameError as name_error:
-                logging.error(
-                    "Error while parsing {0}:\n{1}: {2}.".format(
-                        self.path, type(name_error), name_error))
-                quit()
-            self.manifest_dict = extra_context
-            self.manifest_dict.update(opt_map)
+        # Parse and extract variables from it.
+        if self.parent is None:
+            extra_context = {}
         else:
-            self.manifest_dict = {}
+            extra_context = dict(self.top_manifest.manifest_dict)
+        extra_context["__manifest"] = self.path
+
+        # The parse method is where most of the parser action takes place!
+        opt_map = None
+        try:
+            opt_map = manifest_parser.parse(extra_context=extra_context)
+        except NameError as name_error:
+            raise Exception(
+                "Error while parsing {0}:\n{1}: {2}.".format(
+                    self.path, type(name_error), name_error))
+        self.manifest_dict = opt_map
 
         # Process the parsed manifest_dict to assign the module properties
         self.process_manifest()
         self.process_git_submodules()
 
-        # Parse every detected submodule
+        # Recurse: parse every detected submodule
         for module_aux in self.submodules():
             module_aux.parse_manifest()
 

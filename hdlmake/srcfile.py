@@ -50,10 +50,7 @@ class SourceFile(DepFile):
         self.library = library
         if not library:
             self.library = "work"
-        DepFile.__init__(self,
-                         file_path=path,
-                         module=module)
-        self.parser = DepParser(self)
+        DepFile.__init__(self, file_path=path, module=module)
 
     def __hash__(self):
         return hash(self.path + self.library)
@@ -70,16 +67,6 @@ class VHDLFile(SourceFile):
         from hdlmake.vhdl_parser import VHDLParser
         self.parser = VHDLParser(self)
 
-    def _check_encryption(self):
-        """Check if the VHDL is encrypted (in Xilinx toolchain)"""
-        file_aux = open(self.path, "rb")
-        text = file_aux.read(3)
-        file_aux.close()
-        if text == b'Xlx':
-            return True
-        else:
-            return False
-
 
 class VerilogFile(SourceFile):
 
@@ -94,8 +81,6 @@ class VerilogFile(SourceFile):
             self.include_dirs.extend(include_dirs)
         self.include_dirs.append(path_mod.relpath(self.dirname))
         self.parser = VerilogParser(self)
-        for dir_aux in self.include_paths:
-            self.parser.add_search_path(dir_aux)
         self.is_include = is_include
 
 
@@ -199,10 +184,13 @@ class VEOFile(File):
     pass
 
 
-class XCIFile(File):
+class XCIFile(SourceFile):
     """Xilinx Core IP File"""
-    pass
 
+    def __init__(self, path, module, library=None):
+        SourceFile.__init__(self, path=path, module=module, library=library)
+        from hdlmake.xci_parser import XCIParser
+        self.parser = XCIParser(self)
 
 XILINX_FILE_DICT = {
     'xise': XISEFile,
@@ -416,27 +404,10 @@ class SourceFileSet(set):
                 out.add(file_aux)
         return out
 
-    def inversed_filter(self, filetype):
-        """Method that filters and returns all of the HDL source files
-        contained in the instance SourceFileSet NOT matching the provided
-        type"""
-        out = SourceFileSet()
-        for file_aux in self:
-            if not isinstance(file_aux, filetype):
-                out.add(file_aux)
-        return out
-
-    def get_libs(self):
-        """Method that returns a set containing all of the libraries that are
-        provided by any of the source files in the SourceFileSet"""
-        ret = set()
-        for file_aux in self:
-            try:
-                ret.add(file_aux.library)
-            except TypeError:
-                pass
-        return ret
-
+    def sort(self):
+        """Return a sorted list of the fileset.  This is useful to have always
+        the same output"""
+        return sorted(self, key=(lambda x: x.file_path))
 
 def create_source_file(path, module, library=None,
                        include_dirs=None, is_include=False):
@@ -482,7 +453,6 @@ def create_source_file(path, module, library=None,
     elif extension in MICROSEMI_FILE_DICT:
         new_file = MICROSEMI_FILE_DICT[extension](path=path, module=module)
     else:
-        logging.error("Cannot create source file %s, "
-                      "unknown file extension %s", path, extension)
-        quit()
+        raise Exception("Cannot create source file %s, "
+                        "unknown file extension %s", path, extension)
     return new_file

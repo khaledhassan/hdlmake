@@ -71,16 +71,11 @@ class Git(Fetcher):
         logging.debug("Fetchto = '{}'".format(fetchto))
         if not os.path.exists(fetchto):
             os.mkdir(fetchto)
-        if not module.isfetched:
-            logging.info("Cloning git module %s to %s", module.url, module.path)
-            cmd = "(git clone {1} {2})"
-            cmd = cmd.format(fetchto, module.url, module.path)
-            logging.info(cmd)
-            if os.system(cmd) != 0:
-                return False
-        else:
-            logging.info("Updating git module %s", module.path)
-
+        basename = path_utils.url_basename(module.url)
+        mod_path = os.path.join(fetchto, basename)
+        assert not module.isfetched
+        logging.info("Fetching git module %s", mod_path)
+        shell.run("(cd {0} && git clone {1})".format(fetchto, module.url))
         checkout_id = None
         if module.branch is not None:
             checkout_id = module.branch
@@ -109,12 +104,6 @@ class Git(Fetcher):
         return True
 
     @staticmethod
-    def check_git_commit(path):
-        """Get the revision number for the Git repository at path"""
-        git_cmd = 'git log -1 --format="%H" | cut -c1-32'
-        return Fetcher.check_id(path, git_cmd)
-
-    @staticmethod
     def get_git_submodules(module):
         """Get a dictionary containing the git submodules
         that are listed in the module's path"""
@@ -123,8 +112,7 @@ class Git(Fetcher):
             logging.debug("Cannot check submodules, module %s is not fetched",
                 submodule_dir)
             return {}
-        logging.debug("Checking git submodules in %s",
-            submodule_dir)
+        logging.debug("Checking git submodules in %s", submodule_dir)
         cur_dir = os.getcwd()
         try:
             os.chdir(submodule_dir)
@@ -137,7 +125,7 @@ class Git(Fetcher):
                                       stdin=PIPE,
                                       close_fds=not shell.check_windows(),
                                       shell=True)
-            config_lines = [line.strip() for line
+            config_lines = [line.strip().decode('utf-8') for line
                             in config_content.stdout.readlines()]
             config_submodule_lines = [line for line in config_lines
                                       if line.startswith("submodule")]

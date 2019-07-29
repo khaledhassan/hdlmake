@@ -1,0 +1,6 @@
+[run]
+source = ../hdlmake
+# Termcolor is an external module
+# tree has external dependencies
+omit = ../hdlmake/util/termcolor.py
+ ../hdlmake/action/tree.py

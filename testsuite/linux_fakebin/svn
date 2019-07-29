@@ -1,0 +1,30 @@
+#!/usr/bin/env python
+import os
+import sys
+import shutil
+
+if len(sys.argv) == 1:
+    print("fake svn version 0.0")
+    sys.exit(1)
+if sys.argv[1] == 'checkout':
+    print("fake svn checkout: {}".format(sys.argv[2:]))
+    if len(sys.argv) == 4:
+        # Get the basename of the module
+        name = sys.argv[2]
+        name = name[name.rfind('/') + 1:]
+        if name.find('@') >= 0:
+            name = name[:name.find('@')]
+        assert name == sys.argv[3]
+        modpath = os.path.join(os.path.dirname(__file__), '..', 'modules', name)
+        if os.path.exists(name):
+            sys.exit(0)
+        print("fake svn checkout {} from {}".format(name, modpath))
+        # Copy all the files
+        shutil.copytree(modpath, name)
+        sys.exit(0)
+    else:
+        print("unhandled fake svn checkout")
+        sys.exit(1)
+else:
+    print("fake svn unknown command: {}".format(sys.argv[1:]))
+    sys.exit(1)

@@ -77,10 +77,10 @@ def solve(fileset, standard_libs=None):
                         satisfied_by.add(dep_file)
                 if len(satisfied_by) > 1:
                     logging.warning(
-                        "Relation %s satisfied by multpiple (%d) files: %s",
+                        "Relation %s satisfied by multiple (%d) files:\n %s",
                         str(rel),
                         len(satisfied_by),
-                        '\n'.join([file_aux.path for
+                        '\n '.join([file_aux.path for
                                    file_aux in list(satisfied_by)]))
                 elif len(satisfied_by) == 0:
                     # if relation is a USE PACKAGE, check against
@@ -109,7 +109,7 @@ def solve(fileset, standard_libs=None):
             "Dependencies solved, all of the relations were satisfied!")
 
 
-def make_dependency_sorted_list(fileset, reverse=False):
+def make_dependency_sorted_list(fileset):
     """Sort files in order of dependency.
     Files with no dependencies first.
     All files that another depends on will be earlier in the list."""
@@ -119,10 +119,7 @@ def make_dependency_sorted_list(fileset, reverse=False):
     # Not necessary, but will tend to group files more nicely
     # in the output.
     dependable.sort(key=DepFile.get_dep_level)
-    sorted_list = non_dependable + dependable
-    if reverse:
-        sorted_list = list(reversed(sorted_list))
-    return sorted_list
+    return non_dependable + dependable
 
 
 def make_dependency_set(fileset, top_level_entity, extra_modules=None):
@@ -135,6 +132,8 @@ def make_dependency_set(fileset, top_level_entity, extra_modules=None):
 
     def _check_entity(test_file, entity_name):
         """ Check if the input file provides the entity pointed by the name"""
+        if entity_name == None:
+            return False
         entity_rel_vhdl = DepRelation(
             entity_name,
             DepRelation.PROVIDE, DepRelation.ENTITY)
@@ -156,9 +155,15 @@ def make_dependency_set(fileset, top_level_entity, extra_modules=None):
                 if _check_entity(chk_file, entity_aux):
                     extra_files.append(chk_file)
     if top_file is None:
-        logging.critical('Could not find a top level file that provides the '
-                         'top_module="%s". Continuing with the full file set.',
-                         top_level_entity)
+        if top_level_entity is None:
+            logging.critical(
+                    'Could not find a top level file because the top '
+                    'module is undefined. Continuing with the full file set.')
+        else:
+            logging.critical(
+                    'Could not find a top level file that provides the '
+                    'top_module="%s". Continuing with the full file set.',
+                     top_level_entity)
         return fileset
     # Collect only the files that the top level entity is dependant on, by
     # walking the dependancy tree.

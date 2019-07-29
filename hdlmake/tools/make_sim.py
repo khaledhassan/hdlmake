@@ -13,12 +13,8 @@ from hdlmake.srcfile import VerilogFile, VHDLFile, SVFile
 
 def _check_simulation_manifest(manifest_dict):
     """Check if the simulation keys are provided by the top manifest"""
-    if not manifest_dict["sim_top"]:
-        logging.error("sim_top variable must be set in the top manifest.")
-        sys.exit("Exiting")
-    if not manifest_dict["sim_tool"]:
-        logging.error("sim_tool variable must be set in the top manifest.")
-        sys.exit("Exiting")
+    if manifest_dict.get("sim_top") is None:
+        raise Exception("sim_top variable must be set in the top manifest.")
 
 
 class ToolSim(ToolMakefile):
@@ -34,6 +30,7 @@ class ToolSim(ToolMakefile):
         _check_simulation_manifest(config)
         self.makefile_setup(config, fileset, filename=filename)
         self.makefile_check_tool('sim_path')
+        self.makefile_includes()
         self._makefile_sim_top()
         self._makefile_sim_options()
         self._makefile_sim_local()
@@ -42,6 +39,7 @@ class ToolSim(ToolMakefile):
         self._makefile_sim_command()
         self._makefile_sim_clean()
         self._makefile_sim_phony()
+        self.makefile_close()
 
     def _makefile_sim_top(self):
         """Generic method to write the simulation Makefile top section"""
@@ -70,12 +68,12 @@ PWD := $$(shell pwd)
         """Generic method to write the simulation Makefile HDL sources"""
         fileset = self.fileset
         self.write("VERILOG_SRC := ")
-        for vlog in fileset.filter(VerilogFile):
+        for vlog in fileset.filter(VerilogFile).sort():
             if not vlog.is_include:
                 self.writeln(vlog.rel_path() + " \\")
         self.writeln()
         self.write("VERILOG_OBJ := ")
-        for vlog in fileset.filter(VerilogFile):
+        for vlog in fileset.filter(VerilogFile).sort():
             if vlog.is_include:
                 continue
             # make a file compilation indicator (these .dat files are made even
@@ -86,36 +84,28 @@ PWD := $$(shell pwd)
                 os.path.join(
                     vlog.library,
                     vlog.purename,
-                    "." +
-                    vlog.purename +
-                    "_" +
-                    vlog.extension(
-                    )) +
+                    ".{}_{}".format(vlog.purename, vlog.extension())) +
                 " \\")
         self.writeln()
         self.write("VHDL_SRC := ")
-        for vhdl in fileset.filter(VHDLFile):
-            self.write(vhdl.rel_path() + " \\\n")
+        for vhdl in fileset.filter(VHDLFile).sort():
+            self.writeln(vhdl.rel_path() + " \\")
         self.writeln()
         # list vhdl objects (_primary.dat files)
         self.write("VHDL_OBJ := ")
-        for vhdl in fileset.filter(VHDLFile):
+        for vhdl in fileset.filter(VHDLFile).sort():
             # file compilation indicator (important: add _vhd ending)
             self.writeln(
                 os.path.join(
                     vhdl.library,
                     vhdl.purename,
-                    "." +
-                    vhdl.purename +
-                    "_" +
-                    vhdl.extension(
-                    )) +
+                    ".{}_{}".format(vhdl.purename, vhdl.extension())) +
                 " \\")
         self.writeln()
 
     def _makefile_sim_dep_files(self):
         """Print dummy targets to handle file dependencies"""
-        fileset = self.fileset
+        fileset = self.fileset.sort()
         for file_aux in fileset:
             if any(isinstance(file_aux, file_type)
                    for file_type in self._hdl_files):
@@ -124,8 +114,9 @@ PWD := $$(shell pwd)
                     ".%s_%s" % (file_aux.purename, file_aux.extension())),
                     file_aux.rel_path()))
                 # list dependencies, do not include the target file
-                for dep_file in [dfile for dfile in file_aux.depends_on
-                                 if dfile is not file_aux]:
+                for dep_file in sorted([dfile for dfile in file_aux.depends_on
+                                        if dfile is not file_aux],
+                                       key=(lambda x: x.file_path)):
                     if dep_file in fileset:
                         name = dep_file.purename
                         extension = dep_file.extension()

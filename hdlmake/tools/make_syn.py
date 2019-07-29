@@ -8,25 +8,15 @@ import string
 from .makefile import ToolMakefile
 from hdlmake.util import shell
 
+from hdlmake.srcfile import VerilogFile, SVFile
+
 
 def _check_synthesis_manifest(manifest_dict):
     """Check the manifest contains all the keys for a synthesis project"""
-    if not manifest_dict["syn_tool"]:
-        logging.error(
-            "syn_tool variable must be set in the top manifest.")
-        sys.exit("Exiting")
-    if not manifest_dict["syn_device"]:
-        logging.error(
-            "syn_device variable must be set in the top manifest.")
-        sys.exit("Exiting")
-    if not manifest_dict["syn_grade"]:
-        logging.error(
-            "syn_grade variable must be set in the top manifest.")
-        sys.exit("Exiting")
-    if not manifest_dict["syn_package"]:
-        logging.error(
-            "syn_package variable must be set in the top manifest.")
-        sys.exit("Exiting")
+    for v in ["syn_device", "syn_grade", "syn_package"]:
+        if v not in manifest_dict:
+            raise Exception(
+                "'{}' variable must be set in the top manifest.".format(v))
     if not manifest_dict["syn_top"]:
         logging.error(
             "syn_top variable must be set in the top manifest.")
@@ -54,6 +44,7 @@ class ToolSyn(ToolMakefile):
         self._makefile_syn_build()
         self._makefile_syn_clean()
         self._makefile_syn_phony()
+        self.makefile_close()
         logging.info(self._tool_info['name'] + " synthesis makefile generated.")
 
     def _makefile_syn_top(self):
@@ -114,7 +105,13 @@ endif""")
             file_list = []
             for file_aux in self.fileset:
                 if isinstance(file_aux, filetype):
-                    file_list.append(shell.tclpath(file_aux.rel_path()))
+                    if (
+                           not (filetype == VerilogFile and
+                               isinstance(file_aux, SVFile)) and
+                           not (isinstance(file_aux, VerilogFile) and
+                               file_aux.is_include)
+                       ):
+                        file_list.append(shell.tclpath(file_aux.rel_path()))
             if not file_list == []:
                 ret.append(
                    'SOURCES_{0} := \\\n'

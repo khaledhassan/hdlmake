@@ -42,7 +42,7 @@ class ToolLibero(ToolSyn):
 
     STANDARD_LIBS = ['ieee', 'std']
 
-    _LIBERO_SOURCE = 'create_links {0} {{$$filename}}'
+    _LIBERO_SOURCE = 'create_links {0} $(sourcefile)'
 
     SUPPORTED_FILES = {
         SDCFile: _LIBERO_SOURCE.format('-sdc'),
@@ -63,7 +63,7 @@ class ToolLibero(ToolSyn):
         'save': 'save_project',
         'close': 'close_project',
         'project': '$(TCL_CREATE)\n'
-                   '$(TCL_FILES)\n'
+                   'source files.tcl\n'
                    '{0}\n'
                    '$(TCL_SAVE)\n'
                    '$(TCL_CLOSE)',

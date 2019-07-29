@@ -26,7 +26,8 @@
 
 from __future__ import absolute_import
 from .xilinx import ToolXilinx
-from hdlmake.srcfile import (XDCFile, XCIFile, NGCFile, XMPFile,
+from hdlmake.srcfile import (VHDLFile, VerilogFile, SVFile,
+                             XDCFile, XCIFile, NGCFile, XMPFile,
                              XCOFile, COEFile, BDFile, TCLFile, BMMFile,
                              MIFFile, RAMFile, VHOFile, VEOFile, XCFFile)
 
@@ -48,7 +49,6 @@ class ToolVivado(ToolXilinx):
     SUPPORTED_FILES = {
          XDCFile: ToolXilinx._XILINX_SOURCE,
          XCFFile: ToolXilinx._XILINX_SOURCE,
-         XCIFile: ToolXilinx._XILINX_SOURCE,
          NGCFile: ToolXilinx._XILINX_SOURCE,
          XMPFile: ToolXilinx._XILINX_SOURCE,
          XCOFile: ToolXilinx._XILINX_SOURCE,
@@ -60,6 +60,12 @@ class ToolVivado(ToolXilinx):
          RAMFile: ToolXilinx._XILINX_SOURCE,
          VHOFile: ToolXilinx._XILINX_SOURCE,
          VEOFile: ToolXilinx._XILINX_SOURCE}
+
+    HDL_FILES = {
+        VHDLFile:    ToolXilinx._XILINX_SOURCE,
+        VerilogFile: ToolXilinx._XILINX_SOURCE,
+        SVFile:      ToolXilinx._XILINX_SOURCE,
+        XCIFile:     ToolXilinx._XILINX_SOURCE}
 
     CLEAN_TARGETS = {'clean': [".Xil", "*.jou", "*.log", "*.pb", "*.dmp",
                                "$(PROJECT).cache", "$(PROJECT).data", "work",
@@ -79,3 +85,4 @@ class ToolVivado(ToolXilinx):
         self._standard_libs.extend(ToolVivado.STANDARD_LIBS)
         self._clean_targets.update(ToolVivado.CLEAN_TARGETS)
         self._tcl_controls.update(ToolVivado.TCL_CONTROLS)
+        self._hdl_files.update(ToolVivado.HDL_FILES)

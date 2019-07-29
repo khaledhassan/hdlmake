@@ -71,25 +71,19 @@ class ToolISim(ToolSim):
 
         def __get_xilinxsim_ini_dir():
             """Get Xilinx ISim ini simulation file"""
-            if "sim_path" in self.manifest_dict:
-                xilinx_dir = str(os.path.join(
-                    self.manifest_dict["sim_path"], "..", ".."))
-            else:
-                logging.error("Cannot calculate xilinx tools base directory")
-                quit()
+            xilinx_dir = str(os.path.join(
+                self.manifest_dict["sim_path"], "..", ".."))
             hdl_language = 'vhdl'  # 'verilog'
             if shell.check_windows():
                 os_prefix = 'nt'
             else:
                 os_prefix = 'lin'
             if shell.architecture() == 32:
-                arch_sufix = ''
+                arch_suffix = ''
             else:
-                arch_sufix = '64'
-            xilinx_ini_path = str(os.path.join(xilinx_dir,
-                                  hdl_language,
-                                  "hdp",
-                                  os_prefix + arch_sufix))
+                arch_suffix = '64'
+            xilinx_ini_path = os.path.join(
+                xilinx_dir, hdl_language, "hdp", os_prefix + arch_suffix)
             # Ensure the path is absolute and normalized
             return os.path.abspath(xilinx_ini_path)
         self.writeln("""## variables #############################
@@ -105,8 +99,6 @@ XILINX_INI_PATH := """ + __get_xilinxsim_ini_dir() +
         """Print the Xilinx ISim simulation options in the Makefile"""
         def __get_rid_of_isim_incdirs(vlog_opt):
             """Clean the vlog options from include dirs"""
-            if not vlog_opt:
-                vlog_opt = ""
             vlogs = vlog_opt.split(' ')
             ret = []
             skip = False
@@ -177,7 +169,7 @@ fuse:
         # rules for all _primary.dat files for sv
         # incdir = ""
         objs = []
-        for vl_file in fileset.filter(VerilogFile):
+        for vl_file in fileset.filter(VerilogFile).sort():
             comp_obj = os.path.join(vl_file.library, vl_file.purename)
             objs.append(comp_obj)
             # self.write(os.path.join(vl_file.library, vl_file.purename,
@@ -212,7 +204,7 @@ fuse:
             self.writeln(" && " + shell.touch_command() + " $@ \n\n")
         self.write("\n")
         # list rules for all _primary.dat files for vhdl
-        for vhdl_file in fileset.filter(VHDLFile):
+        for vhdl_file in fileset.filter(VHDLFile).sort():
             lib = vhdl_file.library
             purename = vhdl_file.purename
             comp_obj = os.path.join(lib, purename)
@@ -255,7 +247,7 @@ fuse:
                     self.write(
                         " \\\n" + os.path.join(dep_file.library,
                                                name, "." + name + "_" +
-                                               vhdl_file.extension()))
+                                               dep_file.extension()))
                 else:
                     self.write(" \\\n" + os.path.join(dep_file.rel_path()))
             self.write('\n')

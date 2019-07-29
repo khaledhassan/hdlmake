@@ -30,7 +30,7 @@ class ModuleConfig(object):
 
     def basename(self):
         """Get the basename for the module"""
-        if self.source == fetch.SVN:
+        if self.source == 'svn':
             return path_mod.svn_basename(self.url)
         else:
             return path_mod.url_basename(self.url)
@@ -50,13 +50,11 @@ class ModuleConfig(object):
         self.source = source
         self.parent = parent
 
-        if self.source != fetch.LOCAL:
-            if self.source == fetch.SVN:
-                self.url, self.revision, self.library_overide = \
-                    path_mod.svn_parse(url)
+        if self.source != 'local':
+            if self.source == 'svn':
+                self.url, self.revision = path_mod.svn_parse(url)
             else:
-                self.url, self.branch, self.revision, self.library_overide = \
-                    path_mod.url_parse(url)
+                self.url, self.branch, self.revision = path_mod.url_parse(url)
             basename = self.basename()
             if self.library_overide:
                 basename += "-" + self.library_overide                
@@ -78,10 +76,9 @@ class ModuleConfig(object):
             self.url, self.branch, self.revision = url, None, None
 
             if not os.path.exists(url):
-                logging.error(
+                raise Exception(
                     "Path to the local module doesn't exist:\n" + url
                     + "\nThis module was instantiated in: " + str(self.parent))
-                quit()
             self.path = path_mod.relpath(url)
             self.isfetched = True
 
@@ -95,10 +92,9 @@ class ModuleConfig(object):
                 return False
             filepath = os.path.join(self.path, filepath)
             if not os.path.exists(filepath):
-                logging.error(
-                    "Path specified in manifest in %s doesn't exist: %s",
-                    self.path, filepath)
-                sys.exit("Exiting")
+                raise Exception(
+                    "Path specified in manifest {} doesn't exist: {}".format(
+                    self.path, filepath))
 
             filepath = path_mod.rel2abs(filepath, self.path)
             if os.path.isdir(filepath):
@@ -125,14 +121,14 @@ class ModuleCore(ModuleConfig):
         self.library = "work"
         self.action = None
         self.pool = None
-        self.top_module = None
+        self.top_manifest = None
         self.manifest_dict = None
         super(ModuleCore, self).__init__()
 
     def set_pool(self, pool):
         """Set the associated pool for the module instance"""
         self.pool = pool
-        self.top_module = pool.get_top_module()
+        self.top_manifest = pool.get_top_manifest()
 
     def process_manifest(self):
         """Method that process the core manifest section"""
@@ -140,9 +136,8 @@ class ModuleCore(ModuleConfig):
         super(ModuleCore, self).process_manifest()
 
     def _process_manifest_universal(self):
-        """Method processing the universal manifest directives"""
-        # if "top_module" in self.manifest_dict:
-        #    self.top_module = self.manifest_dict["top_module"]
+        """Method processing the universal manifest directives;
+           set library (inherited if not set) and action"""
         # Libraries
         if self.library_overide is not None:
             self.library = self.library_overide

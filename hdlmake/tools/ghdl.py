@@ -37,7 +37,7 @@ class ToolGHDL(ToolSim):
     TOOL_INFO = {
         'name': 'GHDL',
         'id': 'ghdl',
-        'windows_bin': None,
+        'windows_bin': 'ghdl',
         'linux_bin': 'ghdl'}
 
     STANDARD_LIBS = ['ieee', 'std']

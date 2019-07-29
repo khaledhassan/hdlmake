@@ -129,6 +129,9 @@ def _get_parser():
     listfiles.add_argument(
         "--top", dest="top", default=None,
         help="print only those files required to build 'top'")
+    listfiles.add_argument(
+        "--qip", dest="qip", default=None,
+        help="write file list to intel/altera .qip file")
     tree = subparsers.add_parser(
         "tree",
         help="generate a module hierarchy tree graph")

@@ -54,10 +54,10 @@ class ModuleConfig(object):
             if self.source == 'svn':
                 self.url, self.revision = path_mod.svn_parse(url)
             else:
-                self.url, self.branch, self.revision = path_mod.url_parse(url)
+                self.url, self.branch, self.revision, self.library_overide = path_mod.url_parse(url)
             basename = self.basename()
             if self.library_overide:
-                basename += "-" + self.library_overide                
+                basename += "-" + self.library_overide
             path = path_mod.relpath(os.path.abspath(
                 os.path.join(fetchto, basename)))
 

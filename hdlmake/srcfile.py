@@ -279,9 +279,9 @@ class IPFile(SourceFile):
     """This is the class providing the Altera Quartus IP file"""
     def __init__(self, path, module):
         assert isinstance(path, six.string_types)
-        filename = path_mod.pathsplit(path)[-1]
-        library = filename[:-3] # making some poor assumptions here.
-        entity = filename[:-3]  # and here.
+        filename = os.path.basename(path)
+        entity = filename.rsplit(".",1)[0] # making some poor assumptions here.
+        library = entity  # and here.
         SourceFile.__init__(self,
                             path=path,
                             module=module,
@@ -296,9 +296,9 @@ class QSYSFile(SourceFile):
     """Qsys - Altera's System Integration Tool"""
     def __init__(self, path, module):
         assert isinstance(path, six.string_types)
-        filename = path_mod.pathsplit(path)[-1]
-        library = filename[:-5] # making some poor assumptions here.
-        entity = filename[:-5]  # and here.        
+        filename = os.path.basename(path)
+        entity = filename.rsplit(".",1)[0] # making some poor assumptions here.
+        library = entity  # and here.
         SourceFile.__init__(self,
                             path=path,
                             module=module,

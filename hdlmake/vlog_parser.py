@@ -619,10 +619,11 @@ class VerilogParser(DepParser):
                 mod_name = text.group(1)
                 if mod_name in self.reserved_words:
                     return
+                lib = 'verilog_inst'
                 logging.debug("-> instantiates %s.%s as %s",
-                              dep_file.library, mod_name, text.group(2))
+                              lib, mod_name, text.group(2))
                 dep_file.add_relation(
-                    DepRelation("%s.%s" % (dep_file.library, mod_name),
+                    DepRelation("%s.%s" % (lib, mod_name),
                                 DepRelation.USE, DepRelation.MODULE))
             re.subn(m_instantiation, do_inst, text.group(2))
         re.subn(m_inside_module, do_module, buf)

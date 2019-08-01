@@ -33,9 +33,10 @@ from .dep_file import DepFile, File, DepRelation
 from .new_dep_solver import DepParser
 import six
 
-import re
-import io
-import mmap
+import xml.etree.ElementTree as ET
+
+from .vhdl_parser import VHDLParser
+
 
 class SourceFile(DepFile):
 
@@ -64,7 +65,6 @@ class VHDLFile(SourceFile):
 
     def __init__(self, path, module, library=None):
         SourceFile.__init__(self, path=path, module=module, library=library)
-        from hdlmake.vhdl_parser import VHDLParser
         self.parser = VHDLParser(self)
 
 
@@ -296,30 +296,50 @@ class QSYSFile(SourceFile):
     """Qsys - Altera's System Integration Tool"""
     def __init__(self, path, module):
         assert isinstance(path, six.string_types)
-        filename = os.path.basename(path)
-        entity = filename.rsplit(".",1)[0] # making some poor assumptions here.
-        library = entity  # and here.
+        tree = ET.parse(path)
+        root = tree.getroot()
+        entity = root.attrib["name"]
+        library = entity
         SourceFile.__init__(self,
                             path=path,
                             module=module,
                             library=library)
         obj_name = "%s.%s" % (library, entity)
-        self.add_relation(DepRelation(obj_name, DepRelation.PROVIDE, DepRelation.ENTITY))
-        self.add_relation(DepRelation(obj_name, DepRelation.PROVIDE, DepRelation.ARCHITECTURE))
+        provides = DepRelation(obj_name, DepRelation.PROVIDE, DepRelation.ENTITY)
+        self.add_relation(provides)
+        filename = os.path.basename(path)
         logging.debug("%s -> provides %s" % (filename, obj_name))
-        with io.open(path, 'r', encoding="utf-8") as qsys_file:
-            # Avoid loading entire file into memory - since it is a large file.
-            with mmap.mmap(qsys_file.fileno(), 0, access=mmap.ACCESS_READ) as qsys_xml:
-                child_re = r'<hdlLibraryName>(?P<entity>[\w_\d]+)</hdlLibraryName>'
-                pattern = re.compile(child_re.encode("utf-8"))
-                for match in pattern.finditer(qsys_xml):
-                    entity = str(match.group("entity").decode('utf-8'))
-                    library = entity
-                    obj_name = "%s.%s" % (library, entity)
-                    depends = DepRelation(obj_name, DepRelation.USE, DepRelation.ENTITY)
-                    self.add_relation(depends)
-                    logging.debug("%s -> depends %s" % (filename, obj_name))
+
+        for module in root.iterfind("module"):
+            for param in module.iterfind("parameter[@name='generationInfoDefinition']"):
+                #print(param.tag, param.attrib)
+                cdata_node = ET.fromstring(param.text)
+                dep_on_lib = cdata_node.find("hdlLibraryName").text
+                dep_on_entity = cdata_node.find("fileSets/fileSet/fileSetFixedName").text
+                top_level_kind = None
+                for fileSetFile in cdata_node.iterfind("fileSets/fileSet[fileSetKind='QUARTUS_SYNTH']/fileSetFiles/fileSetFile"):
+                    if fileSetFile.find("[fileKind='VERILOG']/fileAttributes/entry[key='TOP_LEVEL_FILE'][value='true']") is not None:
+                        top_level_kind = 'verilog'
+                        break
+                    elif fileSetFile.find("[fileKind='VHDL']/fileAttributes/entry[key='TOP_LEVEL_FILE'][value='true']") is not None:
+                        top_level_kind = 'vhdl'
+                        break
+                else:
+                    param = module.find("parameter[@name='logicalView']")
+                    if 'value' in param.attrib:
+                        top_level_kind = "qsys"
+                    elif param.text is not None:
+                        top_level_kind = "ip"
+                    else:
+                        logging.warning("Cannot determine the kind of module for %s.%s in %s" % (dep_on_lib, dep_on_entity, filename))
+
+            obj_name = "%s.%s" % (dep_on_lib, dep_on_entity)
+            depends = DepRelation(obj_name, DepRelation.USE, DepRelation.ENTITY)
+            self.add_relation(depends)
+            logging.debug("%s -> depends %s (kind: %s)" % (filename, obj_name, top_level_kind))
+
         self.is_parsed = True
+
 
 class DPFFile(File):
     """This is the class providing Altera Quartus Design Protocol File"""

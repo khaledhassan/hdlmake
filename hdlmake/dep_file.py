@@ -63,7 +63,7 @@ class DepRelation(object):
                 self.direction == DepRelation.USE):
             return False
         if rel_b.rel_type == DepRelation.MODULE and rel_b.obj_name.startswith("verilog_inst."):
-            # ignore relations where verilog instanciates vhdl or IP modules.
+            # ignore library in relations where verilog instanciates vhdl or IP modules.
             self_obj_name = self.obj_name.split(".")[-1]
             rel_b_obj_name = rel_b.obj_name.split(".")[-1]
         else:

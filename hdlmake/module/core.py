@@ -70,7 +70,7 @@ class ModuleConfig(object):
             else:
                 self.path = path
                 self.isfetched = False
-                logging.debug("Module %s (parent: %s) is NOT fetched.",
+                logging.warning("Module %s (parent: %s) is NOT fetched.",
                               url, self.parent.path)
         else:
             self.url, self.branch, self.revision = url, None, None

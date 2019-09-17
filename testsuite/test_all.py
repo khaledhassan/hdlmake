@@ -382,6 +382,9 @@ def test_err_vlog_recursion():
     with pytest.raises(SystemExit) as _:
         run([], path="080err_vlg_recursion")
 
+def test_vlog_ifdef_elsif_else_081():
+    run_compare(path="081vlog_ifdef_elsif_else")
+
 def test_dep_level():
     run(['list-files'], path="053vlog_dep_level")
     run(['list-files', '--delimiter', ','], path="053vlog_dep_level")

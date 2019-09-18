@@ -35,6 +35,7 @@ import logging
 from .new_dep_solver import DepParser
 from .dep_file import DepRelation
 from hdlmake.srcfile import create_source_file
+from collections import namedtuple
 import six
 
 
@@ -64,38 +65,13 @@ class VerilogPreprocessor(object):
             self.args = args
             self.expansion = expansion
 
-    class VLStack(object):
-
-        """Class that provides a simple binary (true/false) stack
-        for Verilog Defines for nested `ifdefs evaluation"""
-
-        def __init__(self):
-            self.stack = []
-
-        def push(self, v_element):
-            """Push element to the stack"""
-            self.stack.append(v_element)
-
-        def pop(self):
-            "Pop element from the stack"""
-            return self.stack.pop()
-
-        def all_true(self):
-            """Returns true if the stack is empty or all the contained
-            elements are True"""
-            return len(self.stack) == 0 or all(self.stack)
-
-        def flip(self):
-            """Toggle the following element"""
-            self.push(not self.pop())
-
     def __init__(self):
-        self.vpp_stack = self.VLStack()
         self.vlog_file = None
         # List of macro definitions
         self.vpp_macros = []
         # Dictionary of files sub-included by each file parsed
         self.vpp_filedeps = {}
+        self.macro_depth = 0
 
     def _find_macro(self, name):
         """Get the Verilog preprocessor macro named 'name'"""
@@ -153,121 +129,145 @@ class VerilogPreprocessor(object):
                 re.DOTALL | re.MULTILINE)
             return re.sub(pattern, replacer, text)
 
-        def _degapize(text):
-            """ Create a list in which the verilog sentences are
-            stored in an ordered way -- and without empty 'gaps'"""
-            lempty = re.compile(r"^\s*$")
-            cline = None
-            lines = []
-            for line_aux in text.splitlines(False):
-                if re.match(lempty, line_aux) is not None:
-                    continue
-                if line_aux.endswith('\\'):
-                    if cline is None:
-                        cline = ""
-                    cline += line_aux[:len(line_aux) - 1]
-                    continue
-                elif cline:
-                    line_aux = cline + line_aux
-                    cline = None
+        def _filter_protected_regions(text):
+            '''Remove regions demarked by `pragma protect being_protected/end_protected'''
+            return re.sub(r'\s*`pragma\s+protect\s+begin_protected.*`pragma\s+protect\s+end_protected\b', '', text, flags=re.DOTALL)
+
+        def _handle_macros(text):
+            '''Process text to implement ifdef/ifndef/elsif/else/endif & define logic'''
+            from pprint import pprint
+
+            vpp_match = namedtuple('vpp_match', ['mtext','pptype','ppident', 'macroident','ppargs','ppdefn','incfile','substid'])
+            vpp_macrodefn = namedtuple('vpp_macrodefn', ['params', 'expansion'])
+
+            def _munge_list(flist):
+                '''Take the split list & normalize into a list of string literals & seperator matches'''
+                from pprint import pprint
+                if not flist:
+                    return []
+                is_match = False # if nothing was present, split inserts an empty element
+                rlist = []
+                while flist:
+                    if is_match:
+                        if len(flist) < 9:
+                            raise Exception("_munge_list: insufficient arguments for match object")
+                        rlist.append(vpp_match(flist[0],flist[1],None if not flist[2] else flist[2].strip(),
+                                               flist[3],flist[4],'' if not flist[5] else flist[5].replace('\\\n',''),flist[6],flist[7]))
+                        flist = flist[9:]
+                    else:
+                        rlist.append(flist.pop(0))
+                    is_match = not is_match
+                return rlist
+
+            def _tok_string(text):
+                toks = re.split(r'''((?:`(ifn?def|elsif|else|endif|define|include)((?<=ifdef\b)\s+(?:\w+)|(?<=ifndef\b)\s+(?:\w+)|(?<=elsif\b)\s+(?:\w+)|(?:(?<=define\b)\s+(\w+)(?:\(([\w\s,]*)\))?[ \t]*((?:\\\n|[^\n\r])*)$)|(?<=include\b)\s+"(.+?)")?)|(?:`(\w+)(?:\(([\w\s,]*)\))?))''', text, flags=re.MULTILINE)
+                return _munge_list(toks)
+
+            parts = _tok_string(text)
+
+            # PP tokens
+            vpp_macros = {}
+
+            def _proc_macros_layer(parts, gmacros):
+                '''Process a level of macros'''
+                lbuf    = ""
+                front   = parts.pop(0)
+                enabled = True
+                handled = False # we've handled an if condition
+                lmacros = dict(gmacros)
+
+                # we should only arrive here because either the start of a string was seen
+                # or an ifdef was detected
+                if isinstance(front, str):
+                    lbuf = front
+                elif front.pptype in ('ifdef','ifndef'):
+                    enabled = front.ppident in lmacros
+                    if front.pptype == 'ifndef':
+                        enabled = not enabled
+                    handled = enabled
                 else:
-                    cline = None
-                lines.append(line_aux)
-            return lines
-        exps = {
-            "include": re.compile(r"^\s*`include\s+\"(.+)\""),
-            "define": re.compile(r"^\s*`define\s+(\w+)(?:\(([\w\s,]*)\))?(.*)"),
-            "ifdef_elsif": re.compile(r"^\s*`(ifdef|ifndef|elsif)\s+(\w+)[\s\S]*$"),
-            "endif_else": re.compile(r"^\s*`(endif|else)\s*$"),
-            "begin_protected": re.compile(r"^\s*`pragma\s*protect\s*begin_protected\s*$"),
-            "end_protected": re.compile(r"^\s*`pragma\s*protect\s*end_protected\s*$")}
-        vl_macro_expand = re.compile(r"`(\w+)(?:\(([\w\s,]*)\))?")
+                    raise Exception("verilog preprocessor: unexpected token '%s'" % front[1])
+
+                while parts:
+                    # handle further ifdefs recusively
+                    front = parts.pop(0)
+                    if isinstance(front, str):
+                        if enabled:
+                            lbuf += front
+                    elif front.pptype in ('ifdef', 'ifndef'):
+                        # ifdef requires a new level, reinsert element & parse next level
+                        parts.insert(0, front)
+                        ctext, parts, cmacros = _proc_macros_layer(parts, lmacros)
+                        if enabled:
+                            lbuf    += ctext
+                            lmacros  = cmacros
+                    elif front.pptype == 'elsif':
+                        if not handled:
+                            enabled = front.ppident in lmacros
+                            if front.pptype == 'ifndef':
+                                enabled = not enabled
+                            handled = enabled
+                        else: # if a clause was already selected, skip this one
+                            enabled = False
+                    elif front.pptype == 'else':
+                        if not handled:
+                            enabled = True
+                            handled = True
+                        else:
+                            enabled = False
+                    elif front.pptype == 'endif':
+                        return lbuf, parts, lmacros
+                    elif front.pptype == 'define':
+                        if enabled:
+                            if front.macroident in self.vpp_keywords:
+                                raise Exception("Attempt to `define a reserved preprocessor keyword")
+                            lmacros[front.macroident] = vpp_macrodefn(front.ppargs, front.ppdefn)
+                            lbuf += front.mtext.replace('\\\n','')
+                    elif front.pptype == "include":
+                        if enabled:
+                            # maybe add a check for recusion here?
+                            included_file_path = self._search_include(front.incfile, os.path.dirname(file_name))
+                            logging.debug("File being parsed %s (library %s) "
+                                          "includes %s",
+                                          file_name, library, included_file_path)
+                            # add include file to the dependancies
+                            self.vpp_filedeps[file_name + library].append(
+                                included_file_path)
+                            # tokenize the file & prepend to the current stack
+                            decomment = _remove_comment(open(included_file_path).read())
+                            tokens = _tok_string(decomment)
+                            parts = tokens + parts
+                    elif front.pptype == 'pop_macro':
+                        self.macro_depth -= 1
+                        assert self.macro_depth >= 0
+                    elif front.substid is not None:
+                        if enabled:
+                            # if not front.substid in lmacros:
+                            #     raise Exception("substitute unknown identifier! (%s)" % str(front))
+                            if front.substid in lmacros:
+                                tokens = _tok_string(lmacros[front.substid].expansion)
+                                tokens.append(vpp_match(None, 'pop_macro', front.substid, None, None, None, None, None))
+                                parts = tokens + parts
+                                self.macro_depth += 1
+                                if self.macro_depth > 30:
+                                    raise Exception("Recursion level exceeded. Nested `includes?")
+                            else:
+                                lbuf += front.mtext
+                    else:
+                        raise Exception("verilog preprocessor: unexpected token '%s' from %s" % (front[1], str(front)))
+
+                return lbuf, parts, lmacros
+
+            return re.sub(r'^\s*\n','', _proc_macros_layer(parts, vpp_macros)[0], flags=re.MULTILINE)
+
         # init dependencies
         self.vpp_filedeps[file_name + library] = []
         cur_iter = 0
         logging.debug("preprocess file %s (of length %d) in library %s",
                       file_name, len(file_content), library)
-        buf = _remove_comment(file_content)
-        protected_region = False
-        while True:
-            new_buf = ""
-            n_expansions = 0
-            cur_iter += 1
-            if cur_iter > 30:
-                raise Exception("Recursion level exceeded. Nested `includes?")
-            for line in _degapize(buf):
-                matches = {}
-                last = None
-                for statement, stmt_regex in six.iteritems(exps):
-                    matches[statement] = re.match(stmt_regex, line)
-                    if matches[statement]:
-                        last = matches[statement]
-                if matches["begin_protected"]:
-                    protected_region = True
-                    continue
-                if matches["end_protected"]:
-                    protected_region = False
-                    continue
-                if protected_region:
-                    continue
-                if matches["ifdef_elsif"]:
-                    cond_true = self._find_macro(last.group(2)) is not None
-                    if last.group(1) == "ifndef":
-                        cond_true = not cond_true
-                    elif last.group(1) == "elsif":
-                        self.vpp_stack.pop()
-                    self.vpp_stack.push(cond_true)
-                    continue
-                elif matches["endif_else"]:
-                    if last.group(1) == "endif":
-                        self.vpp_stack.pop()
-                    else:  # `else
-                        self.vpp_stack.flip()
-                    continue
-                if not self.vpp_stack.all_true():
-                    continue
-                if matches["include"]:
-                    included_file_path = self._search_include(
-                        last.group(1), os.path.dirname(file_name))
-                    logging.debug("File being parsed %s (library %s) "
-                                  "includes %s",
-                                  file_name, library, included_file_path)
-                    line = self._preprocess_file(
-                        file_content=open(included_file_path, "r").read(),
-                        file_name=included_file_path, library=library)
-                    self.vpp_filedeps[file_name + library].append(
-                        included_file_path)
-                    # add the whole include chain to the dependencies of the
-                    # currently parsed file
-                    self.vpp_filedeps[file_name + library].extend(
-                        self.vpp_filedeps[included_file_path + library])
-                    new_buf += line + '\n'
-                    n_expansions += 1
-                    continue
-                elif matches["define"]:
-                    self._parse_macro_def(matches["define"])
+        buf = _filter_protected_regions(_remove_comment(file_content))
 
-                def do_expand(what):
-                    """Function to be applied by re.sub to every match of the
-                    vl_macro_expand in the Verilof code -- group() returns
-                    positive matches as indexed plain strings."""
-                    if what.group(1) in self.vpp_keywords:
-                        return '`' + what.group(1)
-                    macro = self._find_macro(what.group(1))
-                    if macro:
-                        return macro.expansion
-                    else:
-                        logging.error("No expansion for macro '`%s' (%s) (%s)",
-                                      what.group(1), line[:50]
-                                      if len(line) > 50 else line, file_name)
-                repl_line = re.sub(vl_macro_expand, do_expand, line)
-                new_buf += repl_line + '\n'
-                # if there was any expansion, then keep on iterating
-                if repl_line != line:
-                    n_expansions += 1
-            buf = new_buf
-            if n_expansions == 0:
-                return new_buf
+        return _handle_macros(buf)
 
     def preprocess(self, vlog_file):
         """Assign the provided 'vlog_file' to the associated class property
@@ -573,7 +573,7 @@ class VerilogParser(DepParser):
             dep_file.add_relation(
                 DepRelation("%s.%s" % (dep_file.library, text.group(1)),
                             DepRelation.USE, DepRelation.PACKAGE))
-        re.subn(import_pattern, do_imports, buf)
+        import_pattern.subn(do_imports, buf)
         # packages
         m_inside_package = re.compile(
             r"package\s+(\w+)\s*(?:\(.*?\))?\s*(.+?)endpackage",
@@ -589,16 +589,19 @@ class VerilogParser(DepParser):
             dep_file.add_relation(
                 DepRelation("%s.%s" % (dep_file.library, text.group(1)),
                             DepRelation.PROVIDE, DepRelation.PACKAGE))
-        re.subn(m_inside_package, do_package, buf)
+        m_inside_package.subn(do_package, buf)
 
         # modules and instantiations
         m_inside_module = re.compile(
-            r"(?:module|interface)\s+(\w+)\s*(?:\(.*?\))?\s*(.+?)"
+            r"(?:module|interface)\s+(\w+)\s*(?:#\s*\(.*?\)\s*)?(?:\(.*?\))?\s*;\s*(.+?)"
             r"(?:endmodule|endinterface)",
             re.DOTALL | re.MULTILINE)
         m_instantiation = re.compile(
-            r"(?:\A|\s*)\s*(\w+)\s+(?:#\s*\(.*?\)\s*)?(\w+)\s*\(.*?\)\s*",
+            r"\s*\b(\w+)\s+(?:#\s*\(.*?\)\s*)?(\w+)\s*(?:\[.*?\]\s*)?\(.*?\)$",
             re.DOTALL | re.MULTILINE)
+
+        m_stmt = re.compile(r'''(?:\s*(?:(?:\b(?:function|task)\b.*?\bend(?:function|task)\b)|(?:\bbegin(?:\s*:\s*\w+)?)|(?:\bend\b(?:\s*:\s*\w+)?)|(?:end(?:generate|case)\b)|(?:\b(?:case|if|for)\s*\(.*?\))|(?:\b(?:else|generate)\b)|\b(?:assign|localparam|wire|logic|reg)\b[^;]*?(?:=.*?)?;|\balways(?:_ff|_latch|_comb)?\b\s*(?:@\s*(?:\*|(?:\(.*?\))))?|;)\s*)+''',
+                            re.MULTILINE | re.DOTALL)
 
         def do_module(text):
             """Function to be applied by re.sub to every match of the
@@ -620,12 +623,15 @@ class VerilogParser(DepParser):
                 if mod_name in self.reserved_words:
                     return
                 logging.debug("-> instantiates %s.%s as %s",
-                              dep_file.library, mod_name, text.group(2))
+                              dep_file.library, text.group(1), text.group(2))
                 dep_file.add_relation(
-                    DepRelation("%s.%s" % (dep_file.library, mod_name),
+                    DepRelation("%s.%s" % (dep_file.library, text.group(1)),
                                 DepRelation.USE, DepRelation.MODULE))
-            re.subn(m_instantiation, do_inst, text.group(2))
-        re.subn(m_inside_module, do_module, buf)
+            for stmt in [x for x in m_stmt.split(text.group(2)) if x and x[-1] == ")"]:
+                match = m_instantiation.match(stmt)
+                if match:
+                    do_inst(match)
+        m_inside_module.subn(do_module, buf)
         dep_file.add_relation(
             DepRelation(
                 dep_file.path,

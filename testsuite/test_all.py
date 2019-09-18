@@ -36,13 +36,16 @@ def compare_makefile():
     assert out == ref
     os.remove('Makefile')
 
-def compare_makefile_xilinx():
+def compare_makefile_filter(start):
     ref = open('Makefile.ref', 'r').readlines()
     out = open('Makefile', 'r').readlines()
-    # HDLmake make the path absolute.  Remove this line.
-    out = [l for l in out if not l.startswith("XILINX_INI_PATH")]
+    out = [l for l in out if not l.startswith(start)]
     assert out == ref
     os.remove('Makefile')
+
+def compare_makefile_xilinx():
+    # HDLmake make the path absolute.  Remove this line.
+    compare_makefile_filter("XILINX_INI_PATH")
 
 def run_compare(**kwargs):
     with Config(**kwargs) as _:
@@ -100,7 +103,9 @@ def test_ghdl():
     run_compare(path="008ghdl")
 
 def test_icestorm():
-    run_compare(path="009icestorm")
+    with Config(path="009icestorm") as _:
+        hdlmake.main.hdlmake([])
+        compare_makefile_filter("TOOL_PATH")
 
 def test_isim():
     with Config(path="010isim") as _:

@@ -290,7 +290,9 @@ def test_no_files():
     run([], path="042nofiles")
 
 def test_no_bin():
-    run_compare(path="061err_nobin", fakebin="no_fakebin")
+    with Config(path="061err_nobin", fakebin="no_fakebin") as _:
+        hdlmake.main.hdlmake([])
+        compare_makefile_xilinx()
 
 def test_local043():
     run_compare(path="043local_fetch")

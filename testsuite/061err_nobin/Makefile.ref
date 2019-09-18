@@ -8,7 +8,6 @@ PWD := $(shell pwd)
 TOP_MODULE := gate3_tb
 FUSE_OUTPUT ?= isim_proj
 
-XILINX_INI_PATH := /home/tgingold/Repositories/ohwr/hdl-make/vhdl/hdp/lin64
 
 VHPCOMP_FLAGS := -intstyle default -incremental -initfile xilinxsim.ini 
 VLOGCOMP_FLAGS := -intstyle default -incremental -initfile xilinxsim.ini 

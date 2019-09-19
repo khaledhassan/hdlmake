@@ -4,7 +4,6 @@
 ########################################
 
 TOP_MODULE := gate
-PWD := $(shell pwd)
 PROJECT := gate_prj
 PROJECT_FILE := $(PROJECT).qpf
 TOOL_PATH := 

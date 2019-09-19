@@ -4,7 +4,6 @@
 ########################################
 
 TOP_MODULE := gate2
-PWD := $(shell pwd)
 PROJECT := gate2
 PROJECT_FILE := $(PROJECT).
 TCL_INTERPRETER := yosys -c

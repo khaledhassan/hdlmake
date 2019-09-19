@@ -4,7 +4,6 @@
 ########################################
 
 TOP_MODULE := gate_tb
-PWD := $(shell pwd)
 
 MODELSIM_INI_PATH := ../linux_fakebin/..
 

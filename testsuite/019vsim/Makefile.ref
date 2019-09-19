@@ -4,7 +4,6 @@
 ########################################
 
 TOP_MODULE := gate
-PWD := $(shell pwd)
 
 #target for performing local simulation
 local: sim_pre_cmd simulation sim_post_cmd

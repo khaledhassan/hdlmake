@@ -4,7 +4,6 @@
 ########################################
 
 TOP_MODULE := gate
-PWD := $(shell pwd)
 
 MODELSIM_INI_PATH := fake_bin/..
 

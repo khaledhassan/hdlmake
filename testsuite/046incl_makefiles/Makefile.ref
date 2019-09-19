@@ -7,7 +7,6 @@ include a.mk
 include b.mk
 
 TOP_MODULE := gate
-PWD := $(shell pwd)
 
 MODELSIM_INI_PATH := ../linux_fakebin/..
 

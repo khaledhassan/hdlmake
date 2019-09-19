@@ -4,7 +4,6 @@
 ########################################
 
 TOP_MODULE := gate
-PWD := $(shell pwd)
 PROJECT := gate
 PROJECT_FILE := $(PROJECT).xise
 TOOL_PATH := 

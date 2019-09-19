@@ -4,7 +4,6 @@
 ########################################
 
 ## variables #############################
-PWD := $(shell pwd)
 TOP_MODULE := gate3_tb
 FUSE_OUTPUT ?= isim_proj
 

@@ -4,7 +4,6 @@
 ########################################
 
 TOP_MODULE := gate3
-PWD := $(shell pwd)
 
 GHDL := ghdl
 GHDL_OPT := 

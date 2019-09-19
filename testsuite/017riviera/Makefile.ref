@@ -4,7 +4,6 @@
 ########################################
 
 TOP_MODULE := gate
-PWD := $(shell pwd)
 
 
 VCOM_FLAGS := -quiet -2008 

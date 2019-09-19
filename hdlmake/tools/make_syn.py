@@ -54,7 +54,6 @@ class ToolSyn(ToolMakefile):
             tcl_interpreter = self._tool_info["linux_bin"]
         top_parameter = """\
 TOP_MODULE := {top_module}
-PWD := $(shell pwd)
 PROJECT := {project_name}
 PROJECT_FILE := $(PROJECT).{project_ext}
 TOOL_PATH := {tool_path}

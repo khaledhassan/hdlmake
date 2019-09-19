@@ -87,7 +87,6 @@ class ToolISim(ToolSim):
             # Ensure the path is absolute and normalized
             return os.path.abspath(xilinx_ini_path)
         self.writeln("""## variables #############################
-PWD := $(shell pwd)
 TOP_MODULE := """ + self.manifest_dict.get("sim_top", '') + """
 FUSE_OUTPUT ?= isim_proj
 

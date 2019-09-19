@@ -44,7 +44,6 @@ class ToolSim(ToolMakefile):
         """Generic method to write the simulation Makefile top section"""
         top_parameter = """\
 TOP_MODULE := {top_module}
-PWD := $(shell pwd)
 """
         self.writeln(top_parameter.format(
             top_module=self.manifest_dict["sim_top"]))

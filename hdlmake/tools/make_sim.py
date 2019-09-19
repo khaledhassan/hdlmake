@@ -3,7 +3,6 @@
 from __future__ import absolute_import
 import os
 import sys
-import string
 import logging
 
 from .makefile import ToolMakefile
@@ -43,11 +42,11 @@ class ToolSim(ToolMakefile):
 
     def _makefile_sim_top(self):
         """Generic method to write the simulation Makefile top section"""
-        top_parameter = string.Template("""\
-TOP_MODULE := ${top_module}
-PWD := $$(shell pwd)
-""")
-        self.writeln(top_parameter.substitute(
+        top_parameter = """\
+TOP_MODULE := {top_module}
+PWD := $(shell pwd)
+"""
+        self.writeln(top_parameter.format(
             top_module=self.manifest_dict["sim_top"]))
 
     def _makefile_sim_options(self):
@@ -145,14 +144,14 @@ PWD := $$(shell pwd)
         """Generic method to write the simulation Makefile user commands"""
         sim_pre_cmd = self.manifest_dict.get("sim_pre_cmd", '')
         sim_post_cmd = self.manifest_dict.get("sim_post_cmd", '')
-        sim_command = string.Template("""# USER SIM COMMANDS
+        sim_command = """# USER SIM COMMANDS
 sim_pre_cmd:
-\t\t${sim_pre_cmd}
+\t\t{sim_pre_cmd}
 sim_post_cmd:
-\t\t${sim_post_cmd}
-""")
-        self.writeln(sim_command.substitute(sim_pre_cmd=sim_pre_cmd,
-                                            sim_post_cmd=sim_post_cmd))
+\t\t{sim_post_cmd}
+"""
+        self.writeln(sim_command.format(sim_pre_cmd=sim_pre_cmd,
+                                        sim_post_cmd=sim_post_cmd))
 
     def _makefile_sim_clean(self):
         """Generic method to write the simulation Makefile user clean target"""

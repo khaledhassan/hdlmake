@@ -172,7 +172,7 @@ def set_logging_level(options):
     if not isinstance(numeric_level, int):
         raise Exception('Invalid log level: %s' % options.log)
 
-    if not shell.check_windows() and options.logfile == None:
+    if not shell.check_windows_tools() and options.logfile == None:
         logging.basicConfig(
             format=colored(
                 "%(levelname)s",

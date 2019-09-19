@@ -48,7 +48,7 @@ class MakeSyn(ToolMakefile):
 
     def _makefile_syn_top(self):
         """Create the top part of the synthesis Makefile"""
-        if shell.check_windows():
+        if shell.check_windows_tools():
             tcl_interpreter = self._tool_info["windows_bin"]
         else:
             tcl_interpreter = self._tool_info["linux_bin"]
@@ -125,14 +125,14 @@ endif""")
             for command in self._tcl_controls["files"].split('\n'):
                 tcl_command.append(echo_command.format(command))
             command_string = "\n".join(tcl_command)
-            if shell.check_windows():
+            if shell.check_windows_commands():
                 command_string = command_string.replace("'", "")
             self.writeln(command_string)
         for filetype in sources_list:
             filetype_string = ('\t\t@$(foreach sourcefile,'
                 ' $(SOURCES_{0}), echo "{1}" >> $@ &)'.format(
                 filetype.__name__, fileset_dict[filetype]))
-            if shell.check_windows():
+            if shell.check_windows_commands():
                 filetype_string = filetype_string.replace(
                     '"', '')
             self.writeln(filetype_string)
@@ -155,7 +155,7 @@ endif""")
                 for command in self._tcl_controls[stage].split('\n'):
                     tcl_command.append(echo_command.format(command))
                 command_string = "\n".join(tcl_command)
-                if shell.check_windows():
+                if shell.check_windows_commands():
                     command_string = command_string.replace(
                         "'", "")
                 self.writeln("""\

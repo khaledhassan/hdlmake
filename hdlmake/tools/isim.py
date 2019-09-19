@@ -74,7 +74,7 @@ class ToolISim(MakeSim):
             xilinx_dir = str(os.path.join(
                 self.manifest_dict["sim_path"], "..", ".."))
             hdl_language = 'vhdl'  # 'verilog'
-            if shell.check_windows():
+            if shell.check_windows_tools():
                 os_prefix = 'nt'
             else:
                 os_prefix = 'lin'

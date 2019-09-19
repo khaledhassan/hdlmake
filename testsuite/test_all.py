@@ -12,7 +12,8 @@ class Config(object):
     def __init__(self, path=None, check_windows=False, fakebin="linux_fakebin"):
         self.path = path
         self.prev_env_path = os.environ['PATH']
-        self.prev_check_windows = hdlmake.util.shell.check_windows
+        self.prev_check_windows_commands = hdlmake.util.shell.check_windows_commands
+        self.prev_check_windows_tools = hdlmake.util.shell.check_windows_tools
         self.check_windows = check_windows
         self.fakebin = fakebin
 
@@ -22,13 +23,15 @@ class Config(object):
             + self.prev_env_path)
         if self.path is not None:
             os.chdir(self.path)
-        hdlmake.util.shell.check_windows = (lambda : self.check_windows)
+        hdlmake.util.shell.check_windows_tools = (lambda : self.check_windows)
+        hdlmake.util.shell.check_windows_commands = (lambda : self.check_windows)
 
     def __exit__(self, *_):
         if self.path is not None:
             os.chdir("..")
         os.environ['PATH'] = self.prev_env_path
-        hdlmake.util.shell.check_windows = self.prev_check_windows
+        hdlmake.util.shell.check_windows_tools = self.prev_check_windows_tools
+        hdlmake.util.shell.check_windows_commands = self.prev_check_windows_commands
 
 def compare_makefile():
     ref = open('Makefile.ref', 'r').read()
@@ -399,7 +402,7 @@ def test_dep_level():
     run(['list-files', '--top', 'level2'], path="053vlog_dep_level")
 
 def test_modelsim_windows():
-    assert hdlmake.util.shell.check_windows() is False
+    assert hdlmake.util.shell.check_windows_tools() is False
     run_compare(path="057msim_windows", check_windows=True)
 
 def test_nosim_tool():

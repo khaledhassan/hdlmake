@@ -74,7 +74,7 @@ class ToolMakefile(object):
 
     def _get_name_bin(self):
         """Get the name and binary values"""
-        if shell.check_windows():
+        if shell.check_windows_tools():
             bin_name = self._tool_info['windows_bin']
         else:
             bin_name = self._tool_info['linux_bin']
@@ -137,7 +137,7 @@ class ToolMakefile(object):
         self.writeln("clean:")
         tmp = "\t\t" + shell.del_command() + " $(CLEAN_TARGETS)"
         self.writeln(tmp)
-        if shell.check_windows():
+        if shell.check_windows_commands():
             tmp = "\t\t@-" + shell.rmdir_command() + \
             " $(CLEAN_TARGETS) >nul 2>&1"
             self.writeln(tmp)
@@ -170,7 +170,7 @@ class ToolMakefile(object):
         if not self._initialized:
             self._initialized = True
             self.initialize()
-        if shell.check_windows():
+        if shell.check_windows_commands():
             self._file.write(line.replace('\\"', '"'))
         else:
             self._file.write(line)

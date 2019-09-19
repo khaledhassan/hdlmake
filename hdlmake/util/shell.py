@@ -39,7 +39,7 @@ def run(command):
             stdout=PIPE,
             stdin=PIPE,
             stderr=PIPE,
-            close_fds=not check_windows(),
+            close_fds=not check_windows_tools(), # FIXME: comment
             shell=True)
         lines = command_out.stdout.readlines()
         if len(lines) == 0:
@@ -56,17 +56,19 @@ def tclpath(path):
     return path.replace(slash_char(), "/")
 
 
-def check_windows():
-    """Check if we are operating on a Windows filesystem"""
-    if platform.system() == 'Windows' or sys.platform == 'cygwin':
-        return True
-    else:
-        return False
+def check_windows_tools():
+    """Check if we are using windows version of synthesis/simulation tools"""
+    return platform.system() == 'Windows' or sys.platform == 'cygwin'
+
+def check_windows_commands():
+    """Check if we are using windows commands (del/type).
+       False on cygwin"""
+    return platform.system() == 'Windows'
 
 
 def del_command():
     """Get a string with the O.S. specific delete command"""
-    if check_windows():
+    if check_windows_commands():
         return "del /s /q /f"
     else:
         return "rm -rf"
@@ -74,7 +76,7 @@ def del_command():
 
 def rmdir_command():
     """Get a string with the O.S. specific remove directory command"""
-    if check_windows():
+    if check_windows_commands():
         return "rmdir /s /q"
     else:
         return "rm -rf"
@@ -82,7 +84,7 @@ def rmdir_command():
 
 def copy_command():
     """Get a string with the O.S. specific copy command"""
-    if check_windows():
+    if check_windows_commands():
         return "copy"
     else:
         return "cp"
@@ -90,7 +92,7 @@ def copy_command():
 
 def mkdir_command():
     """Get a string with the O.S. specific mkdir command"""
-    if check_windows():
+    if check_windows_commands():
         return "mkdir"
     else:
         return "mkdir -p"
@@ -98,7 +100,7 @@ def mkdir_command():
 
 def touch_command():
     """Get a string with the O.S. specific mkdir command"""
-    if check_windows():
+    if check_windows_commands():
         return "type nul >>"
     else:
         return "touch"
@@ -117,7 +119,7 @@ def which(filename):
 
 def slash_char():
     """Get a string with the O.S. specific path separator"""
-    if check_windows():
+    if check_windows_tools():
         return "\\"
     else:
         return "/"

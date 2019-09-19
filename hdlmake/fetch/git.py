@@ -119,7 +119,7 @@ class Git(Fetcher):
             config_content = Popen("git config -f .gitmodules --list",
                                       stdout=PIPE,
                                       stdin=PIPE,
-                                      close_fds=not shell.check_windows(),
+                                      close_fds=not shell.check_windows_tools(),
                                       shell=True)
             config_lines = [line.strip().decode('utf-8') for line
                             in config_content.stdout.readlines()]

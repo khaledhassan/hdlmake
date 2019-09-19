@@ -118,7 +118,7 @@ $(TCL_CLOSE)'''
         'translate': _ISE_RUN.format("Translate"),
         'map': _ISE_RUN.format("Map"),
         'par': _ISE_RUN.format("Place "
-            + ("^&" if shell.check_windows() else "'&'")
+            + ("^&" if shell.check_windows_tools() else "'&'")
             + " Route"),
         'bitstream': _ISE_RUN.format("Generate Programming File"),
         'install_source': "*.bit *.bin"}
@@ -151,7 +151,7 @@ $(TCL_CLOSE)'''
         syn_properties = self.manifest_dict.get("syn_properties")
         project_new = []
         project_tcl = self._tcl_controls["project"]
-        if shell.check_windows():
+        if shell.check_windows_commands():
             tmp = 'project set "{0}" "{1}"'
         else:
             tmp = 'project set \\"{0}\\" \\"{1}\\"'

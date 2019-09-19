@@ -25,11 +25,11 @@
 
 
 from __future__ import absolute_import
-from .make_syn import ToolSyn
+from .make_syn import MakeSyn
 from hdlmake.srcfile import VHDLFile, VerilogFile, SDCFile, PDCFile
 
 
-class ToolLibero(ToolSyn):
+class ToolLibero(MakeSyn):
 
     """Class providing the interface for Microsemi Libero IDE synthesis"""
 

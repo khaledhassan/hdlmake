@@ -86,8 +86,8 @@ SYN_GRADE := ${syn_grade}
         command_list = ["create", "open", "save", "close"]
         for command in command_list:
             if command in self._tcl_controls:
-                self.writeln('TCL_{1} := {0}'.format(
-                    self._tcl_controls[command], command.upper()))
+                self.writeln('TCL_{} := {}'.format(
+                    command.upper(), self._tcl_controls[command]))
         self.writeln("""\
 ifneq ($(wildcard $(PROJECT_FILE)),)
 TCL_CREATE := $(TCL_OPEN)

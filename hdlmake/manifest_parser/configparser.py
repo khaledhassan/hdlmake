@@ -34,14 +34,12 @@ import contextlib
 
 
 @contextlib.contextmanager
-def stdout_io(stdout=None):
+def capture_stdout():
     """This is a function used to grab the stdout from
     the executed Manifest.py files"""
     old = sys.stdout
-    if stdout is None:
-        stdout = StringIO()
-    sys.stdout = stdout
-    yield stdout
+    sys.stdout = StringIO()
+    yield sys.stdout
     sys.stdout = old
 
 
@@ -251,7 +249,7 @@ types:[<type 'int'>]
         """method that acts as an 'exec' wraper to run the Python code"""
         options = {}
         try:
-            with stdout_io() as stdout_aux:
+            with capture_stdout() as stdout_aux:
                 root_path = os.getcwd()
                 exec_path = os.path.dirname(self.config_file)
                 os.chdir(exec_path)
@@ -260,22 +258,19 @@ types:[<type 'int'>]
             printed = stdout_aux.getvalue()
             if len(printed) > 0:
                 logging.info(
-                    "The manifest inside " +
-                    self.config_file +
-                    " tried to print something:")
+                    "The manifest inside {} tried to print something:".format(
+                        self.config_file))
                 for line in printed.split('\n'):
                     print("> " + line)
         except SyntaxError as error_syntax:
-            raise Exception("Invalid syntax in the manifest file " +
-                            self.config_file + ":\n" + str(error_syntax) +
-                            content)
+            raise Exception("Invalid syntax in the manifest file {}:\n {}{}".format(
+                            self.config_file, str(error_syntax), content))
         except SystemExit as error_exit:
-            raise Exception("Exit requested by the manifest file " +
-                            self.config_file + ":\n" + str(error_exit) +
-                            content)
+            raise Exception("Exit requested by the manifest file {}:\n{}{}".format(
+                            self.config_file, str(error_exit), content))
         except:
-            logging.error("Encountered unexpected error while parsing " +
-                          self.config_file)
+            logging.error("Encountered unexpected error while parsing {}".format(
+                          self.config_file))
             logging.error(content)
             print(str(sys.exc_info()[0]) + ':' + str(sys.exc_info()[1]))
             raise

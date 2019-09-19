@@ -3,7 +3,6 @@
 from __future__ import absolute_import
 import os, sys
 import logging
-import string
 
 from .makefile import ToolMakefile
 from hdlmake.util import shell
@@ -53,23 +52,23 @@ class ToolSyn(ToolMakefile):
             tcl_interpreter = self._tool_info["windows_bin"]
         else:
             tcl_interpreter = self._tool_info["linux_bin"]
-        top_parameter = string.Template("""\
-TOP_MODULE := ${top_module}
-PWD := $$(shell pwd)
-PROJECT := ${project_name}
-PROJECT_FILE := $$(PROJECT).${project_ext}
-TOOL_PATH := ${tool_path}
-TCL_INTERPRETER := ${tcl_interpreter}
-ifneq ($$(strip $$(TOOL_PATH)),)
-TCL_INTERPRETER := $$(TOOL_PATH)/$$(TCL_INTERPRETER)
+        top_parameter = """\
+TOP_MODULE := {top_module}
+PWD := $(shell pwd)
+PROJECT := {project_name}
+PROJECT_FILE := $(PROJECT).{project_ext}
+TOOL_PATH := {tool_path}
+TCL_INTERPRETER := {tcl_interpreter}
+ifneq ($(strip $(TOOL_PATH)),)
+TCL_INTERPRETER := $(TOOL_PATH)/$(TCL_INTERPRETER)
 endif
 
-SYN_FAMILY := ${syn_family}
-SYN_DEVICE := ${syn_device}
-SYN_PACKAGE := ${syn_package}
-SYN_GRADE := ${syn_grade}
-""")
-        self.writeln(top_parameter.substitute(
+SYN_FAMILY := {syn_family}
+SYN_DEVICE := {syn_device}
+SYN_PACKAGE := {syn_package}
+SYN_GRADE := {syn_grade}
+"""
+        self.writeln(top_parameter.format(
             tcl_interpreter=tcl_interpreter,
             project_name=os.path.splitext(
                 self.manifest_dict["syn_project"])[0],

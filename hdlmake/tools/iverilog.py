@@ -26,11 +26,11 @@
 from __future__ import absolute_import
 import string
 
-from .make_sim import ToolSim
+from .make_sim import MakeSim
 from hdlmake.srcfile import VerilogFile, VHDLFile, SVFile
 
 
-class ToolIVerilog(ToolSim):
+class ToolIVerilog(MakeSim):
 
     """Class providing the interface for Icarus Verilog simulator"""
 

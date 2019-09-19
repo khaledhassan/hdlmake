@@ -27,13 +27,13 @@ from __future__ import absolute_import
 import os
 import string
 
-from .make_sim import ToolSim
+from .make_sim import MakeSim
 from hdlmake.util import shell
 from hdlmake.srcfile import VerilogFile, VHDLFile, SVFile
 import six
 
 
-class VsimMakefileWriter(ToolSim):
+class VsimMakefileWriter(MakeSim):
 
     """A Makefile writer for simulation suitable for vsim based simulators.
 

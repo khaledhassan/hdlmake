@@ -87,6 +87,12 @@ def _action_runner(modules_pool):
         logging.info("No command selected")
 
 
+def _get_version_string(prog):
+    cmd = 'win' if shell.check_windows_commands() else 'unx'
+    tool = 'win' if shell.check_windows_tools() else 'unx'
+    return "{} {} [tool:{} cmd:{}]".format(prog, __version__, tool, cmd)
+
+
 def _get_parser():
     """This is the parser function, where options and commands are defined.
     """
@@ -145,7 +151,7 @@ def _get_parser():
     parser.add_argument(
         '-v', '--version', action='version',
         help="print the version of this program",
-        version=parser.prog + " " + __version__)
+        version=_get_version_string(parser.prog))
     parser.add_argument(
         '-a', '--all', action='store_true', dest="all_files",
         help="use all the listed files, do not solve the fileset")

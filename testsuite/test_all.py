@@ -9,12 +9,14 @@ import pytest
 import shutil
 
 class Config(object):
-    def __init__(self, path=None, check_windows=False, fakebin="linux_fakebin"):
+    def __init__(self, path=None, my_os='unx', fakebin="linux_fakebin"):
         self.path = path
         self.prev_env_path = os.environ['PATH']
         self.prev_check_windows_commands = hdlmake.util.shell.check_windows_commands
         self.prev_check_windows_tools = hdlmake.util.shell.check_windows_tools
-        self.check_windows = check_windows
+        assert my_os in ('unx', 'windows', 'cygwin')
+        self.check_windows_commands = my_os == 'windows'
+        self.check_windows_tools = my_os in ('windows', 'cygwin')
         self.fakebin = fakebin
 
     def __enter__(self):
@@ -23,8 +25,8 @@ class Config(object):
             + self.prev_env_path)
         if self.path is not None:
             os.chdir(self.path)
-        hdlmake.util.shell.check_windows_tools = (lambda : self.check_windows)
-        hdlmake.util.shell.check_windows_commands = (lambda : self.check_windows)
+        hdlmake.util.shell.check_windows_tools = (lambda : self.check_windows_tools)
+        hdlmake.util.shell.check_windows_commands = (lambda : self.check_windows_commands)
 
     def __exit__(self, *_):
         if self.path is not None:
@@ -63,7 +65,10 @@ def test_ise():
     run_compare(path="001ise")
 
 def test_ise_windows():
-    run_compare(path="071ise_windows", check_windows=True)
+    run_compare(path="071ise_windows", my_os='windows')
+
+def test_ise_cygwin():
+    run_compare(path="082ise_cygwin", my_os='cygwin')
 
 def test_makefile_002():
     run_compare(path="002msim")
@@ -97,7 +102,7 @@ def test_noact():
         hdlmake.main.hdlmake(['list-mods', '--with-files'])
 
 def test_ahdl():
-    run_compare(path="006ahdl", check_windows=True)
+    run_compare(path="006ahdl", my_os='windows')
 
 def test_diamond():
     run_compare(path="007diamond")
@@ -117,7 +122,7 @@ def test_isim():
 
 def test_isim_windows():
     with Config(path="060isim_windows",
-                check_windows=True, fakebin="windows_fakebin") as _:
+                my_os='windows', fakebin="windows_fakebin") as _:
         hdlmake.main.hdlmake([])
         compare_makefile_xilinx()
 
@@ -403,7 +408,7 @@ def test_dep_level():
 
 def test_modelsim_windows():
     assert hdlmake.util.shell.check_windows_tools() is False
-    run_compare(path="057msim_windows", check_windows=True)
+    run_compare(path="057msim_windows", my_os='windows')
 
 def test_nosim_tool():
     with pytest.raises(SystemExit) as _:

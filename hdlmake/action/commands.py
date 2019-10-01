@@ -68,7 +68,7 @@ class ActionCore(Action):
         combined_fileset.add(self.privative_fileset)
         self.tool.write_makefile(self.config,
                                  combined_fileset,
-                                 filename=self.options.filename)
+                                 filename=self.options.__dict__.get('filename'))
 
     def _fetch_all(self):
         """Fetch all the modules declared in the design"""

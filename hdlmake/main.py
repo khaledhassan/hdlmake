@@ -43,9 +43,13 @@ def hdlmake(args):
         -- prepare the global module containing the heavy common stuff
     """
 
+    # Command 'makefile' is impled by '-f'.
+    if len(args) == 2 and args[0] in ('-f', '--filename'):
+        args.insert(0, 'makefile')
+
     # Options
     parser = _get_parser()
-    options = _get_options(args, parser)
+    options = parser.parse_args(args)
 
     try:
         set_logging_level(options)
@@ -71,7 +75,7 @@ def _action_runner(modules_pool):
     options = modules_pool.options
     if options.command == "manifest-help":
         ManifestParser().print_help()
-    elif options.command == "makefile":
+    elif options.command == "makefile" or options.command is None:
         modules_pool.makefile()
     elif options.command == "fetch":
         modules_pool.fetch()
@@ -83,8 +87,8 @@ def _action_runner(modules_pool):
         modules_pool.list_files()
     elif options.command == "tree":
         modules_pool.generate_tree()
-    elif options.command is None:
-        logging.info("No command selected")
+    else:
+        raise AssertionError
 
 
 def _get_version_string(prog):
@@ -102,18 +106,22 @@ def _get_parser():
                  + "and fetching IP-Core libraries from remote repositories.")
     parser = argparse.ArgumentParser("hdlmake", description=description)
     subparsers = parser.add_subparsers(title="commands", dest="command")
+
     makefile = subparsers.add_parser(
         "makefile",
         help="write the Makefile (default action for hdlmake)")
     makefile.add_argument(
         "-f", "--filename", default=None, dest="filename",
         help="name for the Makefile file to be created")
+
     subparsers.add_parser(
         "fetch",
         help="fetch and/or update all of the remote modules")
+
     subparsers.add_parser(
         "clean",
         help="clean all of the already fetched remote modules")
+
     listmod = subparsers.add_parser(
         "list-mods",
         help="list all modules together with their files")
@@ -123,6 +131,7 @@ def _get_parser():
     listmod.add_argument(
         "--terse", default=False, action="store_true", dest="terse",
         help="do not print comments")
+
     listfiles = subparsers.add_parser(
         "list-files",
         help="list all of the files in the design hierarchy")
@@ -135,6 +144,7 @@ def _get_parser():
     listfiles.add_argument(
         "--top", dest="top", default=None,
         help="print only those files required to build 'top'")
+
     tree = subparsers.add_parser(
         "tree",
         help="generate a module hierarchy tree graph")
@@ -145,9 +155,11 @@ def _get_parser():
         "--mode", dest="mode", default="mods",
         help="set the working mode for the tree generator: "
              "(mods, dfs, bfs)")
+
     subparsers.add_parser(
         "manifest-help",
         help="print manifest file variables description")
+
     parser.add_argument(
         '-v', '--version', action='version',
         help="print the version of this program",
@@ -194,19 +206,6 @@ def set_logging_level(options):
             level=numeric_level,
             filename=options.logfile)
     logging.debug(str(options))
-
-
-def _get_options(args, parser):
-    """Function that decodes and set the provided command user options"""
-    options = None
-    if len(args) == 0:
-        options = parser.parse_args(['makefile'])
-    elif len(args) == 2 and (
-             args[0] == '-f' or args[0] == '--filename'):
-        options = parser.parse_args(['makefile'] + args)
-    else:
-        options = parser.parse_args(args)
-    return options
 
 
 def main():

@@ -31,6 +31,17 @@ import logging
 from subprocess import PIPE, Popen, CalledProcessError
 
 
+commands_os = 'auto'
+
+
+def set_commands_os(name):
+    """Select the OS for commands"""
+    global commands_os
+    if name == 'windows' and not check_windows_tools():
+        logging.warning("Setting 'make' to windows may not work on non-windows platforms")
+    commands_os = name
+
+
 def run(command):
     """Execute a command in the shell and print the output lines as a list"""
     try:
@@ -63,7 +74,10 @@ def check_windows_tools():
 def check_windows_commands():
     """Check if we are using windows commands (del/type).
        False on cygwin"""
-    return platform.system() == 'Windows'
+    if commands_os == 'auto':
+        return platform.system() == 'Windows'
+    else:
+        return commands_os == 'windows'
 
 
 def del_command():

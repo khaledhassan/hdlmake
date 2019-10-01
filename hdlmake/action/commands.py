@@ -35,6 +35,7 @@ from hdlmake.fetch.svn import Svn
 from hdlmake.fetch.git import Git, GitSM
 from hdlmake.fetch.local import Local
 from .action import Action
+import hdlmake.util.shell as shell
 
 
 class ActionCore(Action):
@@ -61,6 +62,9 @@ class ActionCore(Action):
 
     def makefile(self):
         """Write the Makefile for the current design"""
+        commands = self.options.__dict__.get('make')
+        if commands:
+            shell.set_commands_os(commands)
         self._check_all_fetched()
         self.build_file_set()
         self.solve_file_set()

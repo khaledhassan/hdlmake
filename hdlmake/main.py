@@ -113,6 +113,15 @@ def _get_parser():
     makefile.add_argument(
         "-f", "--filename", default=None, dest="filename",
         help="name for the Makefile file to be created")
+    makefile.add_argument(
+        "--make", default='auto', dest='make', choices=['auto', 'cygwin', 'windows'],
+        help="select the type of 'make' on windows platforms")
+    makefile.add_argument(
+        "--cygwin", action='store_const', dest='make', const='cygwin',
+        help="select a cygwin 'make' on windows platforms")
+    makefile.add_argument(
+        "--windows", action='store_const', dest='make', const='windows',
+        help="select a mingw/windows 'make' on windows platforms")
 
     subparsers.add_parser(
         "fetch",

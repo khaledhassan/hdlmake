@@ -127,7 +127,7 @@ XILINX_INI_PATH := """ + __get_xilinxsim_ini_dir() +
         self.write('\n')
         # tell how to make libraries
         self.write('LIB_IND := ')
-        self.write(' '.join([lib + shell.slash_char() +
+        self.write(' '.join([lib + shell.makefile_slash_char() +
             "." + lib for lib in libs]))
         self.write('\n')
         self.writeln("""\
@@ -137,7 +137,7 @@ $(VHDL_OBJ): $(LIB_IND) xilinxsim.ini
 
 """)
         self.writeln("xilinxsim.ini: $(XILINX_INI_PATH)" +
-            shell.slash_char() + "xilinxsim.ini")
+            shell.makefile_slash_char() + "xilinxsim.ini")
         self.writeln("\t\t" + shell.copy_command() + " $< .")
         self.writeln("""\
 fuse:
@@ -147,11 +147,11 @@ fuse:
         # ISim does not have a vmap command to insert additional libraries in
         #.ini file.
         for lib in libs:
-            self.write(lib + shell.slash_char() + "." + lib + ":\n")
+            self.write(lib + shell.makefile_slash_char() + "." + lib + ":\n")
             self.write(
                 ' '.join(["\t(" + shell.mkdir_command(), lib, "&&",
                           shell.touch_command(),
-                          lib + shell.slash_char() + "." + lib + " "]))
+                          lib + shell.makefile_slash_char() + "." + lib + " "]))
             # self.write(' '.join(["&&", "echo", "\""+lib+"="+lib+"/."+lib+"\"
             # ", ">>", "xilinxsim.ini) "]))
             self.write(
@@ -188,7 +188,7 @@ fuse:
             self.writeln(
                 ' '.join([fname.rel_path() for fname in vl_file.depends_on]))
             self.write("\t\tvlogcomp -work " + vl_file.library
-                       + "=." + shell.slash_char() + vl_file.library)
+                       + "=." + shell.makefile_slash_char() + vl_file.library)
             self.write(" $(VLOGCOMP_FLAGS) ")
             # if isinstance(vl_file, SVFile):
             #    self.write(" -sv ")
@@ -226,7 +226,7 @@ fuse:
             self.writeln(
                 ' '.join(["\t\tvhpcomp $(VHPCOMP_FLAGS)",
                           "-work",
-                          lib + "=." + shell.slash_char() + lib,
+                          lib + "=." + shell.makefile_slash_char() + lib,
                           "$< "]))
             self.writeln("\t\t@" + shell.mkdir_command() +
                          " $(dir $@) && " + shell.touch_command() + " $@\n")

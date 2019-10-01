@@ -64,7 +64,7 @@ def run(command):
 
 def tclpath(path):
     """Convert a O.S. specific path into a TCL friendly one"""
-    return path.replace(slash_char(), "/")
+    return path.replace(makefile_slash_char(), "/")
 
 
 def check_windows_tools():
@@ -131,9 +131,9 @@ def which(filename):
     return candidates
 
 
-def slash_char():
-    """Get a string with the O.S. specific path separator"""
-    if check_windows_tools():
+def makefile_slash_char():
+    """Return the OS specific path separator for use in makefile"""
+    if check_windows_commands():
         return "\\"
     else:
         return "/"

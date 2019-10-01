@@ -105,7 +105,7 @@ class VsimMakefileWriter(MakeSim):
         self.write('\n')
         # tell how to make libraries
         self.write('LIB_IND := ')
-        self.write(' '.join([lib + shell.slash_char() +
+        self.write(' '.join([lib + shell.makefile_slash_char() +
                    "." + lib for lib in libs]))
         self.write('\n')
         self.writeln()
@@ -121,10 +121,10 @@ class VsimMakefileWriter(MakeSim):
         for filename, filesource in six.iteritems(self.copy_rules):
             self.write(__create_copy_rule(filename, filesource))
         for lib in libs:
-            self.write(lib + shell.slash_char() + "." + lib + ":\n")
+            self.write(lib + shell.makefile_slash_char() + "." + lib + ":\n")
             vmap_command = "vmap $(VMAP_FLAGS)"
             self.write(' '.join(["\t(vlib", lib, "&&", vmap_command, lib, "&&",
-                shell.touch_command(), lib + shell.slash_char() +
+                shell.touch_command(), lib + shell.makefile_slash_char() +
                 "." + lib, ")"]))
             self.write(' '.join(["||", shell.del_command(), lib, "\n"]))
             self.write('\n\n')

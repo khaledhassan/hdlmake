@@ -31,7 +31,7 @@ from hdlmake.util import shell
 from hdlmake.util.termcolor import colored
 
 from .manifest_parser.variables import ManifestParser
-from .action.commands import ActionCore
+from .action.commands import Commands
 from ._version import __version__
 
 
@@ -55,7 +55,7 @@ def hdlmake(args):
         set_logging_level(options)
 
         # Create a ModulePool object, this will become our workspace
-        action = ActionCore(options)
+        action = Commands(options)
         action.load_top_manifest()
         action.run()
 
@@ -70,23 +70,23 @@ def hdlmake(args):
         quit(2)
 
 
-def _action_runner(modules_pool):
+def _action_runner(action):
     """Funtion that decodes and executed the action selected by the user"""
-    options = modules_pool.options
+    options = action.options
     if options.command == "manifest-help":
         ManifestParser().print_help()
     elif options.command == "makefile" or options.command is None:
-        modules_pool.makefile()
+        action.makefile()
     elif options.command == "fetch":
-        modules_pool.fetch()
+        action.fetch()
     elif options.command == "clean":
-        modules_pool.clean()
+        action.clean()
     elif options.command == "list-mods":
-        modules_pool.list_modules()
+        action.list_modules()
     elif options.command == "list-files":
-        modules_pool.list_files()
+        action.list_files()
     elif options.command == "tree":
-        modules_pool.generate_tree()
+        action.generate_tree()
     else:
         raise AssertionError
 
@@ -192,6 +192,7 @@ def _get_parser():
         "--full-error", default=False, action="store_true", dest="full_error",
         help="display full error log with traceback")
     return parser
+
 
 def set_logging_level(options):
     """Set the log level and config (A.K.A. log verbosity)"""

@@ -38,12 +38,12 @@ from .action import Action
 import hdlmake.util.shell as shell
 
 
-class ActionCore(Action):
+class Commands(Action):
 
     """Class that contains the methods for core actions"""
 
     def __init__(self, *args):
-        super(ActionCore, self).__init__(*args)
+        super(Commands, self).__init__(*args)
         self.git_backend = Git()
         self.gitsm_backend = GitSM()
         self.svn_backend = Svn()

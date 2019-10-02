@@ -62,9 +62,12 @@ class Commands(Action):
 
     def makefile(self):
         """Write the Makefile for the current design"""
+        # Handle the --make option
         commands = self.options.__dict__.get('make')
         if commands:
             shell.set_commands_os(commands)
+        # Handle --filename option.
+        filename = self.options.__dict__.get('filename')
         self._check_all_fetched()
         self.build_file_set()
         self.solve_file_set()
@@ -72,7 +75,7 @@ class Commands(Action):
         combined_fileset.add(self.privative_fileset)
         self.tool.write_makefile(self.config,
                                  combined_fileset,
-                                 filename=self.options.__dict__.get('filename'))
+                                 filename=filename)
 
     def _fetch_all(self):
         """Fetch all the modules declared in the design"""

@@ -57,7 +57,8 @@ class Action(object):
         self.top_manifest.parse_manifest()
         self.config = self._get_config_dict()
 
-    def run(self):
+    def setup(self):
+        """Set tool and top_entity"""
         action = self.config.get("action")
         if action == None:
             self.tool = None

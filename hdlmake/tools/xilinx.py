@@ -25,12 +25,12 @@
 
 
 from __future__ import absolute_import
-from .make_syn import MakeSyn
+from .makefilesyn import MakefileSyn
 from hdlmake.srcfile import VHDLFile, VerilogFile, SVFile, TCLFile
 import logging
 
 
-class ToolXilinx(MakeSyn):
+class ToolXilinx(MakefileSyn):
 
     """Class providing the interface for Xilinx Vivado synthesis"""
 

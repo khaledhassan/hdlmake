@@ -25,11 +25,11 @@
 
 from __future__ import absolute_import
 
-from .make_syn import MakeSyn
+from .makefilesyn import MakefileSyn
 from hdlmake.srcfile import VerilogFile, PCFFile
 
 
-class ToolIcestorm(MakeSyn):
+class ToolIcestorm(MakefileSyn):
 
     """Class providing the interface for IceStorm synthesis"""
 

@@ -27,13 +27,13 @@ from __future__ import absolute_import
 import os
 import string
 
-from .make_sim import MakeSim
+from .makefilesim import MakefileSim
 from hdlmake.util import shell
 from hdlmake.srcfile import VerilogFile, VHDLFile, SVFile
 import six
 
 
-class VsimMakefileWriter(MakeSim):
+class MakefileVsim(MakefileSim):
 
     """A Makefile writer for simulation suitable for vsim based simulators.
 
@@ -45,7 +45,7 @@ class VsimMakefileWriter(MakeSim):
     HDL_FILES = {VerilogFile: '', VHDLFile: '', SVFile: ''}
 
     def __init__(self):
-        super(VsimMakefileWriter, self).__init__()
+        super(MakefileVsim, self).__init__()
         # These are variables that will be set in the makefile
         # The key is the variable name, and the value is the variable value
         self.custom_variables = {}
@@ -54,7 +54,7 @@ class VsimMakefileWriter(MakeSim):
         # These are files copied into your working directory by a make rule
         # The key is the filename, the value is the file source path
         self.copy_rules = {}
-        self._hdl_files.update(VsimMakefileWriter.HDL_FILES)
+        self._hdl_files.update(MakefileVsim.HDL_FILES)
 
     def _makefile_sim_options(self):
         """Print the vsim options to the Makefile"""

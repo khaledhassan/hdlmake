@@ -21,12 +21,12 @@ def _check_synthesis_manifest(manifest_dict):
             "syn_top variable must be set in the top manifest.")
 
 
-class MakeSyn(ToolMakefile):
+class MakefileSyn(ToolMakefile):
 
     """Class that provides the synthesis Makefile writing methods and status"""
 
     def __init__(self):
-        super(MakeSyn, self).__init__()
+        super(MakefileSyn, self).__init__()
 
     def write_makefile(self, config, fileset, filename=None):
         """Generate a Makefile for the specific synthesis tool"""

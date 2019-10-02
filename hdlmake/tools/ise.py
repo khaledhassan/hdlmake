@@ -27,7 +27,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 import logging
 
-from .make_syn import MakeSyn
+from .makefilesyn import MakefileSyn
 
 from hdlmake.util import shell
 from hdlmake.srcfile import (VHDLFile, VerilogFile, SVFile,
@@ -48,7 +48,7 @@ ISE_STANDARD_LIBS = ['ieee', 'ieee_proposed', 'iSE', 'simprims', 'std',
                      'synopsys', 'unimacro', 'unisim', 'XilinxCoreLib']
 
 
-class ToolISE(MakeSyn):
+class ToolISE(MakefileSyn):
 
     """Class providing the methods to create and build a Xilinx ISE project"""
 

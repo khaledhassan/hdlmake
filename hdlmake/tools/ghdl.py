@@ -26,11 +26,11 @@
 from __future__ import absolute_import
 import string
 
-from .make_sim import MakeSim
+from .makefilesim import MakefileSim
 from hdlmake.srcfile import VHDLFile
 
 
-class ToolGHDL(MakeSim):
+class ToolGHDL(MakefileSim):
 
     """Class providing the interface for GHDL simulator"""
 

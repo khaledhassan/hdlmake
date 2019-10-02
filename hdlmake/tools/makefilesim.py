@@ -16,12 +16,12 @@ def _check_simulation_manifest(manifest_dict):
         raise Exception("sim_top variable must be set in the top manifest.")
 
 
-class MakeSim(ToolMakefile):
+class MakefileSim(ToolMakefile):
 
     """Class that provides the Makefile writing methods and status"""
 
     def __init__(self):
-        super(MakeSim, self).__init__()
+        super(MakefileSim, self).__init__()
         self._simulator_controls = {}
 
     def write_makefile(self, config, fileset, filename=None):

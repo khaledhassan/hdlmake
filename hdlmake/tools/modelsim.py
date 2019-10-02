@@ -27,10 +27,10 @@ from __future__ import print_function
 from __future__ import absolute_import
 import os
 
-from .sim_makefile_support import VsimMakefileWriter
+from .makefilevsim import MakefileVsim
 
 
-class ToolModelsim(VsimMakefileWriter):
+class ToolModelsim(MakefileVsim):
 
     """Class providing the interface for Mentor Modelsim simulator"""
 

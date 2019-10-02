@@ -25,11 +25,11 @@
 
 
 from __future__ import absolute_import
-from .make_syn import MakeSyn
+from .makefilesyn import MakefileSyn
 from hdlmake.srcfile import EDFFile, LPFFile, VHDLFile, VerilogFile
 
 
-class ToolDiamond(MakeSyn):
+class ToolDiamond(MakefileSyn):
 
     """Class providing the interface for Lattice Diamond synthesis"""
 

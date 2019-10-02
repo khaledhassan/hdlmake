@@ -25,10 +25,10 @@
 
 
 from __future__ import absolute_import
-from .make_sim import MakeSim
+from .makefilesim import MakefileSim
 from hdlmake.srcfile import VerilogFile, VHDLFile, SVFile
 
-class ToolVivadoSim(MakeSim):
+class ToolVivadoSim(MakefileSim):
 
     """Class providing the interface for Xilinx Vivado synthesis"""
 

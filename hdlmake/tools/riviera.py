@@ -25,7 +25,7 @@
 """Module providing support for Aldec Riviera-PRO simulation"""
 
 from __future__ import print_function
-from .sim_makefile_support import VsimMakefileWriter
+from .makefilevsim import MakefileVsim
 
 # as of 2014.06, these are the standard libraries
 # included in an installation
@@ -62,7 +62,7 @@ RIVIERA_STANDARD_LIBS.extend(RIVIERA_XILINX_VHDL_LIBRARIES)
 RIVIERA_STANDARD_LIBS.extend(RIVIERA_XILINX_VLOG_LIBRARIES)
 
 
-class ToolRiviera(VsimMakefileWriter):
+class ToolRiviera(MakefileVsim):
 
     """Class providing the interface for Aldec Riviera-PRO simulator"""
 

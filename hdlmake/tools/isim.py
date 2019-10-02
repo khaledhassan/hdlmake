@@ -30,12 +30,12 @@ import os
 import os.path
 import logging
 
-from .make_sim import MakeSim
+from .makefilesim import MakefileSim
 from hdlmake.util import shell
 from hdlmake.srcfile import VerilogFile, VHDLFile
 
 
-class ToolISim(MakeSim):
+class ToolISim(MakefileSim):
 
     """Class providing the interface for Xilinx ISim simulator"""
 

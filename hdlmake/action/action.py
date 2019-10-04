@@ -70,13 +70,14 @@ class Action(object):
         self._add(new_module)
         return new_module
 
-    def load_top_manifest(self):
+    def load_all_manifests(self):
         # Top level module.
         assert self.top_manifest is None
         self.top_manifest = self.new_module(parent=None,
                                             url=os.getcwd(),
                                             source=None,
                                             fetchto=".")
+        # Parse the top manifest and all sub-modules.
         self.top_manifest.parse_manifest()
         self.config = self._get_config_dict()
 

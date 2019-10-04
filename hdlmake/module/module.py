@@ -134,22 +134,20 @@ PARSE START: %s
         extra_context["__manifest"] = self.path
 
         # The parse method is where most of the parser action takes place!
-        opt_map = None
         try:
-            opt_map = manifest_parser.parse(config_file=filename, extra_context=extra_context)
+            self.manifest_dict = manifest_parser.parse(config_file=filename, extra_context=extra_context)
         except NameError as name_error:
             raise Exception(
                 "Error while parsing {0}:\n{1}: {2}.".format(
                     self.path, type(name_error), name_error))
-        self.manifest_dict = opt_map
 
         # Process the parsed manifest_dict to assign the module properties
         self.process_manifest()
         self.process_git_submodules()
 
         # Recurse: parse every detected submodule
-        for module_aux in self.submodules():
-            module_aux.parse_manifest()
+        for submod in self.submodules():
+            submod.parse_manifest()
 
         logging.debug("""
 ***********************************************************

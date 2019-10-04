@@ -56,7 +56,7 @@ def hdlmake(args):
 
         # Create a ModulePool object, this will become our workspace
         action = Commands(options)
-        action.load_top_manifest()
+        action.load_all_manifests()
         action.setup()
 
         # Execute the appropriated action for the freshly created modules pool

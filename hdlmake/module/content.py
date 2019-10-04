@@ -21,7 +21,6 @@ class ModuleContent(ModuleConfig):
         self.modules = {'local': [], 'git': [], 'gitsm': [], 'svn': []}
         self.incl_makefiles = []
         self.library = "work"
-        self.action = None
         self.pool = None
         self.top_manifest = None
         self.manifest_dict = {}
@@ -44,9 +43,6 @@ class ModuleContent(ModuleConfig):
             self.library = self.manifest_dict["library"]
         elif self.parent:
             self.library = self.parent.library
-
-        if "action" in self.manifest_dict:
-            self.action = self.manifest_dict["action"].lower()
 
     def _create_file_list_from_paths(self, paths):
         """

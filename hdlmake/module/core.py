@@ -9,6 +9,23 @@ from hdlmake import fetch
 from hdlmake.util import path as path_mod
 
 
+class ModuleArgs(object):
+    """This class is just a container for the main Module args"""
+
+    def __init__(self):
+        self.parent = None
+        self.url = None
+        self.source = 'local'
+        self.fetchto = None
+
+    def set_args(self, parent, url, source, fetchto):
+        """Set the module arguments"""
+        self.parent = parent
+        self.url = url
+        self.source = source or 'local'
+        self.fetchto = fetchto
+
+
 class ModuleConfig(object):
 
     """This class containt the base properties and methods that
@@ -49,7 +66,16 @@ class ModuleConfig(object):
         self.source = source
         self.parent = parent
 
-        if self.source != 'local':
+        if self.source == 'local':
+            self.url, self.branch, self.revision = url, None, None
+
+            if not os.path.exists(url):
+                raise Exception(
+                    "Path to the local module doesn't exist:\n" + url
+                    + "\nThis module was instantiated in: " + str(self.parent))
+            self.path = path_mod.relpath(url)
+            self.isfetched = True
+        else:
             if self.source == 'svn':
                 self.url, self.revision = path_mod.svn_parse(url)
             else:
@@ -69,15 +95,6 @@ class ModuleConfig(object):
                 self.isfetched = False
                 logging.debug("Module %s (parent: %s) is NOT fetched.",
                               url, self.parent.path)
-        else:
-            self.url, self.branch, self.revision = url, None, None
-
-            if not os.path.exists(url):
-                raise Exception(
-                    "Path to the local module doesn't exist:\n" + url
-                    + "\nThis module was instantiated in: " + str(self.parent))
-            self.path = path_mod.relpath(url)
-            self.isfetched = True
 
     def _check_filepath(self, filepath):
         """Check the provided filepath against several conditions"""
@@ -119,7 +136,7 @@ class ModuleCore(ModuleConfig):
         self.action = None
         self.pool = None
         self.top_manifest = None
-        self.manifest_dict = None
+        self.manifest_dict = {}
         super(ModuleCore, self).__init__()
 
     def set_pool(self, pool):

@@ -246,7 +246,7 @@ types:[<type 'int'>]
         return [o.name for o in self.options if o is not None]
 
     def __parser_runner(self, content, extra_context):
-        """method that acts as an 'exec' wraper to run the Python code"""
+        """method that acts as an 'exec' wraper to run the Python code.  Return the locals"""
         options = {}
         try:
             with capture_stdout() as stdout_aux:
@@ -283,7 +283,8 @@ types:[<type 'int'>]
         return open(self.config_file, "r").read()
 
     def parse(self, extra_context=None):
-        """Parse the stored manifest plus arbitrary code"""
+        """Parse the stored manifest plus arbitrary code.  Return a dictionnary
+        of variables defined in the manifest."""
         assert isinstance(extra_context, dict) or extra_context is None
 
         # These HDLMake keys must not be inherited from parent module

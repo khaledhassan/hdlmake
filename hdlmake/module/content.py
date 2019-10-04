@@ -10,24 +10,6 @@ import six
 import os
 
 
-class ModuleArgs(object):
-
-    """This class is just a container for the main Module args"""
-
-    def __init__(self):
-        self.parent = None
-        self.url = None
-        self.source = 'local'
-        self.fetchto = None
-
-    def set_args(self, parent, url, source, fetchto):
-        """Set the module arguments"""
-        self.parent = parent
-        self.url = url
-        self.source = source or 'local'
-        self.fetchto = fetchto
-
-
 class ModuleContent(ModuleCore):
 
     """Class providing the HDLMake module content"""

@@ -47,6 +47,29 @@ class Action(object):
         self._deps_solved = False
         self.options = options
 
+    def _add(self, new_module):
+        """Add the given new module if this is not already in the pool"""
+        assert isinstance(new_module, Module), "Expect a Module instance"
+        if self.__contains(new_module):
+            return
+        if new_module.isfetched:
+            for mod in new_module.submodules():
+                self._add(mod)
+        self.manifests.append(new_module)
+
+    def new_module(self, parent, url, source, fetchto):
+        """Add new module to the pool.
+
+        This is the only way to add new modules to the pool
+        Thanks to it the pool can easily control its content
+        """
+        self._deps_solved = False
+        args = ModuleArgs()
+        args.set_args(parent, url, source, fetchto)
+        new_module = Module(args, self)
+        self._add(new_module)
+        return new_module
+
     def load_top_manifest(self):
         # Top level module.
         assert self.top_manifest is None
@@ -81,20 +104,6 @@ class Action(object):
             self.config["syn_top"] = self.top_entity
         else:
             raise Exception("Unknown requested action: {}".format(action))
-
-    def new_module(self, parent, url, source, fetchto):
-        """Add new module to the pool.
-
-        This is the only way to add new modules to the pool
-        Thanks to it the pool can easily control its content
-        """
-        self._deps_solved = False
-        new_module_args = ModuleArgs()
-        new_module_args.set_args(parent, url, source, fetchto)
-        new_module = Module(new_module_args, self)
-        if not self.__contains(new_module):
-            self._add(new_module)
-        return new_module
 
     def build_complete_file_set(self):
         """Build file set with all the files listed in the complete pool"""
@@ -158,7 +167,7 @@ class Action(object):
         config_dict = {}
         for mod in self.manifests:
             manifest_dict_tmp = mod.manifest_dict
-            if not manifest_dict_tmp == None:
+            if manifest_dict_tmp is not None:
                 if 'fetchto' in manifest_dict_tmp:
                     manifest_dict_tmp['fetchto'] = os.path.relpath(os.path.join(
                         mod.path,
@@ -166,17 +175,6 @@ class Action(object):
                 manifest_dict_tmp.update(config_dict)
                 config_dict = manifest_dict_tmp
         return config_dict
-
-    def _add(self, new_module):
-        """Add the given new module if this is not already in the pool"""
-        assert isinstance(new_module, Module), "Expect a Module instance"
-        if self.__contains(new_module):
-            return False
-        if new_module.isfetched:
-            for mod in new_module.submodules():
-                self._add(mod)
-        self.manifests.append(new_module)
-        return True
 
     def __contains(self, module):
         """Check if the pool contains the given module by checking the URL"""

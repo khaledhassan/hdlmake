@@ -35,7 +35,8 @@ import logging
 from hdlmake.util import path as path_mod
 from hdlmake.util import shell
 from hdlmake.manifest_parser.variables import ManifestParser
-from .content import ModuleContent, ModuleArgs
+from .content import ModuleContent
+from .core import ModuleArgs
 import six
 
 

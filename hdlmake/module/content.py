@@ -28,7 +28,8 @@ class ModuleContent(ModuleConfig):
         super(ModuleContent, self).__init__()
 
     def process_manifest(self):
-        """Process the content section of the manifest_dic"""
+        """Process the content section of the manifest_dict"""
+        logging.debug("Process manifest at: " + os.path.dirname(self.path))
         self._process_manifest_universal()
         self._process_manifest_files()
         self._process_manifest_modules()

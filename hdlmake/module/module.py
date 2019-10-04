@@ -73,14 +73,6 @@ class Module(ModuleContent):
         command_tmp = shell.rmdir_command() + " " + self.path
         shell.run(command_tmp)
 
-    def process_manifest(self):
-        """
-        This method processes the different manifest dictionary sections
-        contained in the action specific inherited Python modules.
-        """
-        logging.debug("Process manifest at: " + os.path.dirname(self.path))
-        super(Module, self).process_manifest()
-
     def parse_manifest(self):
         """
         Create a dictionary from the module Manifest.py and assign it

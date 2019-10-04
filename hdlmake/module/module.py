@@ -143,7 +143,6 @@ PARSE START: %s
 
         # Process the parsed manifest_dict to assign the module properties
         self.process_manifest()
-        self.process_git_submodules()
 
         # Recurse: parse every detected submodule
         for submod in self.submodules():

@@ -34,6 +34,7 @@ class ModuleContent(ModuleConfig):
         self._process_manifest_files()
         self._process_manifest_modules()
         self._process_manifest_makefiles()
+        self._process_git_submodules()
 
     def _process_manifest_universal(self):
         """Method processing the universal manifest directives;
@@ -131,7 +132,7 @@ class ModuleContent(ModuleConfig):
                     parent=self, url=path, source=m, fetchto=fetchto))
             self.modules[m] = mods
 
-    def process_git_submodules(self):
+    def _process_git_submodules(self):
         """Get the submodules if found in the Manifest path"""
         if not self.source == 'gitsm':
             return

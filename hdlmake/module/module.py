@@ -32,9 +32,9 @@ from __future__ import absolute_import
 import os
 import logging
 
-from hdlmake.util import path as path_mod
-from hdlmake.util import shell
-from hdlmake.manifest_parser.manifestparser import ManifestParser
+from ..util import path as path_mod
+from ..util import shell
+from ..manifest_parser.manifestparser import ManifestParser
 from .content import ModuleContent
 from .core import ModuleArgs
 import six

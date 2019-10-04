@@ -28,11 +28,11 @@ import os
 import logging
 import sys
 
-from hdlmake.tools.makefile_writer import load_syn_tool, load_sim_tool
-from hdlmake.util import shell
-from hdlmake import new_dep_solver as dep_solver
-from hdlmake.srcfile import SourceFileSet, VHDLFile, VerilogFile, SVFile
-from hdlmake.module.module import Module, ModuleArgs
+from ..tools.makefile_writer import load_syn_tool, load_sim_tool
+from ..util import shell
+from ..sourcefiles import new_dep_solver as dep_solver
+from ..sourcefiles.srcfile import SourceFileSet, VHDLFile, VerilogFile, SVFile
+from ..module.module import Module, ModuleArgs
 
 class Action(object):
 

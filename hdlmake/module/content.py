@@ -3,8 +3,8 @@ from files to required submodules"""
 
 from __future__ import absolute_import
 import logging
-from hdlmake.fetch.git import Git
-from hdlmake.util import path as path_mod
+from ..fetch.git import Git
+from ..util import path as path_mod
 from .core import ModuleConfig
 import six
 import os
@@ -53,7 +53,7 @@ class ModuleContent(ModuleConfig):
         Build a Source File Set containing the files indicated by the
         provided list of paths
         """
-        from hdlmake.srcfile import create_source_file, SourceFileSet
+        from ..sourcefiles.srcfile import create_source_file, SourceFileSet
         srcs = SourceFileSet()
         # Check if this is the top module and grab the include_dirs
         if self.parent is None:
@@ -81,7 +81,7 @@ class ModuleContent(ModuleConfig):
 
     def _process_manifest_files(self):
         """Process the files instantiated by the HDLMake module"""
-        from hdlmake.srcfile import SourceFileSet
+        from ..sourcefiles.srcfile import SourceFileSet
         # HDL files provided by the module
         if "files" not in self.manifest_dict:
             self.files = SourceFileSet()

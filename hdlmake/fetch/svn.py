@@ -24,7 +24,7 @@
 from __future__ import absolute_import
 import os
 import logging
-from hdlmake.util import path as path_utils
+from ..util import path as path_utils
 from .fetcher import Fetcher
 
 

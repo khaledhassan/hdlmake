@@ -28,7 +28,7 @@ from __future__ import absolute_import
 import os
 import logging
 
-from .util import path as path_mod
+from ..util import path as path_mod
 from .dep_file import DepFile, File
 import six
 
@@ -60,7 +60,7 @@ class VHDLFile(SourceFile):
 
     def __init__(self, path, module, library=None):
         SourceFile.__init__(self, path=path, module=module, library=library)
-        from hdlmake.vhdl_parser import VHDLParser
+        from .vhdl_parser import VHDLParser
         self.parser = VHDLParser(self)
 
 
@@ -71,7 +71,7 @@ class VerilogFile(SourceFile):
     def __init__(self, path, module, library=None,
                  include_dirs=None, is_include=False):
         SourceFile.__init__(self, path=path, module=module, library=library)
-        from hdlmake.vlog_parser import VerilogParser
+        from .vlog_parser import VerilogParser
         self.include_dirs = []
         if include_dirs:
             self.include_dirs.extend(include_dirs)
@@ -185,7 +185,7 @@ class XCIFile(SourceFile):
 
     def __init__(self, path, module, library=None):
         SourceFile.__init__(self, path=path, module=module, library=library)
-        from hdlmake.xci_parser import XCIParser
+        from .xci_parser import XCIParser
         self.parser = XCIParser(self)
 
 XILINX_FILE_DICT = {

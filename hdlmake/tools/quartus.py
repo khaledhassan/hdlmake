@@ -29,11 +29,11 @@ import sys
 import logging
 
 from .makefilesyn import MakefileSyn
-from hdlmake.util import path as path_mod
-from hdlmake.util import shell
-from hdlmake.srcfile import (VHDLFile, VerilogFile, SVFile, DPFFile,
-                             SignalTapFile, SDCFile, QIPFile, QSYSFile,
-                             QSFFile, BSFFile, BDFFile, TDFFile, GDFFile)
+from ..util import path as path_mod
+from ..util import shell
+from ..sourcefiles.srcfile import (VHDLFile, VerilogFile, SVFile, DPFFile,
+                                   SignalTapFile, SDCFile, QIPFile, QSYSFile,
+                                   QSFFile, BSFFile, BDFFile, TDFFile, GDFFile)
 
 
 class ToolQuartus(MakefileSyn):

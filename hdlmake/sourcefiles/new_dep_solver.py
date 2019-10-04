@@ -27,7 +27,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 import logging
 
-from .dep_file import DepFile
+from ..sourcefiles.dep_file import DepFile
 
 
 class DepParser(object):
@@ -125,8 +125,8 @@ def make_dependency_sorted_list(fileset):
 def make_dependency_set(fileset, top_level_entity, extra_modules=None):
     """Create the set of all files required to build the named
      top_level_entity."""
-    from hdlmake.srcfile import SourceFileSet
-    from hdlmake.dep_file import DepRelation
+    from ..sourcefiles.srcfile import SourceFileSet
+    from ..sourcefiles.dep_file import DepRelation
     assert isinstance(fileset, SourceFileSet)
     fset = fileset.filter(DepFile)
 

@@ -22,12 +22,12 @@
 """Module providing graph funtionalities to HDLMake"""
 
 from __future__ import absolute_import
-from hdlmake.util import path
+from ..util import path
 
 import logging
 
 from .action import Action
-from hdlmake.dep_file import DepFile
+from ..sourcefiles.dep_file import DepFile
 
 
 class ActionTree(Action):
@@ -88,8 +88,8 @@ class ActionTree(Action):
             self.build_file_set()
             self.solve_file_set()
 
-            from hdlmake.srcfile import SourceFileSet
-            from hdlmake.dep_file import DepRelation
+            from ..sourcefiles.srcfile import SourceFileSet
+            from ..sourcefiles.dep_file import DepRelation
             assert isinstance(self.parseable_fileset, SourceFileSet)
             fset = self.parseable_fileset.filter(DepFile)
             # Find the file that provides the named top level entity

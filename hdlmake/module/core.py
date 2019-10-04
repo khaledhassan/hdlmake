@@ -5,8 +5,7 @@ import os
 import sys
 import logging
 
-from hdlmake import fetch
-from hdlmake.util import path as path_mod
+from ..util import path as path_mod
 
 
 class ModuleArgs(object):

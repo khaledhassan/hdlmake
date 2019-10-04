@@ -28,7 +28,7 @@ from xml.etree import ElementTree as ET
 
 from .new_dep_solver import DepParser
 from .dep_file import DepRelation
-from hdlmake.srcfile import create_source_file
+from ..sourcefiles.srcfile import create_source_file
 
 class XCIParser(DepParser):
     """Class providing the Xilinx XCI parser"""

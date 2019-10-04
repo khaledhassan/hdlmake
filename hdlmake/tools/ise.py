@@ -29,9 +29,9 @@ import logging
 
 from .makefilesyn import MakefileSyn
 
-from hdlmake.util import shell
-from hdlmake.srcfile import (VHDLFile, VerilogFile, SVFile,
-                             UCFFile, CDCFile, NGCFile, BMMFile, XCOFile)
+from ..util import shell
+from ..sourcefiles.srcfile import (VHDLFile, VerilogFile, SVFile,
+                                   UCFFile, CDCFile, NGCFile, BMMFile, XCOFile)
 
 FAMILY_NAMES = {
     "XC6S": "Spartan6",

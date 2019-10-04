@@ -26,7 +26,7 @@ from __future__ import print_function
 import os
 import logging
 
-from .util import path as path_mod
+from ..util import path as path_mod
 import six
 
 

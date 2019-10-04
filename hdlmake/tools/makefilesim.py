@@ -6,8 +6,8 @@ import sys
 import logging
 
 from .makefile import ToolMakefile
-from hdlmake.util import shell
-from hdlmake.srcfile import VerilogFile, VHDLFile, SVFile
+from ..util import shell
+from ..sourcefiles.srcfile import VerilogFile, VHDLFile, SVFile
 
 
 def _check_simulation_manifest(manifest_dict):

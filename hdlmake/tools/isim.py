@@ -31,8 +31,8 @@ import os.path
 import logging
 
 from .makefilesim import MakefileSim
-from hdlmake.util import shell
-from hdlmake.srcfile import VerilogFile, VHDLFile
+from ..util import shell
+from ..sourcefiles.srcfile import VerilogFile, VHDLFile
 
 
 class ToolISim(MakefileSim):

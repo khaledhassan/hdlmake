@@ -25,7 +25,7 @@
 
 from __future__ import absolute_import
 from .xilinx import ToolXilinx
-from hdlmake.srcfile import (UCFFile, NGCFile, XMPFile, XCOFile, BMMFile)
+from ..sourcefiles.srcfile import (UCFFile, NGCFile, XMPFile, XCOFile, BMMFile)
 
 
 class ToolPlanAhead(ToolXilinx):

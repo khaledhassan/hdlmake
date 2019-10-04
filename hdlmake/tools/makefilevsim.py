@@ -28,8 +28,8 @@ import os
 import string
 
 from .makefilesim import MakefileSim
-from hdlmake.util import shell
-from hdlmake.srcfile import VerilogFile, VHDLFile, SVFile
+from ..util import shell
+from ..sourcefiles.srcfile import VerilogFile, VHDLFile, SVFile
 import six
 
 

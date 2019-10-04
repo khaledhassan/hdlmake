@@ -25,7 +25,7 @@
 
 from __future__ import absolute_import
 from .makefilesim import MakefileSim
-from hdlmake.srcfile import VHDLFile, VerilogFile, SVFile
+from ..sourcefiles.srcfile import VHDLFile, VerilogFile, SVFile
 
 
 class ToolActiveHDL(MakefileSim):

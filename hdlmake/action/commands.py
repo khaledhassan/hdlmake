@@ -28,14 +28,13 @@ import os
 import sys
 import os.path
 
-import hdlmake.fetch as fetch
-import hdlmake.new_dep_solver as dep_solver
-from hdlmake.util import path as path_mod
-from hdlmake.fetch.svn import Svn
-from hdlmake.fetch.git import Git, GitSM
-from hdlmake.fetch.local import Local
+from ..sourcefiles import new_dep_solver as dep_solver
+from ..util import path as path_mod
+from ..fetch.svn import Svn
+from ..fetch.git import Git, GitSM
+from ..fetch.local import Local
 from .action import Action
-import hdlmake.util.shell as shell
+from ..util import shell
 
 
 class Commands(Action):

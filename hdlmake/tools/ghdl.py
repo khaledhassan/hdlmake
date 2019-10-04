@@ -27,7 +27,7 @@ from __future__ import absolute_import
 import string
 
 from .makefilesim import MakefileSim
-from hdlmake.srcfile import VHDLFile
+from ..sourcefiles.srcfile import VHDLFile
 
 
 class ToolGHDL(MakefileSim):

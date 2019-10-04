@@ -26,10 +26,10 @@
 
 from __future__ import absolute_import
 from .xilinx import ToolXilinx
-from hdlmake.srcfile import (VHDLFile, VerilogFile, SVFile,
-                             XDCFile, XCIFile, NGCFile, XMPFile,
-                             XCOFile, COEFile, BDFile, TCLFile, BMMFile,
-                             MIFFile, RAMFile, VHOFile, VEOFile, XCFFile)
+from ..sourcefiles.srcfile import (VHDLFile, VerilogFile, SVFile,
+                                   XDCFile, XCIFile, NGCFile, XMPFile,
+                                   XCOFile, COEFile, BDFile, TCLFile, BMMFile,
+                                   MIFFile, RAMFile, VHOFile, VEOFile, XCFFile)
 
 
 class ToolVivado(ToolXilinx):

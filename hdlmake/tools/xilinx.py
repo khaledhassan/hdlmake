@@ -26,7 +26,7 @@
 
 from __future__ import absolute_import
 from .makefilesyn import MakefileSyn
-from hdlmake.srcfile import VHDLFile, VerilogFile, SVFile, TCLFile
+from ..sourcefiles.srcfile import VHDLFile, VerilogFile, SVFile, TCLFile
 import logging
 
 

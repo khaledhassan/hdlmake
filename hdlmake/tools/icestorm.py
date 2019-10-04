@@ -26,7 +26,7 @@
 from __future__ import absolute_import
 
 from .makefilesyn import MakefileSyn
-from hdlmake.srcfile import VerilogFile, PCFFile
+from ..sourcefiles.srcfile import VerilogFile, PCFFile
 
 
 class ToolIcestorm(MakefileSyn):

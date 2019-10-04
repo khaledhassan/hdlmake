@@ -5,9 +5,9 @@ import os, sys
 import logging
 
 from .makefile import ToolMakefile
-from hdlmake.util import shell
+from ..util import shell
 
-from hdlmake.srcfile import VerilogFile, SVFile
+from ..sourcefiles.srcfile import VerilogFile, SVFile
 
 
 def _check_synthesis_manifest(manifest_dict):

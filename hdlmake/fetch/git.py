@@ -23,8 +23,8 @@
 
 from __future__ import absolute_import
 import os
-from hdlmake.util import path as path_utils
-from hdlmake.util import shell
+from ..util import path as path_utils
+from ..util import shell
 from subprocess import PIPE, Popen
 import logging
 from .fetcher import Fetcher

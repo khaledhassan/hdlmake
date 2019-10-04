@@ -27,8 +27,8 @@ from __future__ import absolute_import
 import argparse
 import sys
 import logging
-from hdlmake.util import shell
-from hdlmake.util.termcolor import colored
+from .util import shell
+from .util.termcolor import colored
 
 from .manifest_parser.manifestparser import ManifestParser
 from .action.commands import Commands

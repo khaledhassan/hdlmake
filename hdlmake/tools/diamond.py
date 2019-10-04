@@ -26,7 +26,7 @@
 
 from __future__ import absolute_import
 from .makefilesyn import MakefileSyn
-from hdlmake.srcfile import EDFFile, LPFFile, VHDLFile, VerilogFile
+from ..sourcefiles.srcfile import EDFFile, LPFFile, VHDLFile, VerilogFile
 
 
 class ToolDiamond(MakefileSyn):

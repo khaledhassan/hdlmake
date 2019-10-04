@@ -5,12 +5,12 @@ from __future__ import absolute_import
 import logging
 from hdlmake.fetch.git import Git
 from hdlmake.util import path as path_mod
-from .core import ModuleCore
+from .core import ModuleConfig
 import six
 import os
 
 
-class ModuleContent(ModuleCore):
+class ModuleContent(ModuleConfig):
 
     """Class providing the HDLMake module content"""
 
@@ -20,14 +20,31 @@ class ModuleContent(ModuleCore):
         # Manifest Modules Properties
         self.modules = {'local': [], 'git': [], 'gitsm': [], 'svn': []}
         self.incl_makefiles = []
+        self.library = "work"
+        self.action = None
+        self.pool = None
+        self.top_manifest = None
+        self.manifest_dict = {}
         super(ModuleContent, self).__init__()
 
     def process_manifest(self):
         """Process the content section of the manifest_dic"""
-        super(ModuleContent, self).process_manifest()
+        self._process_manifest_universal()
         self._process_manifest_files()
         self._process_manifest_modules()
         self._process_manifest_makefiles()
+
+    def _process_manifest_universal(self):
+        """Method processing the universal manifest directives;
+           set library (inherited if not set) and action"""
+        # Libraries
+        if "library" in self.manifest_dict:
+            self.library = self.manifest_dict["library"]
+        elif self.parent:
+            self.library = self.parent.library
+
+        if "action" in self.manifest_dict:
+            self.action = self.manifest_dict["action"].lower()
 
     def _process_manifest_files(self):
         """Process the files instantiated by the HDLMake module"""
@@ -45,6 +62,10 @@ class ModuleContent(ModuleCore):
                           self.library)
             paths = self._make_list_of_paths(self.manifest_dict["files"])
             self.files = self._create_file_list_from_paths(paths=paths)
+
+    def fetchto(self):
+        """Get the fetchto folder for the module"""
+        return os.path.dirname(self.path)
 
     def _get_fetchto(self):
         """Calculate the fetchto folder"""

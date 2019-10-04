@@ -51,10 +51,11 @@ class Module(ModuleContent):
         """Calculate and initialize the origin attributes: path, source..."""
         assert module_args.url is not None
         assert module_args.source is not None
+        self.manifest_dict = {}
         super(Module, self).__init__()
         self.init_config(module_args)
-        self.set_pool(pool)
-        self.module_args = ModuleArgs()
+        self.pool = pool
+        self.top_manifest = pool.get_top_manifest()
         self.module_args = module_args
 
     def __str__(self):

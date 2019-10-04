@@ -43,13 +43,10 @@ class ModuleConfig(object):
     def init_config(self, module_args):
         """This initializes the module configuration.
         The function is executed by Module constructor"""
-        parent = module_args.parent
+        self.parent = module_args.parent
         url = module_args.url
-        source = module_args.source
+        self.source = module_args.source
         fetchto = module_args.fetchto
-
-        self.source = source
-        self.parent = parent
 
         if self.source == 'local':
             self.url, self.branch, self.revision = url, None, None

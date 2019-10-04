@@ -267,32 +267,6 @@ class ManifestParser(ConfigParser):
                             help=option["help"],
                             type=option["type"])
 
-    def add_manifest(self, path):
-        """Add to configuration the Manifest at directory (path) if exists"""
-        def _search_for_manifest(path):
-            """
-            Look for manifest in the given folder and create a Manifest object
-            """
-            logging.debug("Looking for manifest in " + path)
-            dir_files = os.listdir(path)
-            if "manifest.py" in dir_files and "Manifest.py" in dir_files:
-                raise Exception(
-                    "Both manifest.py and Manifest.py" +
-                    "found in the module directory: %s",
-                    path)
-            for filename in dir_files:
-                if filename == "manifest.py" or filename == "Manifest.py":
-                    if not os.path.isdir(filename):
-                        logging.debug("Found manifest for module %s: %s",
-                                      path, filename)
-                        return os.path.join(path, filename)
-            return None
-        manifest = _search_for_manifest(path)
-        if manifest is None:
-            raise Exception("No manifest found in path: {}".format(path))
-        logging.debug("Parse manifest in: %s", manifest)
-        self.add_config_file(manifest)
-
     def print_help(self):
         """Print the help for the Manifest parser object"""
         self.help()

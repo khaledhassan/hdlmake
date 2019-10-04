@@ -73,6 +73,24 @@ class Module(ModuleContent):
         command_tmp = shell.rmdir_command() + " " + self.path
         shell.run(command_tmp)
 
+    def _search_for_manifest(self):
+        """Look for manifest in the given folder and create a Manifest object
+        """
+        logging.debug("Looking for manifest in " + self.path)
+        dir_files = os.listdir(self.path)
+        if "manifest.py" in dir_files and "Manifest.py" in dir_files:
+            raise Exception(
+                "Both manifest.py and Manifest.py" +
+                "found in the module directory: %s",
+                self.path)
+        for filename in dir_files:
+            if filename == "manifest.py" or filename == "Manifest.py":
+                if not os.path.isdir(filename):
+                    logging.debug("Found manifest for module %s: %s",
+                                  self.path, filename)
+                    return os.path.join(self.path, filename)
+        raise Exception("No manifest found in path: {}".format(self.path))
+
     def parse_manifest(self):
         """
         Create a dictionary from the module Manifest.py and assign it
@@ -95,6 +113,9 @@ class Module(ModuleContent):
             return
         assert self.path is not None
 
+        filename = self._search_for_manifest()
+        logging.debug("Parse manifest in: %s", filename)
+
         logging.debug("""
 ***********************************************************
 PARSE START: %s
@@ -104,9 +125,6 @@ PARSE START: %s
 
         manifest_parser.add_prefix_code(self.pool.options.prefix_code)
         manifest_parser.add_suffix_code(self.pool.options.suffix_code)
-
-        # Look for the Manifest.py file
-        manifest_parser.add_manifest(self.path)
 
         # Parse and extract variables from it.
         if self.parent is None:
@@ -118,7 +136,7 @@ PARSE START: %s
         # The parse method is where most of the parser action takes place!
         opt_map = None
         try:
-            opt_map = manifest_parser.parse(extra_context=extra_context)
+            opt_map = manifest_parser.parse(config_file=filename, extra_context=extra_context)
         except NameError as name_error:
             raise Exception(
                 "Error while parsing {0}:\n{1}: {2}.".format(

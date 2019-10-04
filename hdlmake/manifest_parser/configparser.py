@@ -228,10 +228,6 @@ types:[<type 'int'>]
         Note that this is only allowed when the option's value is a dict!!"""
         self[name].add_key(key)
 
-    def add_config_file(self, config_file):
-        """Add the Manifest to be processed by the parser"""
-        self.config_file = config_file
-
     def add_prefix_code(self, code):
         """Add the arbitrary Python to be executed just before the Manifest"""
         self.prefix_code += code + '\n'
@@ -282,10 +278,12 @@ types:[<type 'int'>]
         assert self.config_file is not None
         return open(self.config_file, "r").read()
 
-    def parse(self, extra_context=None):
+    def parse(self, config_file, extra_context=None):
         """Parse the stored manifest plus arbitrary code.  Return a dictionnary
         of variables defined in the manifest."""
         assert isinstance(extra_context, dict) or extra_context is None
+
+        self.config_file = config_file
 
         # These HDLMake keys must not be inherited from parent module
         key_purge_list = ["modules", "files", "include_dirs",

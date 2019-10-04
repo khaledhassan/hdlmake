@@ -30,7 +30,7 @@ import logging
 from hdlmake.util import shell
 from hdlmake.util.termcolor import colored
 
-from .manifest_parser.variables import ManifestParser
+from .manifest_parser.manifestparser import ManifestParser
 from .action.commands import Commands
 from ._version import __version__
 

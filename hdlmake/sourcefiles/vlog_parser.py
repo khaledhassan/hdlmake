@@ -56,15 +56,6 @@ class VerilogPreprocessor(object):
         "undef",
         "timescale"]
 
-    class VLDefine(object):
-
-        """Class that provides a container for Verilog Defines"""
-
-        def __init__(self, name, args, expansion):
-            self.name = name
-            self.args = args
-            self.expansion = expansion
-
     def __init__(self):
         self.vlog_file = None
         # List of macro definitions
@@ -72,13 +63,6 @@ class VerilogPreprocessor(object):
         # Dictionary of files sub-included by each file parsed
         self.vpp_filedeps = {}
         self.macro_depth = 0
-
-    def _find_macro(self, name):
-        """Get the Verilog preprocessor macro named 'name'"""
-        for macro_aux in self.vpp_macros:
-            if macro_aux.name == name:
-                return macro_aux
-        return None
 
     def _search_include(self, filename, parent_dir=None):
         """Look for the 'filename' Verilog include file in the
@@ -96,22 +80,6 @@ class VerilogPreprocessor(object):
         raise Exception("Can't find {} for {} in any of the include "
                         "directories: {}".format(filename, self.vlog_file.file_path,
                         ', '.join(self.vlog_file.include_dirs)))
-
-    def _parse_macro_def(self, macro):
-        """Parse the provided 'macro' and, if it's not a reserved keyword,
-        create a new VLDefine instance and add it to the Verilog preprocessor
-        list of macros"""
-        name = macro.group(1)
-        expansion = macro.group(3)
-        if macro.group(2):
-            params = macro.group(2).split(",")
-        else:
-            params = []
-        if name in self.vpp_keywords:
-            raise Exception("Attempt to `define a reserved preprocessor keyword")
-        mdef = self.VLDefine(name, params, expansion)
-        self.vpp_macros.append(mdef)
-        return mdef
 
     def _preprocess_file(self, file_content, file_name, library):
         """Preprocess the content of the Verilog file"""

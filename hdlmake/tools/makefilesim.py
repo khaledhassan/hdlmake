@@ -62,13 +62,21 @@ TOP_MODULE := {top_module}
         self.writeln("#target for performing local simulation\n"
                      "local: sim_pre_cmd simulation sim_post_cmd\n")
 
+    def get_stamp_file(self, file):
+        """Stamp file for source file :param file:"""
+        return os.path.join(
+                    file.library,
+                    file.purename,
+                    ".{}_{}".format(file.purename, file.extension()))
+
     def _makefile_sim_sources(self):
         """Generic method to write the simulation Makefile HDL sources"""
         fileset = self.fileset
         self.write("VERILOG_SRC := ")
         for vlog in fileset.filter(VerilogFile).sort():
-            if not vlog.is_include:
-                self.writeln(vlog.rel_path() + " \\")
+            if vlog.is_include:
+                continue
+            self.writeln(vlog.rel_path() + " \\")
         self.writeln()
         self.write("VERILOG_OBJ := ")
         for vlog in fileset.filter(VerilogFile).sort():
@@ -78,12 +86,7 @@ TOP_MODULE := {top_module}
             # if the compilation process fails) and add an ending according
             # to file's extension (.sv and .vhd files may have the same
             # corename and this causes a mess
-            self.writeln(
-                os.path.join(
-                    vlog.library,
-                    vlog.purename,
-                    ".{}_{}".format(vlog.purename, vlog.extension())) +
-                " \\")
+            self.writeln(self.get_stamp_file(vlog) + " \\")
         self.writeln()
         self.write("VHDL_SRC := ")
         for vhdl in fileset.filter(VHDLFile).sort():
@@ -93,12 +96,7 @@ TOP_MODULE := {top_module}
         self.write("VHDL_OBJ := ")
         for vhdl in fileset.filter(VHDLFile).sort():
             # file compilation indicator (important: add _vhd ending)
-            self.writeln(
-                os.path.join(
-                    vhdl.library,
-                    vhdl.purename,
-                    ".{}_{}".format(vhdl.purename, vhdl.extension())) +
-                " \\")
+            self.writeln(self.get_stamp_file(vhdl) + " \\")
         self.writeln()
 
     def _makefile_sim_dep_files(self):
@@ -107,20 +105,13 @@ TOP_MODULE := {top_module}
         for file_aux in fileset:
             if any(isinstance(file_aux, file_type)
                    for file_type in self._hdl_files):
-                self.write("%s: %s" % (os.path.join(
-                    file_aux.library, file_aux.purename,
-                    ".%s_%s" % (file_aux.purename, file_aux.extension())),
-                    file_aux.rel_path()))
+                self.write("%s: %s" % (self.get_stamp_file(file_aux), file_aux.rel_path()))
                 # list dependencies, do not include the target file
                 for dep_file in sorted([dfile for dfile in file_aux.depends_on
                                         if dfile is not file_aux],
                                        key=(lambda x: x.file_path)):
                     if dep_file in fileset:
-                        name = dep_file.purename
-                        extension = dep_file.extension()
-                        self.write(" \\\n" + os.path.join(
-                            dep_file.library, name, ".%s_%s" %
-                            (name, extension)))
+                        self.write(" \\\n" + self.get_stamp_file(dep_file))
                     else:
                         # the file is included -> we depend directly on it
                         self.write(" \\\n" + dep_file.rel_path())

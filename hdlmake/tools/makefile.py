@@ -45,7 +45,6 @@ class ToolMakefile(object):
         super(ToolMakefile, self).__init__()
         self._file = None
         self._initialized = False
-        self._tcl_controls = {}
         self.fileset = None
         self.manifest_dict = {}
         self._filename = "Makefile"

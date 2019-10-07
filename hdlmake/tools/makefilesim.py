@@ -103,13 +103,14 @@ TOP_MODULE := {top_module}
         """Print dummy targets to handle file dependencies"""
         fileset = self.fileset.sort()
         for file_aux in fileset:
-            if any(isinstance(file_aux, file_type)
-                   for file_type in self._hdl_files):
-                self.write("%s: %s" % (self.get_stamp_file(file_aux), file_aux.rel_path()))
+            # Consider only HDL files.
+            if isinstance(file_aux, tuple(self._hdl_files)):
+                self.write("{}: {}".format(self.get_stamp_file(file_aux), file_aux.rel_path()))
                 # list dependencies, do not include the target file
-                for dep_file in sorted([dfile for dfile in file_aux.depends_on
-                                        if dfile is not file_aux],
-                                       key=(lambda x: x.file_path)):
+                for dep_file in sorted(file_aux.depends_on, key=(lambda x: x.file_path)):
+                    if dep_file is file_aux:
+                        # Do not depend on itself.
+                        continue
                     if dep_file in fileset:
                         self.write(" \\\n" + self.get_stamp_file(dep_file))
                     else:

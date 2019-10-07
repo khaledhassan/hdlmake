@@ -38,8 +38,6 @@ class SourceFile(DepFile):
     """This is a class acting as a base for the different
     HDL sources files, i.e. those that can be parsed"""
 
-    cur_index = 0
-
     def __init__(self, path, module, library):
         assert isinstance(path, six.string_types)
         self.is_include = False

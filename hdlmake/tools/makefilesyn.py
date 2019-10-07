@@ -48,10 +48,6 @@ class MakefileSyn(ToolMakefile):
 
     def _makefile_syn_top(self):
         """Create the top part of the synthesis Makefile"""
-        if shell.check_windows_tools():
-            tcl_interpreter = self.TOOL_INFO["windows_bin"]
-        else:
-            tcl_interpreter = self.TOOL_INFO["linux_bin"]
         top_parameter = """\
 TOP_MODULE := {top_module}
 PROJECT := {project_name}
@@ -68,7 +64,7 @@ SYN_PACKAGE := {syn_package}
 SYN_GRADE := {syn_grade}
 """
         self.writeln(top_parameter.format(
-            tcl_interpreter=tcl_interpreter,
+            tcl_interpreter=self.get_tool_bin(),
             project_name=os.path.splitext(
                 self.manifest_dict["syn_project"])[0],
             project_ext=self.TOOL_INFO["project_ext"],

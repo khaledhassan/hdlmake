@@ -73,17 +73,9 @@ class ToolMakefile(object):
         if filename:
             self._filename = filename
 
-    def _get_name_bin(self):
-        """Get the name and binary values"""
-        if shell.check_windows_tools():
-            bin_name = self.TOOL_INFO['windows_bin']
-        else:
-            bin_name = self.TOOL_INFO['linux_bin']
-        return bin_name
-
     def _get_path(self):
         """Get the directory in which the tool binary is at Host"""
-        bin_name = self._get_name_bin()
+        bin_name = self.get_tool_bin()
         locations = shell.which(bin_name)
         if len(locations) == 0:
             return None
@@ -93,12 +85,18 @@ class ToolMakefile(object):
     def _is_in_path(self, path_key):
         """Check if the directory is in the system path"""
         path = self.manifest_dict.get(path_key)
-        bin_name = self._get_name_bin()
+        bin_name = self.get_tool_bin()
         return os.path.exists(os.path.join(path, bin_name))
 
     def _check_in_system_path(self):
         """Check if if in the system path exists a file named (name)"""
         return self._get_path() is not None
+
+    def get_tool_bin(self):
+        if shell.check_windows_tools():
+            return self.TOOL_INFO["windows_bin"]
+        else:
+            return self.TOOL_INFO["linux_bin"]
 
     def makefile_check_tool(self, path_key):
         """Check if the binary is available in the O.S. environment"""

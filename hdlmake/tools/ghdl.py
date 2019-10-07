@@ -53,7 +53,6 @@ class ToolGHDL(MakefileSim):
 
     def __init__(self):
         super(ToolGHDL, self).__init__()
-        self._clean_targets.update(ToolGHDL.CLEAN_TARGETS)
         self._simulator_controls.update(ToolGHDL.SIMULATOR_CONTROLS)
 
     def _makefile_sim_options(self):

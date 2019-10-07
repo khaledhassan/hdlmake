@@ -54,7 +54,6 @@ class ToolVivadoSim(MakefileSim):
 
     def __init__(self):
         super(ToolVivadoSim, self).__init__()
-        self._clean_targets.update(ToolVivadoSim.CLEAN_TARGETS)
         self._simulator_controls.update(ToolVivadoSim.SIMULATOR_CONTROLS)
 
     def _makefile_sim_compilation(self):

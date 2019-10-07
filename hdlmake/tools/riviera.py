@@ -79,7 +79,6 @@ class ToolRiviera(MakefileVsim):
 
     def __init__(self):
         super(ToolRiviera, self).__init__()
-        self._clean_targets.update(ToolRiviera.CLEAN_TARGETS)
 
     def _makefile_sim_options(self):
         """Print the Riviera options to the Makefile"""

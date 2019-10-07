@@ -71,6 +71,7 @@ class ToolVivado(ToolXilinx):
                                "$(PROJECT).cache", "$(PROJECT).data", "work",
                                "$(PROJECT).runs", "$(PROJECT).hw",
                                "$(PROJECT).ip_user_files", "$(PROJECT_FILE)"]}
+    CLEAN_TARGETS.update(ToolXilinx.CLEAN_TARGETS)
 
     TCL_CONTROLS = {'bitstream': '$(TCL_OPEN)\n'
                                  'launch_runs impl_1 -to_step write_bitstream'
@@ -81,5 +82,4 @@ class ToolVivado(ToolXilinx):
     def __init__(self):
         super(ToolVivado, self).__init__()
         self._supported_files.update(ToolVivado.SUPPORTED_FILES)
-        self._clean_targets.update(ToolVivado.CLEAN_TARGETS)
         self._tcl_controls.update(ToolVivado.TCL_CONTROLS)

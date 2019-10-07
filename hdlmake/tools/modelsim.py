@@ -49,7 +49,6 @@ class ToolModelsim(MakefileVsim):
         self.copy_rules["modelsim.ini"] = os.path.join(
             "$(MODELSIM_INI_PATH)", "modelsim.ini")
         self.additional_deps.append("modelsim.ini")
-        self._clean_targets.update(ToolModelsim.CLEAN_TARGETS)
 
     def _makefile_sim_options(self):
         """Print the Modelsim options to the Makefile"""

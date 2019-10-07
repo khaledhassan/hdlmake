@@ -61,7 +61,6 @@ class ToolISim(MakefileSim):
 
     def __init__(self):
         super(ToolISim, self).__init__()
-        self._clean_targets.update(ToolISim.CLEAN_TARGETS)
 
     def _makefile_sim_top(self):
         """Print the top section of the Makefile for Xilinx ISim"""

@@ -56,7 +56,6 @@ class ToolIVerilog(MakefileSim):
 
     def __init__(self):
         super(ToolIVerilog, self).__init__()
-        self._clean_targets.update(ToolIVerilog.CLEAN_TARGETS)
         self._simulator_controls.update(ToolIVerilog.SIMULATOR_CONTROLS)
 
     def _makefile_sim_compilation(self):

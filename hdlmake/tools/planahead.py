@@ -52,6 +52,7 @@ class ToolPlanAhead(ToolXilinx):
     CLEAN_TARGETS = {'clean': ["planAhead_*", "planAhead.*",
                                ".Xil", "$(PROJECT).cache", "$(PROJECT).data",
                                " $(PROJECT).runs", "$(PROJECT).ppr"]}
+    CLEAN_TARGETS.update(ToolXilinx.CLEAN_TARGETS)
 
     TCL_CONTROLS = {'bitstream': '$(TCL_OPEN)\n'
                                  'launch_runs impl_1 -to_step Bitgen\n'
@@ -61,5 +62,4 @@ class ToolPlanAhead(ToolXilinx):
     def __init__(self):
         super(ToolPlanAhead, self).__init__()
         self._supported_files.update(ToolPlanAhead.SUPPORTED_FILES)
-        self._clean_targets.update(ToolPlanAhead.CLEAN_TARGETS)
         self._tcl_controls.update(ToolPlanAhead.TCL_CONTROLS)

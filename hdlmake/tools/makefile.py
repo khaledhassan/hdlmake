@@ -38,12 +38,12 @@ class ToolMakefile(object):
     HDL_FILES = {}
     TOOL_INFO = {}
     STANDARD_LIBS = []
+    CLEAN_TARGETS = {}
 
     def __init__(self):
         super(ToolMakefile, self).__init__()
         self._file = None
         self._initialized = False
-        self._clean_targets = {}
         self._tcl_controls = {}
         self._supported_files = {}
         self.fileset = None
@@ -132,7 +132,7 @@ class ToolMakefile(object):
     def makefile_clean(self):
         """Print the Makefile target for cleaning intermediate files"""
         self.writeln("CLEAN_TARGETS := $(LIBS) " +
-            ' '.join(self._clean_targets["clean"]) + "\n")
+            ' '.join(self.CLEAN_TARGETS["clean"]) + "\n")
         self.writeln("clean:")
         tmp = "\t\t" + shell.del_command() + " $(CLEAN_TARGETS)"
         self.writeln(tmp)
@@ -145,7 +145,7 @@ class ToolMakefile(object):
         """Print the Makefile target for cleaning final files"""
         self.writeln("mrproper: clean")
         tmp = "\t\t" + shell.del_command() + \
-            " " + ' '.join(self._clean_targets["mrproper"]) + "\n"
+            " " + ' '.join(self.CLEAN_TARGETS["mrproper"]) + "\n"
         self.writeln(tmp)
 
     def initialize(self):

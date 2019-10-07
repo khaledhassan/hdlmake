@@ -103,7 +103,6 @@ class ToolQuartus(MakefileSyn):
 
     def __init__(self):
         super(ToolQuartus, self).__init__()
-        self._supported_files.update(ToolQuartus.SUPPORTED_FILES)
         self._tcl_controls.update(ToolQuartus.TCL_CONTROLS)
 
     def _makefile_syn_top(self):

@@ -125,7 +125,6 @@ $(TCL_CLOSE)'''
 
     def __init__(self):
         super(ToolISE, self).__init__()
-        self._supported_files.update(ToolISE.SUPPORTED_FILES)
         self._tcl_controls.update(ToolISE.TCL_CONTROLS)
 
     def _makefile_syn_top(self):

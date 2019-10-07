@@ -39,13 +39,13 @@ class ToolMakefile(object):
     TOOL_INFO = {}
     STANDARD_LIBS = []
     CLEAN_TARGETS = {}
+    SUPPORTED_FILES = {}
 
     def __init__(self):
         super(ToolMakefile, self).__init__()
         self._file = None
         self._initialized = False
         self._tcl_controls = {}
-        self._supported_files = {}
         self.fileset = None
         self.manifest_dict = {}
         self._filename = "Makefile"
@@ -64,7 +64,7 @@ class ToolMakefile(object):
 
     def get_privative_files(self):
         """Get the privative format file types supported by the tool"""
-        return self._supported_files
+        return self.SUPPORTED_FILES
 
     def makefile_setup(self, manifest_project_dict, fileset, filename=None):
         """Set the Makefile configuration"""

@@ -75,7 +75,6 @@ $(TCL_CLOSE)'''
 
     def __init__(self):
         super(ToolXilinx, self).__init__()
-        self._supported_files.update(ToolXilinx.SUPPORTED_FILES)
         self._tcl_controls.update(ToolXilinx.TCL_CONTROLS)
 
     def _get_properties(self):

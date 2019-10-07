@@ -60,6 +60,7 @@ class ToolVivado(ToolXilinx):
          RAMFile: ToolXilinx._XILINX_SOURCE,
          VHOFile: ToolXilinx._XILINX_SOURCE,
          VEOFile: ToolXilinx._XILINX_SOURCE}
+    SUPPORTED_FILES.update(ToolXilinx.SUPPORTED_FILES)
 
     HDL_FILES = {
         VHDLFile:    ToolXilinx._XILINX_SOURCE,
@@ -81,5 +82,4 @@ class ToolVivado(ToolXilinx):
 
     def __init__(self):
         super(ToolVivado, self).__init__()
-        self._supported_files.update(ToolVivado.SUPPORTED_FILES)
         self._tcl_controls.update(ToolVivado.TCL_CONTROLS)

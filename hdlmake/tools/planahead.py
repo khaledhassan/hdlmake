@@ -61,5 +61,4 @@ class ToolPlanAhead(ToolXilinx):
 
     def __init__(self):
         super(ToolPlanAhead, self).__init__()
-        self._supported_files.update(ToolPlanAhead.SUPPORTED_FILES)
         self._tcl_controls.update(ToolPlanAhead.TCL_CONTROLS)

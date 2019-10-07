@@ -94,7 +94,7 @@ endif""")
         fileset_dict = {}
         sources_list = []
         fileset_dict.update(self.HDL_FILES)
-        fileset_dict.update(self._supported_files)
+        fileset_dict.update(self.SUPPORTED_FILES)
         for filetype in fileset_dict:
             file_list = []
             for file_aux in self.fileset:

@@ -81,6 +81,5 @@ class ToolVivado(ToolXilinx):
     def __init__(self):
         super(ToolVivado, self).__init__()
         self._supported_files.update(ToolVivado.SUPPORTED_FILES)
-        self._standard_libs.extend(ToolVivado.STANDARD_LIBS)
         self._clean_targets.update(ToolVivado.CLEAN_TARGETS)
         self._tcl_controls.update(ToolVivado.TCL_CONTROLS)

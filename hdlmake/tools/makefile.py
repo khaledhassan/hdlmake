@@ -37,6 +37,7 @@ class ToolMakefile(object):
 
     HDL_FILES = {}
     TOOL_INFO = {}
+    STANDARD_LIBS = []
 
     def __init__(self):
         super(ToolMakefile, self).__init__()
@@ -45,7 +46,6 @@ class ToolMakefile(object):
         self._clean_targets = {}
         self._tcl_controls = {}
         self._supported_files = {}
-        self._standard_libs = []
         self.fileset = None
         self.manifest_dict = {}
         self._filename = "Makefile"
@@ -56,7 +56,7 @@ class ToolMakefile(object):
 
     def get_standard_libs(self):
         """Get the standard libs supported by the tool"""
-        return self._standard_libs
+        return self.STANDARD_LIBS
 
     def get_parseable_files(self):
         """Get the parseable HDL file types supported by the tool"""

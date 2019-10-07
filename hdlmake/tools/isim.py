@@ -61,7 +61,6 @@ class ToolISim(MakefileSim):
 
     def __init__(self):
         super(ToolISim, self).__init__()
-        self._standard_libs.extend(ToolISim.STANDARD_LIBS)
         self._clean_targets.update(ToolISim.CLEAN_TARGETS)
 
     def _makefile_sim_top(self):

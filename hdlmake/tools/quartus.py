@@ -104,7 +104,6 @@ class ToolQuartus(MakefileSyn):
     def __init__(self):
         super(ToolQuartus, self).__init__()
         self._supported_files.update(ToolQuartus.SUPPORTED_FILES)
-        self._standard_libs.extend(ToolQuartus.STANDARD_LIBS)
         self._clean_targets.update(ToolQuartus.CLEAN_TARGETS)
         self._tcl_controls.update(ToolQuartus.TCL_CONTROLS)
 

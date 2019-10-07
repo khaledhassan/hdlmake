@@ -53,7 +53,6 @@ class ToolGHDL(MakefileSim):
 
     def __init__(self):
         super(ToolGHDL, self).__init__()
-        self._simulator_controls.update(ToolGHDL.SIMULATOR_CONTROLS)
 
     def _makefile_sim_options(self):
         """Print the GHDL options to the Makefile"""
@@ -67,6 +66,6 @@ class ToolGHDL(MakefileSim):
     def _makefile_sim_compilation(self):
         """Print the GDHL simulation compilation target"""
         self.writeln("simulation: $(VERILOG_OBJ) $(VHDL_OBJ)")
-        self.writeln("\t\t" + self._simulator_controls['compiler'])
+        self.writeln("\t\t" + self.SIMULATOR_CONTROLS['compiler'])
         self.writeln('\n')
         self._makefile_sim_dep_files()

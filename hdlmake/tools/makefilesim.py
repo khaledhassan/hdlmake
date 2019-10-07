@@ -20,10 +20,11 @@ class MakefileSim(ToolMakefile):
 
     """Class that provides the Makefile writing methods and status"""
 
+    SIMULATOR_CONTROLS = {}
+
     def __init__(self):
         super(MakefileSim, self).__init__()
-        self._simulator_controls = {}
-
+        
     def write_makefile(self, config, fileset, filename=None):
         """Execute the simulation action"""
         _check_simulation_manifest(config)
@@ -126,7 +127,7 @@ TOP_MODULE := {top_module}
                     command_key = 'vlog'
                 if is_include:
                     continue
-                self.writeln("\t\t" + self._simulator_controls[command_key])
+                self.writeln("\t\t" + self.SIMULATOR_CONTROLS[command_key])
                 self.write("\t\t@" + shell.mkdir_command() + " $(dir $@)")
                 self.writeln(" && " + shell.touch_command()  + " $@ \n")
                 self.writeln()

@@ -54,11 +54,10 @@ class ToolVivadoSim(MakefileSim):
 
     def __init__(self):
         super(ToolVivadoSim, self).__init__()
-        self._simulator_controls.update(ToolVivadoSim.SIMULATOR_CONTROLS)
 
     def _makefile_sim_compilation(self):
         """Generate compile simulation Makefile target for Vivado Simulator"""
         self.writeln("simulation: $(VERILOG_OBJ) $(VHDL_OBJ)")
-        self.writeln("\t\t" + ToolVivadoSim.SIMULATOR_CONTROLS['compiler'])
+        self.writeln("\t\t" + self.SIMULATOR_CONTROLS['compiler'])
         self.writeln()
         self._makefile_sim_dep_files()

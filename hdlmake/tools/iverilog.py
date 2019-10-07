@@ -56,12 +56,11 @@ class ToolIVerilog(MakefileSim):
 
     def __init__(self):
         super(ToolIVerilog, self).__init__()
-        self._simulator_controls.update(ToolIVerilog.SIMULATOR_CONTROLS)
 
     def _makefile_sim_compilation(self):
         """Generate compile simulation Makefile target for IVerilog"""
         self.writeln("simulation: include_dirs $(VERILOG_OBJ) $(VHDL_OBJ)")
-        self.writeln("\t\t" + self._simulator_controls['compiler'])
+        self.writeln("\t\t" + self.SIMULATOR_CONTROLS['compiler'])
         self.writeln()
         self.writeln("include_dirs:")
         self.writeln("\t\techo \"# IVerilog command file,"

@@ -58,7 +58,6 @@ class ToolVivadoSim(MakefileSim):
         self._standard_libs.extend(ToolVivadoSim.STANDARD_LIBS)
         self._clean_targets.update(ToolVivadoSim.CLEAN_TARGETS)
         self._simulator_controls.update(ToolVivadoSim.SIMULATOR_CONTROLS)
-        self._hdl_files.update(ToolVivadoSim.HDL_FILES)
 
     def _makefile_sim_compilation(self):
         """Generate compile simulation Makefile target for Vivado Simulator"""

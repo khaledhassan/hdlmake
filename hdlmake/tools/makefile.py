@@ -35,6 +35,8 @@ class ToolMakefile(object):
 
     """Class that provides the Makefile writing methods and status"""
 
+    HDL_FILES = {}
+
     def __init__(self):
         super(ToolMakefile, self).__init__()
         self._file = None
@@ -42,7 +44,6 @@ class ToolMakefile(object):
         self._tool_info = {}
         self._clean_targets = {}
         self._tcl_controls = {}
-        self._hdl_files = {}
         self._supported_files = {}
         self._standard_libs = []
         self.fileset = None
@@ -59,7 +60,7 @@ class ToolMakefile(object):
 
     def get_parseable_files(self):
         """Get the parseable HDL file types supported by the tool"""
-        return self._hdl_files
+        return self.HDL_FILES
 
     def get_privative_files(self):
         """Get the privative format file types supported by the tool"""

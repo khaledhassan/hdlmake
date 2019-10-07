@@ -97,7 +97,7 @@ endif""")
         ret = []
         fileset_dict = {}
         sources_list = []
-        fileset_dict.update(self._hdl_files)
+        fileset_dict.update(self.HDL_FILES)
         fileset_dict.update(self._supported_files)
         for filetype in fileset_dict:
             file_list = []

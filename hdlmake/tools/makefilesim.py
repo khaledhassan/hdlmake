@@ -104,7 +104,7 @@ TOP_MODULE := {top_module}
         fileset = self.fileset.sort()
         for file_aux in fileset:
             # Consider only HDL files.
-            if isinstance(file_aux, tuple(self._hdl_files)):
+            if isinstance(file_aux, tuple(self.HDL_FILES)):
                 self.write("{}: {}".format(self.get_stamp_file(file_aux), file_aux.rel_path()))
                 # list dependencies, do not include the target file
                 for dep_file in sorted(file_aux.depends_on, key=(lambda x: x.file_path)):

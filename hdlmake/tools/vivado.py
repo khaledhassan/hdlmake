@@ -85,4 +85,3 @@ class ToolVivado(ToolXilinx):
         self._standard_libs.extend(ToolVivado.STANDARD_LIBS)
         self._clean_targets.update(ToolVivado.CLEAN_TARGETS)
         self._tcl_controls.update(ToolVivado.TCL_CONTROLS)
-        self._hdl_files.update(ToolVivado.HDL_FILES)

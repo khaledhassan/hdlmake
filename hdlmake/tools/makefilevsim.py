@@ -54,7 +54,6 @@ class MakefileVsim(MakefileSim):
         # These are files copied into your working directory by a make rule
         # The key is the filename, the value is the file source path
         self.copy_rules = {}
-        self._hdl_files.update(MakefileVsim.HDL_FILES)
 
     def _makefile_sim_options(self):
         """Print the vsim options to the Makefile"""

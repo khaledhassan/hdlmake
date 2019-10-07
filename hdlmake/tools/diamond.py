@@ -80,7 +80,6 @@ class ToolDiamond(MakefileSyn):
     def __init__(self):
         super(ToolDiamond, self).__init__()
         self._tool_info.update(ToolDiamond.TOOL_INFO)
-        self._hdl_files.update(ToolDiamond.HDL_FILES)
         self._supported_files.update(ToolDiamond.SUPPORTED_FILES)
         self._standard_libs.extend(ToolDiamond.STANDARD_LIBS)
         self._clean_targets.update(ToolDiamond.CLEAN_TARGETS)

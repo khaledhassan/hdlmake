@@ -47,7 +47,6 @@ class ToolActiveHDL(MakefileSim):
 
     def __init__(self):
         super(ToolActiveHDL, self).__init__()
-        self._tool_info.update(ToolActiveHDL.TOOL_INFO)
         self._standard_libs.extend(ToolActiveHDL.STANDARD_LIBS)
         self._clean_targets.update(ToolActiveHDL.CLEAN_TARGETS)
 

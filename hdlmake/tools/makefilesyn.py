@@ -44,14 +44,14 @@ class MakefileSyn(ToolMakefile):
         self._makefile_syn_clean()
         self._makefile_syn_phony()
         self.makefile_close()
-        logging.info(self._tool_info['name'] + " synthesis makefile generated.")
+        logging.info(self.TOOL_INFO['name'] + " synthesis makefile generated.")
 
     def _makefile_syn_top(self):
         """Create the top part of the synthesis Makefile"""
         if shell.check_windows_tools():
-            tcl_interpreter = self._tool_info["windows_bin"]
+            tcl_interpreter = self.TOOL_INFO["windows_bin"]
         else:
-            tcl_interpreter = self._tool_info["linux_bin"]
+            tcl_interpreter = self.TOOL_INFO["linux_bin"]
         top_parameter = """\
 TOP_MODULE := {top_module}
 PROJECT := {project_name}
@@ -71,7 +71,7 @@ SYN_GRADE := {syn_grade}
             tcl_interpreter=tcl_interpreter,
             project_name=os.path.splitext(
                 self.manifest_dict["syn_project"])[0],
-            project_ext=self._tool_info["project_ext"],
+            project_ext=self.TOOL_INFO["project_ext"],
             syn_family=self.manifest_dict.get("syn_family", ''),
             syn_device=self.manifest_dict["syn_device"],
             syn_package=self.manifest_dict["syn_package"],

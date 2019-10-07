@@ -76,7 +76,6 @@ class ToolLibero(MakefileSyn):
 
     def __init__(self):
         super(ToolLibero, self).__init__()
-        self._tool_info.update(ToolLibero.TOOL_INFO)
         self._supported_files.update(ToolLibero.SUPPORTED_FILES)
         self._standard_libs.extend(ToolLibero.STANDARD_LIBS)
         self._clean_targets.update(ToolLibero.CLEAN_TARGETS)

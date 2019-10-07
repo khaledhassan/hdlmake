@@ -36,12 +36,12 @@ class ToolMakefile(object):
     """Class that provides the Makefile writing methods and status"""
 
     HDL_FILES = {}
+    TOOL_INFO = {}
 
     def __init__(self):
         super(ToolMakefile, self).__init__()
         self._file = None
         self._initialized = False
-        self._tool_info = {}
         self._clean_targets = {}
         self._tcl_controls = {}
         self._supported_files = {}
@@ -76,9 +76,9 @@ class ToolMakefile(object):
     def _get_name_bin(self):
         """Get the name and binary values"""
         if shell.check_windows_tools():
-            bin_name = self._tool_info['windows_bin']
+            bin_name = self.TOOL_INFO['windows_bin']
         else:
-            bin_name = self._tool_info['linux_bin']
+            bin_name = self.TOOL_INFO['linux_bin']
         return bin_name
 
     def _get_path(self):
@@ -102,7 +102,7 @@ class ToolMakefile(object):
 
     def makefile_check_tool(self, path_key):
         """Check if the binary is available in the O.S. environment"""
-        name = self._tool_info['name']
+        name = self.TOOL_INFO['name']
         logging.debug("Checking if " + name + " tool is available on PATH")
         if path_key in self.manifest_dict:
             if self._is_in_path(path_key):

@@ -49,7 +49,6 @@ class ToolModelsim(MakefileVsim):
         self.copy_rules["modelsim.ini"] = os.path.join(
             "$(MODELSIM_INI_PATH)", "modelsim.ini")
         self.additional_deps.append("modelsim.ini")
-        self._tool_info.update(ToolModelsim.TOOL_INFO)
         self._clean_targets.update(ToolModelsim.CLEAN_TARGETS)
         self._standard_libs.extend(ToolModelsim.STANDARD_LIBS)
 

@@ -64,7 +64,6 @@ class ToolIcestorm(MakefileSyn):
 
     def __init__(self):
         super(ToolIcestorm, self).__init__()
-        self._tool_info.update(ToolIcestorm.TOOL_INFO)
         self._supported_files.update(ToolIcestorm.SUPPORTED_FILES)
         self._standard_libs.extend(ToolIcestorm.STANDARD_LIBS)
         self._clean_targets.update(ToolIcestorm.CLEAN_TARGETS)

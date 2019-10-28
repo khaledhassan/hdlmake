@@ -74,7 +74,7 @@ class Module(object):
         self.files = None
         # Manifest Modules Properties
         self.modules = {'local': [], 'git': [], 'gitsm': [], 'svn': []}
-        self.incl_makefiles = []
+        self.incl_makefiles = []                # List of paths of makefile files to include.
         self.library = "work"
         self.action = None
         self.top_manifest = action.get_top_manifest()

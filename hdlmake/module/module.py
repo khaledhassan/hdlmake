@@ -34,7 +34,7 @@ import logging
 
 from ..util import path as path_mod
 from ..util import shell
-from ..fetch.git import Git
+from ..fetch import git
 from ..manifest_parser.manifestparser import ManifestParser
 import six
 
@@ -264,8 +264,8 @@ class Module(object):
         """Get the submodules if found in the Manifest path"""
         if not self.source == 'gitsm':
             return
-        git_submodule_dict = Git.get_git_submodules(self)
-        git_toplevel = Git.get_git_toplevel(self)
+        git_submodule_dict = git.get_git_submodules(self)
+        git_toplevel = git.get_git_toplevel(self)
         for submodule_key in git_submodule_dict.keys():
             url = git_submodule_dict[submodule_key]["url"]
             path = git_submodule_dict[submodule_key]["path"]

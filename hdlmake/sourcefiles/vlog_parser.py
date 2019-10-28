@@ -501,8 +501,7 @@ class VerilogParser(DepParser):
     def parse(self, dep_file):
         """Parse the provided Verilog file and add to its properties
         all of the detected dependency relations"""
-        if dep_file.is_parsed:
-            return
+        assert not dep_file.is_parsed
         logging.debug("Parsing %s", dep_file.path)
         # assert isinstance(dep_file, DepFile), print("unexpected type: " +
         # str(type(dep_file)))

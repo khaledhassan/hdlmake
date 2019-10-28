@@ -38,8 +38,7 @@ class XCIParser(DepParser):
 
     def parse(self, dep_file):
         """Parse a Xilinx XCI IP description file to determine the provided module(s)"""
-        if dep_file.is_parsed:
-            return
+        assert not dep_file.is_parsed
         logging.debug("Parsing %s", dep_file.path)
 
         with open(dep_file.path) as f:

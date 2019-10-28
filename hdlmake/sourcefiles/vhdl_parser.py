@@ -41,8 +41,8 @@ class VHDLParser(DepParser):
     def parse(self, dep_file):
         """Parse the provided VHDL file and add the detected relations to it"""
         from .dep_file import DepRelation
-        if dep_file.is_parsed:
-            return
+        assert not dep_file.is_parsed
+        
         logging.debug("Parsing %s", dep_file.path)
 
         def _preprocess(vhdl_file):

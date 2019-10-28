@@ -5,7 +5,7 @@
 
 TOP_MODULE := gate
 
-MODELSIM_INI_PATH := ..
+MODELSIM_INI_PATH := $(HDLMAKE_MODELSIM_PATH)/..
 
 VCOM_FLAGS := -quiet -modelsimini modelsim.ini 
 VSIM_FLAGS := 

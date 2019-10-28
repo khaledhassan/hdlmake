@@ -54,7 +54,7 @@ class ToolModelsim(MakefileVsim):
         """Print the Modelsim options to the Makefile"""
         modelsim_ini_path = self.manifest_dict.get("modelsim_ini_path")
         if modelsim_ini_path == None:
-            if "sim_path" in self.manifest_dict:
+            if self.manifest_dict['sim_path']:
                 modelsim_ini_path = os.path.join(
                     self.manifest_dict["sim_path"], "..")
             else:

@@ -61,6 +61,8 @@ class Module(object):
     """
     This is the class providing the HDLMake module, the basic element
     providing the modular behavior allowing for structured designs.
+
+    Note: a module is identified by its URL.
     """
 
     def __init__(self, module_args, action):
@@ -75,26 +77,26 @@ class Module(object):
         self.incl_makefiles = []
         self.library = "work"
         self.action = None
-        self.top_manifest = None
+        self.top_manifest = action.get_top_manifest()
         self.manifest_dict = {}
-        self.source = None
-        self.parent = None
+        self.source = module_args.source        # The fetcher (module, git, ...)
+        self.parent = module_args.parent
         self.url = None
         self.branch = None
         self.revision = None
-        self.path = None
-        self.isfetched = False
+        self.path = None                        # Relative path to the module.
+        self.isfetched = False                  # True if the module exists on the file system.
         self.init_config(module_args)
         self.action = action
-        self.top_manifest = action.get_top_manifest()
         self.module_args = module_args
+
+    def __str__(self):
+        return self.module_args.url
 
     def init_config(self, module_args):
         """This initializes the module configuration.
         The function is executed by Module constructor"""
-        self.parent = module_args.parent
         url = module_args.url
-        self.source = module_args.source
         fetchto = module_args.fetchto
 
         if self.source == 'local':
@@ -107,6 +109,7 @@ class Module(object):
             self.path = path_mod.relpath(url)
             self.isfetched = True
         else:
+            # Split URL (extract basename, revision, branch...)
             if self.source == 'svn':
                 self.url, self.revision = path_mod.svn_parse(url)
                 basename = path_mod.svn_basename(self.url)
@@ -147,14 +150,6 @@ class Module(object):
                     self.path, filepath)
         return True
 
-    def _make_list_of_paths(self, list_of_paths):
-        """Get a list with only the valid absolute paths from the provided"""
-        paths = []
-        for filepath in list_of_paths:
-            if self._check_filepath(filepath):
-                paths.append(path_mod.rel2abs(filepath, self.path))
-        return paths
-
     def process_manifest(self):
         """Process the content section of the manifest_dict"""
         logging.debug("Process manifest at: " + os.path.dirname(self.path))
@@ -166,12 +161,20 @@ class Module(object):
 
     def _process_manifest_universal(self):
         """Method processing the universal manifest directives;
-           set library (inherited if not set) and action"""
+           set library (inherited if not set)."""
         # Libraries
         if "library" in self.manifest_dict:
             self.library = self.manifest_dict["library"]
         elif self.parent:
             self.library = self.parent.library
+
+    def _make_list_of_paths(self, list_of_paths):
+        """Get a list with only the valid absolute paths from the provided"""
+        paths = []
+        for filepath in list_of_paths:
+            if self._check_filepath(filepath):
+                paths.append(path_mod.rel2abs(filepath, self.path))
+        return paths
 
     def _create_file_list_from_paths(self, paths):
         """
@@ -268,10 +271,11 @@ class Module(object):
             path = git_submodule_dict[submodule_key]["path"]
             path = os.path.join(git_toplevel, path)
             fetchto = os.path.sep.join(path.split(os.path.sep)[:-1])
-            self.modules['git'].append(self.action.new_module(parent=self,
-                                                            url=url,
-                                                            fetchto=fetchto,
-                                                            source='git'))
+            self.modules['git'].append(
+                self.action.new_module(parent=self,
+                                       url=url,
+                                       fetchto=fetchto,
+                                       source='git'))
 
     def _process_manifest_makefiles(self):
         """Get the extra makefiles defined in the HDLMake module"""
@@ -286,9 +290,6 @@ class Module(object):
                 included_makefiles_aux = self.manifest_dict["incl_makefiles"][:]
         makefiles_paths = self._make_list_of_paths(included_makefiles_aux)
         self.incl_makefiles.extend(makefiles_paths)
-
-    def __str__(self):
-        return self.module_args.url
 
     def submodules(self):
         """Get a list with all the submodules this module instance requires"""

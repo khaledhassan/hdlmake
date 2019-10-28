@@ -230,12 +230,11 @@ class Module(object):
 
     def _get_fetchto(self):
         """Calculate the fetchto folder"""
-        if ("fetchto" in self.manifest_dict and
-                self.manifest_dict["fetchto"] is not None):
-            fetchto = path_mod.rel2abs(self.manifest_dict["fetchto"],
-                                       self.path)
-        else:
+        fetchto = self.manifest_dict.get('fetchto')
+        if fetchto is None:
             fetchto = self.fetchto()
+        else:
+            fetchto = path_mod.rel2abs(fetchto, self.path)
         return fetchto
 
     def _process_manifest_modules(self):

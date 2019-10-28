@@ -123,23 +123,6 @@ class Action(object):
         logging.debug("End build complete file set")
         return all_manifested_files
 
-    def solve_file_set(self):
-        """Build file set with only those files required by the top entity"""
-        if not self._deps_solved:
-            if self.tool == None:
-                dep_solver.solve(self.parseable_fileset)
-            else:
-                dep_solver.solve(self.parseable_fileset,
-                                 self.tool.get_standard_libs())
-            self._deps_solved = True
-        if self.options.all_files:
-            return
-        solved_files = SourceFileSet()
-        solved_files.add(dep_solver.make_dependency_set(
-            self.parseable_fileset, self.top_entity,
-            self.config.get("extra_modules")))
-        self.parseable_fileset = solved_files
-
     def build_file_set(self):
         """Initialize the parseable and privative fileset contents"""
         total_files = self.build_complete_file_set()
@@ -163,9 +146,28 @@ class Action(object):
         if len(self.privative_fileset) > 0:
             logging.info("Detected %d supported files that are not parseable",
                          len(self.privative_fileset))
+            for f in self.privative_fileset:
+                logging.info("not parseable: %s", f)
         if len(self.parseable_fileset) > 0:
             logging.info("Detected %d supported files that can be parsed",
                          len(self.parseable_fileset))
+
+    def solve_file_set(self):
+        """Build file set with only those files required by the top entity"""
+        if not self._deps_solved:
+            if self.tool == None:
+                dep_solver.solve(self.parseable_fileset)
+            else:
+                dep_solver.solve(self.parseable_fileset,
+                                 self.tool.get_standard_libs())
+            self._deps_solved = True
+        if self.options.all_files:
+            return
+        solved_files = SourceFileSet()
+        solved_files.add(dep_solver.make_dependency_set(
+            self.parseable_fileset, self.top_entity,
+            self.config.get("extra_modules")))
+        self.parseable_fileset = solved_files
 
     def get_top_manifest(self):
         """Get the Top module from the pool"""

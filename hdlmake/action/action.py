@@ -31,7 +31,8 @@ import sys
 from ..tools.makefile_writer import load_syn_tool, load_sim_tool
 from ..util import shell
 from ..sourcefiles import new_dep_solver as dep_solver
-from ..sourcefiles.srcfile import SourceFileSet, VHDLFile, VerilogFile, SVFile
+from ..sourcefiles.srcfile import VHDLFile, VerilogFile, SVFile
+from ..sourcefiles.sourcefileset import SourceFileSet
 from ..module.module import Module, ModuleArgs
 
 class Action(object):

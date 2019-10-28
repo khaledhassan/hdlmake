@@ -45,7 +45,7 @@ class DepParser(object):
 def solve(fileset, standard_libs=None):
     """Function that Parses and Solves the provided HDL fileset. Note
        that it doesn't return a new fileset, but modifies the original one"""
-    from .srcfile import SourceFileSet
+    from .sourcefileset import SourceFileSet
     from .dep_file import DepRelation
     assert isinstance(fileset, SourceFileSet)
     fset = fileset.filter(DepFile)
@@ -125,7 +125,7 @@ def make_dependency_sorted_list(fileset):
 def make_dependency_set(fileset, top_level_entity, extra_modules=None):
     """Create the set of all files required to build the named
      top_level_entity."""
-    from ..sourcefiles.srcfile import SourceFileSet
+    from ..sourcefiles.sourcefileset import SourceFileSet
     from ..sourcefiles.dep_file import DepRelation
     assert isinstance(fileset, SourceFileSet)
     fset = fileset.filter(DepFile)

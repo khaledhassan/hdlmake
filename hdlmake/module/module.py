@@ -181,7 +181,8 @@ class Module(object):
         Build a Source File Set containing the files indicated by the
         provided list of paths
         """
-        from ..sourcefiles.srcfile import create_source_file, SourceFileSet
+        from ..sourcefiles.srcfile import create_source_file
+        from ..sourcefiles.sourcefileset import SourceFileSet
         srcs = SourceFileSet()
         # Check if this is the top module and grab the include_dirs
         if self.parent is None:
@@ -209,7 +210,7 @@ class Module(object):
 
     def _process_manifest_files(self):
         """Process the files instantiated by the HDLMake module"""
-        from ..sourcefiles.srcfile import SourceFileSet
+        from ..sourcefiles.sourcefileset import SourceFileSet
         # HDL files provided by the module
         if "files" not in self.manifest_dict:
             self.files = SourceFileSet()

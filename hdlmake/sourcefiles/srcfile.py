@@ -322,46 +322,6 @@ ALTERA_FILE_DICT = {
     'gdf': GDFFile}
 
 
-class SourceFileSet(set):
-
-    """Class providing a extension of the 'set' object that includes
-    methods that allow for an easier management of a collection of HDL
-    source files"""
-
-    def __init__(self):
-        super(SourceFileSet, self).__init__()
-        self = []
-
-    def __str__(self):
-        return str([str(f) for f in self])
-
-    def add(self, files):
-        """Add a set of files to the source fileset instance"""
-        if isinstance(files, str):
-            raise RuntimeError("Expected object, not a string")
-        elif files is None:
-            logging.debug("Got None as a file.\n Ommiting")
-        else:
-            try:
-                for file_aux in files:
-                    super(SourceFileSet, self).add(file_aux)
-            except TypeError:  # single file, not a list
-                super(SourceFileSet, self).add(files)
-
-    def filter(self, filetype):
-        """Method that filters and returns all of the HDL source files
-        contained in the instance SourceFileSet matching the provided type"""
-        out = SourceFileSet()
-        for file_aux in self:
-            if isinstance(file_aux, filetype):
-                out.add(file_aux)
-        return out
-
-    def sort(self):
-        """Return a sorted list of the fileset.  This is useful to have always
-        the same output"""
-        return sorted(self, key=(lambda x: x.file_path))
-
 def create_source_file(path, module, library=None,
                        include_dirs=None, is_include=False):
     """Function that analyzes the given arguments and returns a new HDL source

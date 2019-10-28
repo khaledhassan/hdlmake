@@ -63,7 +63,7 @@ class Module(object):
     providing the modular behavior allowing for structured designs.
     """
 
-    def __init__(self, module_args, pool):
+    def __init__(self, module_args, action):
         """Calculate and initialize the origin attributes: path, source..."""
         assert module_args.url is not None
         assert module_args.source is not None
@@ -74,7 +74,7 @@ class Module(object):
         self.modules = {'local': [], 'git': [], 'gitsm': [], 'svn': []}
         self.incl_makefiles = []
         self.library = "work"
-        self.pool = None
+        self.action = None
         self.top_manifest = None
         self.manifest_dict = {}
         self.source = None
@@ -85,8 +85,8 @@ class Module(object):
         self.path = None
         self.isfetched = False
         self.init_config(module_args)
-        self.pool = pool
-        self.top_manifest = pool.get_top_manifest()
+        self.action = action
+        self.top_manifest = action.get_top_manifest()
         self.module_args = module_args
 
     def init_config(self, module_args):
@@ -253,7 +253,7 @@ class Module(object):
                         raise Exception("Found an absolute path (" + path +
                                         ") in a manifest(" + self.path + ")")
                     path = path_mod.rel2abs(path, self.path)
-                mods.append(self.pool.new_module(
+                mods.append(self.action.new_module(
                     parent=self, url=path, source=m, fetchto=fetchto))
             self.modules[m] = mods
 
@@ -268,7 +268,7 @@ class Module(object):
             path = git_submodule_dict[submodule_key]["path"]
             path = os.path.join(git_toplevel, path)
             fetchto = os.path.sep.join(path.split(os.path.sep)[:-1])
-            self.modules['git'].append(self.pool.new_module(parent=self,
+            self.modules['git'].append(self.action.new_module(parent=self,
                                                             url=url,
                                                             fetchto=fetchto,
                                                             source='git'))
@@ -326,7 +326,7 @@ class Module(object):
         to the manifest_dict property.
         In order to do this, it creates a ManifestParser object and
         feeds it with:
-        - the arbitrary code from pool's top_module options
+        - the arbitrary code from action's top_module options
             (it assumes a top_module exists before any parsing!)
         - the Manifest.py (if exists)
         - the extra_context:
@@ -352,8 +352,8 @@ PARSE START: %s
 
         manifest_parser = ManifestParser()
 
-        manifest_parser.add_prefix_code(self.pool.options.prefix_code)
-        manifest_parser.add_suffix_code(self.pool.options.suffix_code)
+        manifest_parser.add_prefix_code(self.action.options.prefix_code)
+        manifest_parser.add_suffix_code(self.action.options.suffix_code)
 
         # Parse and extract variables from it.
         if self.parent is None:

@@ -35,8 +35,7 @@ import logging
 from ..util import path as path_mod
 from ..util import shell
 from ..manifest_parser.manifestparser import ManifestParser
-from .content import ModuleContent
-from .core import ModuleArgs
+from .content import ModuleContent, ModuleArgs
 import six
 
 

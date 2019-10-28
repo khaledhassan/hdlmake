@@ -56,7 +56,12 @@ def hdlmake(args):
 
         # Create a ModulePool object, this will become our workspace
         action = Commands(options)
+
+        # Load all manifests, starting from the top-one (the one in the
+        # current directory)
         action.load_all_manifests()
+
+        # Extract tool and top entity.
         action.setup()
 
         # Execute the appropriated action for the freshly created modules pool

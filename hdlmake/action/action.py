@@ -47,6 +47,13 @@ class Action(object):
         self._deps_solved = False
         self.options = options
 
+    def __contains(self, module):
+        """Check if the pool contains the given module by checking the URL"""
+        for mod in self.manifests:
+            if mod.url == module.url:
+                return True
+        return False
+
     def _add(self, new_module):
         """Add the given new module if this is not already in the pool"""
         assert isinstance(new_module, Module), "Expect a Module instance"
@@ -176,13 +183,6 @@ class Action(object):
                 manifest_dict_tmp.update(config_dict)
                 config_dict = manifest_dict_tmp
         return config_dict
-
-    def __contains(self, module):
-        """Check if the pool contains the given module by checking the URL"""
-        for mod in self.manifests:
-            if mod.url == module.url:
-                return True
-        return False
 
     def __str__(self):
         """Cast the module list as a list of strings"""

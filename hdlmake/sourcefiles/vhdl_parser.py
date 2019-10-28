@@ -113,10 +113,6 @@ class VHDLParser(DepParser):
         buf = re.sub(entity_pattern, do_entity, buf)
 
         # new architecture
-        architecture_pattern = re.compile(
-            r"^\s*architecture\s+(?P<name>\w+)\s+of\s+(\w+)\s+is"
-            r".*end\s*((|architecture)\s*(?P=name)|architecture)\s*;",
-            re.DOTALL | re.MULTILINE | re.IGNORECASE)
         architecture_split_pattern = re.compile(
             r"^\s*architecture\s+(?P<name>\w+)\s+of\s+(\w+)\s+is",
             re.DOTALL | re.MULTILINE | re.IGNORECASE)

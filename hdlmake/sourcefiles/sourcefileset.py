@@ -18,6 +18,7 @@
 # along with Hdlmake.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from .dep_file import File
 import logging
 
 class SourceFileSet(set):
@@ -35,16 +36,16 @@ class SourceFileSet(set):
 
     def add(self, files):
         """Add a set of files to the source fileset instance"""
-        if isinstance(files, str):
-            raise RuntimeError("Expected object, not a string")
-        elif files is None:
+        if files is None:
             logging.debug("Got None as a file.\n Ommiting")
+            return
+        if isinstance(files, (SourceFileSet, set)):
+            for file_aux in files:
+                super(SourceFileSet, self).add(file_aux)
+        elif isinstance(files, File):
+            super(SourceFileSet, self).add(files)
         else:
-            try:
-                for file_aux in files:
-                    super(SourceFileSet, self).add(file_aux)
-            except TypeError:  # single file, not a list
-                super(SourceFileSet, self).add(files)
+            raise TypeError
 
     def filter(self, filetype):
         """Method that filters and returns all of the HDL source files

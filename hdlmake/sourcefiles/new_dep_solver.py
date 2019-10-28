@@ -51,7 +51,6 @@ def solve(fileset, standard_libs=None):
     fset = fileset.filter(DepFile)
     # print(fileset)
     # print(fset)
-    not_satisfied = 0
     logging.debug("PARSE BEGIN: Here, we will parse all the files in the "
                   "fileset: no parsing should be done beyond this point")
     for investigated_file in fset:
@@ -60,7 +59,9 @@ def solve(fileset, standard_libs=None):
             logging.debug("Not parsed yet, let's go!")
             investigated_file.parser.parse(investigated_file)
     logging.debug("PARSE END: now the parsing is done")
+
     logging.debug("SOLVE BEGIN")
+    not_satisfied = 0
     for investigated_file in fset:
         # logging.info("INVESTIGATED FILE: %s" % investigated_file)
         # print(investigated_file.rels)
@@ -131,7 +132,7 @@ def make_dependency_set(fileset, top_level_entity, extra_modules=None):
     fset = fileset.filter(DepFile)
 
     def _check_entity(test_file, entity_name):
-        """ Check if the input file provides the entity pointed by the name"""
+        """ Check if :param test_file: provides the entity pointed by :param entity_name:"""
         if entity_name == None:
             return False
         entity_rel_vhdl = DepRelation(
@@ -150,7 +151,7 @@ def make_dependency_set(fileset, top_level_entity, extra_modules=None):
     for chk_file in fset:
         if _check_entity(chk_file, top_level_entity):
             top_file = chk_file
-        if not extra_modules == None:
+        if extra_modules is not None:
             for entity_aux in extra_modules:
                 if _check_entity(chk_file, entity_aux):
                     extra_files.append(chk_file)
@@ -167,18 +168,14 @@ def make_dependency_set(fileset, top_level_entity, extra_modules=None):
         return fileset
     # Collect only the files that the top level entity is dependant on, by
     # walking the dependancy tree.
-    try:
-        dep_file_set = set()
-        file_set = set([top_file] + extra_files)
-        while True:
-            chk_file = file_set.pop()
-            dep_file_set.add(chk_file)
-            file_set.update(chk_file.depends_on - dep_file_set)
-    except KeyError:
-        # no files left
-        pass
+    dep_file_set = set()
+    file_set = set([top_file] + extra_files)
+    while len(file_set) > 0:
+        chk_file = file_set.pop()
+        dep_file_set.add(chk_file)
+        file_set.update(chk_file.depends_on - dep_file_set)
     hierarchy_drivers = [top_level_entity]
-    if not extra_modules == None:
+    if extra_modules is not None:
         hierarchy_drivers += extra_modules
     logging.info("Found %d files as dependancies of %s.",
                  len(dep_file_set), ", ".join(hierarchy_drivers))

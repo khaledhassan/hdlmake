@@ -47,22 +47,15 @@ class VHDLParser(DepParser):
 
         def _preprocess(vhdl_file):
             """Preprocess the supplied VHDL file instance"""
-            def _preprocess_file(file_content, file_name, library):
-                """Preprocess the suplied string using the arguments"""
-                def _remove_comments_and_strings(text):
-                    """Remove the comments and strings from the VHDL code"""
-                    pattern = re.compile('--.*?$|".?"',
-                                         re.DOTALL | re.MULTILINE)
-                    return re.sub(pattern, "", text)
-                logging.debug(
-                    "preprocess file %s (of length %d) in library %s",
-                    file_name, len(file_content), library)
-                return _remove_comments_and_strings(file_content)
             file_path = vhdl_file.file_path
             buf = open(file_path, "r").read()
-            return _preprocess_file(file_content=buf,
-                                    file_name=file_path,
-                                    library=vhdl_file.library)
+            logging.debug(
+                "preprocess file %s (of length %d) in library %s",
+                file_path, len(buf), vhdl_file.library)
+            # Remove the comments and strings from the VHDL code
+            pattern = re.compile('--.*?$|".?"', re.DOTALL | re.MULTILINE)
+            return re.sub(pattern, "", buf)
+
         buf = _preprocess(dep_file)
         # use packages
         use_pattern = re.compile(

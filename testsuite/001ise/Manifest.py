@@ -10,4 +10,6 @@ syn_project = "gate.xise"
 
 syn_tool = "ise"
 
+syn_properties = [['prop1', 0]]
+
 files = [ "../files/gate.vhdl" ]

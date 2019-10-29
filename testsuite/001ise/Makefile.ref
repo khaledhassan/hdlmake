@@ -63,6 +63,7 @@ project.tcl:
 		echo project set \"Manual Implementation Compile Order\" \"false\" >> $@
 		echo project set \"Auto Implementation Top\" \"false\" >> $@
 		echo project set \"Create Binary Configuration File\" \"true\" >> $@
+		echo project set \"prop1\" \"0\" >> $@
 		echo set compile_directory . >> $@
 		echo project set top $(TOP_MODULE) >> $@
 		echo $(TCL_SAVE) >> $@

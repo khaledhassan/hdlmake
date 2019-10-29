@@ -471,6 +471,9 @@ def test_err_ise_no_family():
         run([], path="086ise_no_family")
         assert False
 
+def test_many_modules():
+    run_compare(path="087many_modules")
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""

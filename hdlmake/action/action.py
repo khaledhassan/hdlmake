@@ -55,16 +55,6 @@ class Action(object):
                 return True
         return False
 
-    def _add(self, new_module):
-        """Add the given new module if this is not already in the pool"""
-        assert isinstance(new_module, Module), "Expect a Module instance"
-        if self.__contains(new_module):
-            return
-        if new_module.isfetched:
-            for mod in new_module.submodules():
-                self._add(mod)
-        self.manifests.append(new_module)
-
     def new_module(self, parent, url, source, fetchto):
         """Add new module to the pool.
 
@@ -75,7 +65,8 @@ class Action(object):
         args = ModuleArgs()
         args.set_args(parent, url, source, fetchto)
         new_module = Module(args, self)
-        self._add(new_module)
+        if not self.__contains(new_module):
+            self.manifests.append(new_module)
         return new_module
 
     def load_all_manifests(self):

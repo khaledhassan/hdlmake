@@ -126,8 +126,11 @@ def test_isim_windows():
         hdlmake.main.hdlmake([])
         compare_makefile_xilinx()
 
-def test_icarus():
+def test_icarus_012():
     run_compare(path="012icarus")
+
+def test_icarus_include_083():
+    run_compare(path="083icarus_include")
 
 def test_libero():
     run_compare(path="013libero")

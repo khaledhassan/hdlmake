@@ -456,6 +456,16 @@ def test_err_syn_top():
 def test_extra_modules():
     run_compare(path="076extra_modules")
 
+def test_err_syntool():
+    with pytest.raises(SystemExit) as _:
+        run([], path="084bad_syn")
+        assert False
+
+def test_err_simtool():
+    with pytest.raises(SystemExit) as _:
+        run([], path="085bad_sim")
+        assert False
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""

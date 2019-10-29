@@ -100,7 +100,7 @@ class MakefileVsim(MakefileSim):
                 ('+'.join(self.manifest_dict.get("include_dirs"))))
         libs = set(f.library for f in fileset)
         self.write('LIBS := ')
-        self.write(' '.join(libs))
+        self.write(' '.join(sorted(libs)))
         self.write('\n')
         # tell how to make libraries
         self.write('LIB_IND := ')

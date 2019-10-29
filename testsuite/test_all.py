@@ -487,6 +487,9 @@ def test_err_missing_module():
         run([], path="090missing_module")
         assert False
 
+def test_library():
+    run_compare(path="091library")
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""

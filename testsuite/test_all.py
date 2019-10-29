@@ -490,6 +490,11 @@ def test_err_missing_module():
 def test_library():
     run_compare(path="091library")
 
+def test_err_filetype():
+    with pytest.raises(SystemExit) as _:
+        run([], path="092bad_filetype")
+        assert False
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""

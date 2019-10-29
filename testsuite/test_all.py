@@ -474,6 +474,14 @@ def test_err_ise_no_family():
 def test_many_modules():
     run_compare(path="087many_modules")
 
+def test_file_abs():
+    run_compare(path="088bad_file_abs")
+
+def test_err_missing_file():
+    with pytest.raises(SystemExit) as _:
+        run([], path="089missing_file")
+        assert False
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""

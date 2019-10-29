@@ -129,6 +129,23 @@ class Module(object):
                 logging.debug("Module %s (parent: %s) is NOT fetched.",
                               url, self.parent.path)
 
+    def process_manifest(self):
+        """Process the content section of the manifest_dict"""
+        logging.debug("Process manifest at: " + os.path.dirname(self.path))
+        self._process_manifest_universal()
+        self._process_manifest_files()
+        self._process_manifest_modules()
+        self._process_manifest_makefiles()
+
+    def _process_manifest_universal(self):
+        """Method processing the universal manifest directives;
+           set library (inherited if not set)."""
+        # Libraries
+        if "library" in self.manifest_dict:
+            self.library = self.manifest_dict["library"]
+        elif self.parent:
+            self.library = self.parent.library
+
     def _check_filepath(self, filepath):
         """Check the provided filepath against several conditions"""
         if filepath:
@@ -149,23 +166,6 @@ class Module(object):
                     "Path specified in manifest %s is a directory: %s",
                     self.path, filepath)
         return True
-
-    def process_manifest(self):
-        """Process the content section of the manifest_dict"""
-        logging.debug("Process manifest at: " + os.path.dirname(self.path))
-        self._process_manifest_universal()
-        self._process_manifest_files()
-        self._process_manifest_modules()
-        self._process_manifest_makefiles()
-
-    def _process_manifest_universal(self):
-        """Method processing the universal manifest directives;
-           set library (inherited if not set)."""
-        # Libraries
-        if "library" in self.manifest_dict:
-            self.library = self.manifest_dict["library"]
-        elif self.parent:
-            self.library = self.parent.library
 
     def _make_list_of_paths(self, list_of_paths):
         """Get a list with only the valid absolute paths from the provided"""
@@ -211,17 +211,19 @@ class Module(object):
         """Process the files instantiated by the HDLMake module"""
         from ..sourcefiles.sourcefileset import SourceFileSet
         # HDL files provided by the module
-        if "files" not in self.manifest_dict:
+        files = self.manifest_dict.get('files')
+        if files is None:
             self.files = SourceFileSet()
             logging.debug("No files in the manifest at %s", self.path or '?')
         else:
-            self.manifest_dict["files"] = path_mod.flatten_list(
-                self.manifest_dict["files"])
+            # Be sure it is a list.
+            files = path_mod.flatten_list(files)
+            self.manifest_dict["files"] = files
             logging.debug("Files in %s: %s to library %s" ,
                           self.path,
                           str(self.manifest_dict["files"]),
                           self.library)
-            paths = self._make_list_of_paths(self.manifest_dict["files"])
+            paths = self._make_list_of_paths(files)
             self.files = self._create_file_list_from_paths(paths=paths)
 
     def fetchto(self):

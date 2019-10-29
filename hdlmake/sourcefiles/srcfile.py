@@ -365,6 +365,5 @@ def create_source_file(path, module, library=None,
     elif extension in MICROSEMI_FILE_DICT:
         new_file = MICROSEMI_FILE_DICT[extension](path=path, module=module)
     else:
-        raise Exception("Cannot create source file %s, "
-                        "unknown file extension %s", path, extension)
+        raise Exception("Unknown extension '{}' for file {}".format(extension, path))
     return new_file

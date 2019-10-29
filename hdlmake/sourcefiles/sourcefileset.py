@@ -42,10 +42,9 @@ class SourceFileSet(set):
         if isinstance(files, (SourceFileSet, set)):
             for file_aux in files:
                 super(SourceFileSet, self).add(file_aux)
-        elif isinstance(files, File):
-            super(SourceFileSet, self).add(files)
         else:
-            raise TypeError
+            assert isinstance(files, File)
+            super(SourceFileSet, self).add(files)
 
     def filter(self, filetype):
         """Method that filters and returns all of the HDL source files

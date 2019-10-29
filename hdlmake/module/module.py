@@ -157,7 +157,6 @@ class Module(object):
         self._process_manifest_files()
         self._process_manifest_modules()
         self._process_manifest_makefiles()
-        self._process_git_submodules()
 
     def _process_manifest_universal(self):
         """Method processing the universal manifest directives;
@@ -259,23 +258,6 @@ class Module(object):
                 mods.append(self.action.new_module(
                     parent=self, url=path, source=m, fetchto=fetchto))
             self.modules[m] = mods
-
-    def _process_git_submodules(self):
-        """Get the submodules if found in the Manifest path"""
-        if not self.source == 'gitsm':
-            return
-        git_submodule_dict = git.get_git_submodules(self)
-        git_toplevel = git.get_git_toplevel(self)
-        for submodule_key in git_submodule_dict.keys():
-            url = git_submodule_dict[submodule_key]["url"]
-            path = git_submodule_dict[submodule_key]["path"]
-            path = os.path.join(git_toplevel, path)
-            fetchto = os.path.sep.join(path.split(os.path.sep)[:-1])
-            self.modules['git'].append(
-                self.action.new_module(parent=self,
-                                       url=url,
-                                       fetchto=fetchto,
-                                       source='git'))
 
     def _process_manifest_makefiles(self):
         """Get the extra makefiles defined in the HDLMake module"""

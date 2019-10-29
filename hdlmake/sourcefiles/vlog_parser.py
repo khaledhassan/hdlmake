@@ -103,14 +103,11 @@ class VerilogPreprocessor(object):
 
         def _handle_macros(text):
             '''Process text to implement ifdef/ifndef/elsif/else/endif & define logic'''
-            from pprint import pprint
-
             vpp_match = namedtuple('vpp_match', ['mtext','pptype','ppident', 'macroident','ppargs','ppdefn','incfile','substid'])
             vpp_macrodefn = namedtuple('vpp_macrodefn', ['params', 'expansion'])
 
             def _munge_list(flist):
                 '''Take the split list & normalize into a list of string literals & seperator matches'''
-                from pprint import pprint
                 if not flist:
                     return []
                 is_match = False # if nothing was present, split inserts an empty element

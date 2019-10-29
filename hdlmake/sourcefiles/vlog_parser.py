@@ -108,14 +108,12 @@ class VerilogPreprocessor(object):
 
             def _munge_list(flist):
                 '''Take the split list & normalize into a list of string literals & seperator matches'''
-                if not flist:
-                    return []
+                assert flist
                 is_match = False # if nothing was present, split inserts an empty element
                 rlist = []
                 while flist:
                     if is_match:
-                        if len(flist) < 9:
-                            raise Exception("_munge_list: insufficient arguments for match object")
+                        assert len(flist) >= 9, "_munge_list: insufficient arguments for match object"
                         rlist.append(vpp_match(flist[0],flist[1],None if not flist[2] else flist[2].strip(),
                                                flist[3],flist[4],'' if not flist[5] else flist[5].replace('\\\n',''),flist[6],flist[7]))
                         flist = flist[9:]
@@ -125,7 +123,7 @@ class VerilogPreprocessor(object):
                 return rlist
 
             def _tok_string(text):
-                toks = re.split(r'''((?:`(ifn?def|elsif|else|endif|define|include)((?<=ifdef\b)\s+(?:\w+)|(?<=ifndef\b)\s+(?:\w+)|(?<=elsif\b)\s+(?:\w+)|(?:(?<=define\b)\s+(\w+)(?:\(([\w\s,]*)\))?[ \t]*((?:\\\n|[^\n\r])*)$)|(?<=include\b)\s+"(.+?)")?)|(?:`(\w+)(?:\(([\w\s,]*)\))?))''', text, flags=re.MULTILINE)
+                toks = re.split(r'((?:`(ifn?def|elsif|else|endif|define|include)((?<=ifdef\b)\s+(?:\w+)|(?<=ifndef\b)\s+(?:\w+)|(?<=elsif\b)\s+(?:\w+)|(?:(?<=define\b)\s+(\w+)(?:\(([\w\s,]*)\))?[ \t]*((?:\\\n|[^\n\r])*)$)|(?<=include\b)\s+"(.+?)")?)|(?:`(\w+)(?:\(([\w\s,]*)\))?))', text, flags=re.MULTILINE)
                 return _munge_list(toks)
 
             parts = _tok_string(text)
@@ -169,8 +167,6 @@ class VerilogPreprocessor(object):
                     elif front.pptype == 'elsif':
                         if not handled:
                             enabled = front.ppident in lmacros
-                            if front.pptype == 'ifndef':
-                                enabled = not enabled
                             handled = enabled
                         else: # if a clause was already selected, skip this one
                             enabled = False

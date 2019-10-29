@@ -466,6 +466,11 @@ def test_err_simtool():
         run([], path="085bad_sim")
         assert False
 
+def test_err_ise_no_family():
+    with pytest.raises(SystemExit) as _:
+        run([], path="086ise_no_family")
+        assert False
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""

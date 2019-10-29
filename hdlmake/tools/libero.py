@@ -94,7 +94,7 @@ class ToolLibero(MakefileSyn):
         compilation_constraints = []
         ret = []
         # First stage: linking files
-        for file_aux in self.fileset:
+        for file_aux in self.fileset.sort():
             if isinstance(file_aux, SDCFile):
                 synthesis_constraints.append(file_aux)
                 compilation_constraints.append(file_aux)

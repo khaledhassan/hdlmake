@@ -34,9 +34,13 @@ SOURCES_VHDLFile := \
 SOURCES_SDCFile := \
 syn.sdc
 
+SOURCES_PDCFile := \
+comp.pdc
+
 files.tcl:
 		@$(foreach sourcefile, $(SOURCES_VHDLFile), echo "create_links -hdl_source $(sourcefile)" >> $@ &)
 		@$(foreach sourcefile, $(SOURCES_SDCFile), echo "create_links -sdc $(sourcefile)" >> $@ &)
+		@$(foreach sourcefile, $(SOURCES_PDCFile), echo "create_links -pdc $(sourcefile)" >> $@ &)
 
 SYN_PRE_PROJECT_CMD := 
 SYN_POST_PROJECT_CMD := 
@@ -48,7 +52,7 @@ project.tcl:
 		echo $(TCL_CREATE) >> $@
 		echo source files.tcl >> $@
 		echo organize_tool_files -tool {SYNTHESIZE} -file {syn.sdc} -module {$(TOP_MODULE)::work} -input_type {constraint} >> $@
-		echo organize_tool_files -tool {COMPILE} -file {syn.sdc} -module {$(TOP_MODULE)::work} -input_type {constraint} >> $@
+		echo organize_tool_files -tool {COMPILE} -file {comp.pdc} -file {syn.sdc} -module {$(TOP_MODULE)::work} -input_type {constraint} >> $@
 		echo set_root -module {$(TOP_MODULE)::work} >> $@
 		echo $(TCL_SAVE) >> $@
 		echo $(TCL_CLOSE) >> $@

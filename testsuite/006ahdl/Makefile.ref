@@ -3,13 +3,17 @@
 #  http://ohwr.org/projects/hdl-make/  #
 ########################################
 
-TOP_MODULE := gate
+TOP_MODULE := gatesv_tb
 
 #target for performing local simulation
 local: sim_pre_cmd simulation sim_post_cmd
 
-VERILOG_SRC := 
-VERILOG_OBJ := 
+VERILOG_SRC := ../files/gate2.v \
+../files/gatesv_tb.sv \
+
+VERILOG_OBJ := work/gate2/.gate2_v \
+work/gatesv_tb/.gatesv_tb_sv \
+
 VHDL_SRC := ../files/gate.vhdl \
 
 VHDL_OBJ := work/gate/.gate_vhdl \
@@ -22,6 +26,8 @@ simulation:
 		echo set worklib work >> run.command
 
 		echo # Compiling HDL source files >> run.command
+		echo alog "../files/gate2.v" >> run.command
+		echo alog "../files/gatesv_tb.sv" >> run.command
 		echo acom "../files/gate.vhdl" >> run.command
 
 		vsimsa -do run.command

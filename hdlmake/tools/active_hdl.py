@@ -62,23 +62,11 @@ class ToolActiveHDL(MakefileSim):
         self.writeln()
         self.writeln(
             "\t\techo # Compiling HDL source files >> run.command")
-        for vl_file in fileset.filter(VerilogFile):
-            self.writeln(
-                "\t\techo alog \"" +
-                vl_file.rel_path(
-                ) +
-                "\" >> run.command")
-        for sv_file in fileset.filter(SVFile):
-            self.writeln(
-                "\t\techo alog \"" +
-                sv_file.rel_path(
-                ) +
-                "\" >> run.command")
+        for vl_file in fileset.filter(VerilogFile).sort():
+            self.writeln("\t\techo alog \"{}\" >> run.command".format(
+                vl_file.rel_path()))
         for vhdl_file in fileset.filter(VHDLFile):
-            self.writeln(
-                "\t\techo acom \"" +
-                vhdl_file.rel_path(
-                ) +
-                "\" >> run.command")
+            self.writeln("\t\techo acom \"{}\" >> run.command".format(
+                vhdl_file.rel_path()))
         self.writeln()
         self.writeln("\t\tvsimsa -do run.command")

@@ -100,8 +100,6 @@ class ToolLibero(MakefileSyn):
                 compilation_constraints.append(file_aux)
             elif isinstance(file_aux, PDCFile):
                 compilation_constraints.append(file_aux)
-            else:
-                continue
         # Second stage: Organizing / activating synthesis constraints (the top
         # module needs to be present!)
         if synthesis_constraints:

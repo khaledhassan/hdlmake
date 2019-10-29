@@ -98,14 +98,14 @@ class MakefileVsim(MakefileSim):
         else:
             self.writeln("INCLUDE_DIRS := +incdir+%s" %
                 ('+'.join(self.manifest_dict.get("include_dirs"))))
-        libs = set(f.library for f in fileset)
+        libs = sorted(set(f.library for f in fileset))
         self.write('LIBS := ')
-        self.write(' '.join(sorted(libs)))
+        self.write(' '.join(libs))
         self.write('\n')
         # tell how to make libraries
         self.write('LIB_IND := ')
         self.write(' '.join([lib + shell.makefile_slash_char() +
-                   "." + lib for lib in sorted(libs)]))
+                   "." + lib for lib in libs]))
         self.write('\n')
         self.writeln()
         self.writeln(

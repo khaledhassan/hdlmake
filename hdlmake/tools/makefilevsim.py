@@ -105,7 +105,7 @@ class MakefileVsim(MakefileSim):
         # tell how to make libraries
         self.write('LIB_IND := ')
         self.write(' '.join([lib + shell.makefile_slash_char() +
-                   "." + lib for lib in libs]))
+                   "." + lib for lib in sorted(libs)]))
         self.write('\n')
         self.writeln()
         self.writeln(

@@ -326,15 +326,14 @@ def create_source_file(path, module, library=None,
                        include_dirs=None, is_include=False):
     """Function that analyzes the given arguments and returns a new HDL source
     file of the appropriated type"""
-    if path is None or path == "":
-        raise RuntimeError("Expected a file path, got: " + str(path))
-    if not os.path.isabs(path):
-        path = os.path.abspath(path)
-    tmp = path.rsplit('.')
-    extension = tmp[len(tmp) - 1]
+    assert path
+    assert os.path.isabs(path)
+    _, extension = os.path.splitext(path)
+    assert extension[0] == '.'
+    # Remove '.'
+    extension = extension[1:]
     logging.debug("add file " + path)
 
-    new_file = None
     if extension in ['vhd', 'vhdl', 'vho']:
         new_file = VHDLFile(path=path,
                             module=module,

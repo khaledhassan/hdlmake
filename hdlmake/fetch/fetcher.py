@@ -21,11 +21,6 @@
 
 """Module providing the base class for the different code fetchers"""
 
-from __future__ import absolute_import
-import os
-from ..util import shell
-
-
 class Fetcher(object):
 
     """Base class for the code fetcher objects"""

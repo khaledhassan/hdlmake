@@ -142,10 +142,9 @@ class DepFile(File):
     """Class that serves as base to all those HDL files that can be
     parsed and solved (Verilog, SystemVerilog, VHDL)"""
 
-    def __init__(self, file_path, module):
-        assert isinstance(file_path, six.string_types)
-        File.__init__(self, path=file_path, module=module)
-        self.file_path = file_path
+    def __init__(self, path, module):
+        assert isinstance(path, six.string_types)
+        File.__init__(self, path=path, module=module)
         self.rels = set()
         self.depends_on = set()
         self.dep_level = None
@@ -181,5 +180,5 @@ class DepFile(File):
             logging.warning("Probably run into a circular reference of file "
                             "dependencies. It appears %s depends on itself, "
                             "indirectly via atleast one other file.",
-                            self.file_path)
+                            self.path)
         return self.dep_level

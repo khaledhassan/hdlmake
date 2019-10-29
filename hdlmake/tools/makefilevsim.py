@@ -138,7 +138,7 @@ class MakefileVsim(MakefileSim):
             # list dependencies, do not include the target file
             for dep_file in sorted([dfile for dfile
                                     in vlog.depends_on if dfile is not vlog],
-                                   key=(lambda x: x.file_path)):
+                                   key=(lambda x: x.path)):
                 if dep_file in fileset and not dep_file.is_include:
                     name = dep_file.purename
                     extension = dep_file.extension()

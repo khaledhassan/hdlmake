@@ -108,7 +108,7 @@ TOP_MODULE := {top_module}
             if isinstance(file_aux, tuple(self.HDL_FILES)):
                 self.write("{}: {}".format(self.get_stamp_file(file_aux), file_aux.rel_path()))
                 # list dependencies, do not include the target file
-                for dep_file in sorted(file_aux.depends_on, key=(lambda x: x.file_path)):
+                for dep_file in sorted(file_aux.depends_on, key=(lambda x: x.path)):
                     if dep_file is file_aux:
                         # Do not depend on itself.
                         continue

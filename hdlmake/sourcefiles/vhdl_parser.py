@@ -42,16 +42,15 @@ class VHDLParser(DepParser):
         """Parse the provided VHDL file and add the detected relations to it"""
         from .dep_file import DepRelation
         assert not dep_file.is_parsed
-        
+
         logging.debug("Parsing %s", dep_file.path)
 
         def _preprocess(vhdl_file):
             """Preprocess the supplied VHDL file instance"""
-            file_path = vhdl_file.file_path
-            buf = open(file_path, "r").read()
+            buf = open(vhdl_file.path, "r").read()
             logging.debug(
                 "preprocess file %s (of length %d) in library %s",
-                file_path, len(buf), vhdl_file.library)
+                vhdl_file.path, len(buf), vhdl_file.library)
             # Remove the comments and strings from the VHDL code
             pattern = re.compile('--.*?$|".?"', re.DOTALL | re.MULTILINE)
             return re.sub(pattern, "", buf)

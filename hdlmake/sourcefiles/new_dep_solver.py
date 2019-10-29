@@ -116,7 +116,7 @@ def make_dependency_sorted_list(fileset):
     All files that another depends on will be earlier in the list."""
     dependable = [f for f in fileset if isinstance(f, DepFile)]
     non_dependable = [f for f in fileset if not isinstance(f, DepFile)]
-    dependable.sort(key=lambda f: f.file_path.lower())
+    dependable.sort(key=lambda f: f.path.lower())
     # Not necessary, but will tend to group files more nicely
     # in the output.
     dependable.sort(key=DepFile.get_dep_level)

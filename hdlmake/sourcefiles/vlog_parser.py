@@ -78,7 +78,7 @@ class VerilogPreprocessor(object):
             if os.path.isfile(probable_file):
                 return os.path.abspath(probable_file)
         raise Exception("Can't find {} for {} in any of the include "
-                        "directories: {}".format(filename, self.vlog_file.file_path,
+                        "directories: {}".format(filename, self.vlog_file.path,
                         ', '.join(self.vlog_file.include_dirs)))
 
     def _preprocess_file(self, file_content, file_name, library):
@@ -242,10 +242,9 @@ class VerilogPreprocessor(object):
         # assert isinstance(vlog_file, VerilogFile)
         # assert isinstance(vlog_file, DepFile)
         self.vlog_file = vlog_file
-        file_path = vlog_file.file_path
-        buf = open(file_path, "r").read()
+        buf = open(vlog_file.path, "r").read()
         return self._preprocess_file(file_content=buf,
-                                     file_name=file_path,
+                                     file_name=vlog_file.path,
                                      library=vlog_file.library)
 
 

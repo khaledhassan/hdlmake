@@ -482,6 +482,11 @@ def test_err_missing_file():
         run([], path="089missing_file")
         assert False
 
+def test_err_missing_module():
+    with pytest.raises(SystemExit) as _:
+        run([], path="090missing_module")
+        assert False
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""

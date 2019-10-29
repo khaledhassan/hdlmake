@@ -260,34 +260,6 @@ class VHDLParser(DepParser):
                                                     text.group("ENTITY"))
         buf = re.sub(instance_pattern, do_instance, buf)
 
-        instance_from_library_pattern = re.compile(
-            r"^\s*(\w+)\s*\:\s*entity\s*(\w+)\s*\.\s*(\w+)\s*(?:port"
-            r"\s+map.*?;|generic\s+map.*?;|\s*;)",
-            re.DOTALL | re.MULTILINE | re.IGNORECASE)
-
-        def do_instance_from_library(text):
-            """Function to be applied by re.sub to every match of the
-            instance_from_library_pattern in the VHDL code -- group()
-            returns positive matches as indexed plain strings.
-            It adds the found USE relations to the file"""
-            if text.group(2).lower() == "work":
-                logging.debug("-> instantiates %s.%s as %s",
-                              dep_file.library, text.group(3), text.group(1))
-                #dep_file.add_relation(
-                #    DepRelation("%s.%s" % (dep_file.library, text.group(3)),
-                #                DepRelation.USE,
-                #                DepRelation.ARCHITECTURE))
-            else:
-                logging.debug("-> instantiates %s.%s as %s",
-                              text.group(2), text.group(3), text.group(1))
-                #dep_file.add_relation(
-                #    DepRelation("%s.%s" % (text.group(2), text.group(3)),
-                #                DepRelation.USE,
-                #                DepRelation.ARCHITECTURE))
-            return "<hdlmake instance_from_library %s|%s>" % (text.group(1),
-                                                              text.group(3))
-        buf = re.sub(instance_from_library_pattern,
-                     do_instance_from_library, buf)
         # libraries
         library_pattern = re.compile(
             r"^\s*library\s*(\w+)\s*;",
@@ -303,4 +275,5 @@ class VHDLParser(DepParser):
             return "<hdlmake library %s>" % text.group(1)
         buf = re.sub(library_pattern, do_library, buf)
         # logging.debug("\n" + buf) # print modified buffer.
+
         dep_file.is_parsed = True

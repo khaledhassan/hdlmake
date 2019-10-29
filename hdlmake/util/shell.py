@@ -53,6 +53,9 @@ def run(command):
             close_fds=not check_windows_tools(), # FIXME: comment
             shell=True)
         lines = command_out.stdout.readlines()
+        if command_out.wait() != 0:
+            logging.error("Shell command failed: %s", command)
+            quit(1)
         if len(lines) == 0:
             return None
         return lines[0].strip().decode('utf-8')

@@ -250,6 +250,11 @@ def test_git_fetch_cmds():
         hdlmake.main.hdlmake(['fetch'])
         shutil.rmtree('ipcores')
 
+def test_sub_fetch():
+    with Config(path="095sub_fetch") as _:
+        hdlmake.main.hdlmake(['fetch'])
+        shutil.rmtree('ipcores')
+
 def test_err_fetch():
     with pytest.raises(SystemExit) as _:
         run([], path="065fetch_pre_post")

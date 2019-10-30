@@ -28,7 +28,7 @@ import os
 import logging
 import sys
 
-from ..tools.makefile_writer import load_syn_tool, load_sim_tool
+from ..tools.load_tool import load_syn_tool, load_sim_tool
 from ..util import shell
 from ..sourcefiles import new_dep_solver as dep_solver
 from ..sourcefiles.srcfile import VHDLFile, VerilogFile, SVFile

@@ -78,7 +78,7 @@ class Action(object):
                                             fetchto=".")
         # Parse the top manifest and all sub-modules.
         self.top_manifest.parse_manifest()
-        self.config = self._get_config_dict()
+        self.config = self.top_manifest.manifest_dict # _get_config_dict()
 
     def setup(self):
         """Set tool and top_entity"""
@@ -163,20 +163,6 @@ class Action(object):
     def get_top_manifest(self):
         """Get the Top module from the pool"""
         return self.top_manifest
-
-    def _get_config_dict(self):
-        """Get the combined hierarchical Manifest dictionary from the pool"""
-        config_dict = {}
-        for mod in self.manifests:
-            manifest_dict_tmp = mod.manifest_dict
-            if manifest_dict_tmp is not None:
-                if 'fetchto' in manifest_dict_tmp:
-                    manifest_dict_tmp['fetchto'] = os.path.relpath(os.path.join(
-                        mod.path,
-                        mod.manifest_dict['fetchto']))
-                manifest_dict_tmp.update(config_dict)
-                config_dict = manifest_dict_tmp
-        return config_dict
 
     def __str__(self):
         """Cast the module list as a list of strings"""

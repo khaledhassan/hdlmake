@@ -91,7 +91,7 @@ class Commands(Action):
                 assert module.source == 'gitsm'
                 result = self.gitsm_backend.fetch(module)
             if result is False:
-                raise Exception("Unable to fetch module %s", str(module.url))
+                raise Exception("Unable to fetch module {}".format(module.url))
             module.parse_manifest()
             for m in module.modules:
                 new_modules.extend(module.modules[m])

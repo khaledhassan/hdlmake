@@ -78,30 +78,30 @@ class Action(object):
                                             fetchto=".")
         # Parse the top manifest and all sub-modules.
         self.top_manifest.parse_manifest()
-        self.config = self.top_manifest.manifest_dict # _get_config_dict()
 
     def setup(self):
         """Set tool and top_entity"""
-        action = self.config.get("action")
+        top_dict = self.top_manifest.manifest_dict
+        action = top_dict.get("action")
         if action == None:
             self.tool = None
-            self.top_entity = self.config.get("top_module", None)
+            self.top_entity = top_dict.get("top_module")
         elif action == "simulation":
-            tool = self.config.get("sim_tool")
+            tool = top_dict.get("sim_tool")
             if tool is None:
                 raise Exception("'sim_tool' variable is not defined")
             self.tool = load_sim_tool(tool)
-            self.top_entity = self.config.get("sim_top") \
-                or self.config.get("top_module")
-            self.config["sim_top"] = self.top_entity
+            self.top_entity = top_dict.get("sim_top") \
+                or top_dict.get("top_module")
+            top_dict["sim_top"] = self.top_entity
         elif action == "synthesis":
-            tool = self.config.get("syn_tool")
+            tool = top_dict.get("syn_tool")
             if tool is None:
                 raise Exception("'syn_tool' variable is not defined")
             self.tool = load_syn_tool(tool)
-            self.top_entity = self.config.get("syn_top") \
-                or self.config.get("top_module")
-            self.config["syn_top"] = self.top_entity
+            self.top_entity = top_dict.get("syn_top") \
+                or top_dict.get("top_module")
+            top_dict["syn_top"] = self.top_entity
         else:
             raise Exception("Unknown requested action: {}".format(action))
 
@@ -157,7 +157,7 @@ class Action(object):
         solved_files = SourceFileSet()
         solved_files.add(dep_solver.make_dependency_set(
             self.parseable_fileset, self.top_entity,
-            self.config.get("extra_modules")))
+            self.top_manifest.manifest_dict.get("extra_modules")))
         self.parseable_fileset = solved_files
 
     def get_top_manifest(self):

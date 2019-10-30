@@ -10,15 +10,12 @@ from ..util import shell
 from ..sourcefiles.srcfile import VerilogFile, SVFile
 
 
-def _check_synthesis_manifest(manifest_dict):
+def _check_synthesis_manifest(top_manifest):
     """Check the manifest contains all the keys for a synthesis project"""
-    for v in ["syn_device", "syn_grade", "syn_package"]:
-        if v not in manifest_dict:
+    for v in ["syn_top", "syn_device", "syn_grade", "syn_package"]:
+        if v not in top_manifest.manifest_dict:
             raise Exception(
                 "'{}' variable must be set in the top manifest.".format(v))
-    if not manifest_dict["syn_top"]:
-        logging.error(
-            "syn_top variable must be set in the top manifest.")
 
 
 class MakefileSyn(ToolMakefile):
@@ -29,11 +26,10 @@ class MakefileSyn(ToolMakefile):
         super(MakefileSyn, self).__init__()
         self._tcl_controls = {}
 
-    def write_makefile(self, config, fileset, filename=None):
+    def write_makefile(self, top_manifest, fileset, filename=None):
         """Generate a Makefile for the specific synthesis tool"""
-        _check_synthesis_manifest(config)
-        self.makefile_setup(config, fileset,
-            filename=filename)
+        _check_synthesis_manifest(top_manifest)
+        self.makefile_setup(top_manifest, fileset, filename=filename)
         self.makefile_check_tool('syn_path')
         self.makefile_includes()
         self._makefile_syn_top()

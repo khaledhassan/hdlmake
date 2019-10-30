@@ -72,7 +72,7 @@ class Commands(Action):
         self.solve_file_set()
         combined_fileset = self.parseable_fileset
         combined_fileset.add(self.privative_fileset)
-        self.tool.write_makefile(self.top_manifest.manifest_dict,
+        self.tool.write_makefile(self.top_manifest,
                                  combined_fileset,
                                  filename=filename)
 

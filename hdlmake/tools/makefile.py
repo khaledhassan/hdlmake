@@ -65,9 +65,9 @@ class ToolMakefile(object):
         """Get the privative format file types supported by the tool"""
         return self.SUPPORTED_FILES
 
-    def makefile_setup(self, manifest_project_dict, fileset, filename=None):
+    def makefile_setup(self, top_manifest, fileset, filename=None):
         """Set the Makefile configuration"""
-        self.manifest_dict = manifest_project_dict
+        self.manifest_dict = top_manifest.manifest_dict
         self.fileset = fileset
         if filename:
             self._filename = filename

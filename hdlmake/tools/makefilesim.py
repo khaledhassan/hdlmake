@@ -10,9 +10,9 @@ from ..util import shell
 from ..sourcefiles.srcfile import VerilogFile, VHDLFile, SVFile
 
 
-def _check_simulation_manifest(manifest_dict):
+def _check_simulation_manifest(top_manifest):
     """Check if the simulation keys are provided by the top manifest"""
-    if manifest_dict.get("sim_top") is None:
+    if top_manifest.manifest_dict.get("sim_top") is None:
         raise Exception("sim_top variable must be set in the top manifest.")
 
 
@@ -25,10 +25,10 @@ class MakefileSim(ToolMakefile):
     def __init__(self):
         super(MakefileSim, self).__init__()
         
-    def write_makefile(self, config, fileset, filename=None):
+    def write_makefile(self, top_manifest, fileset, filename=None):
         """Execute the simulation action"""
-        _check_simulation_manifest(config)
-        self.makefile_setup(config, fileset, filename=filename)
+        _check_simulation_manifest(top_manifest)
+        self.makefile_setup(top_manifest, fileset, filename=filename)
         self.makefile_check_tool('sim_path')
         self.makefile_includes()
         self._makefile_sim_top()

@@ -69,14 +69,14 @@ class VHDLParser(DepParser):
             if text.group(1).lower() == "work":
                 logging.debug("use package %s.%s",
                               dep_file.library, text.group(2))
-                dep_file.add_relation(
+                dep_file.add_require(
                     DepRelation("%s.%s" % (dep_file.library, text.group(2)),
                                 DepRelation.USE,
                                 DepRelation.PACKAGE))
             else:
                 logging.debug("use package %s.%s",
                               text.group(1), text.group(2))
-                dep_file.add_relation(
+                dep_file.add_require(
                     DepRelation("%s.%s" % (text.group(1), text.group(2)),
                                 DepRelation.USE,
                                 DepRelation.PACKAGE))
@@ -95,7 +95,7 @@ class VHDLParser(DepParser):
             to the file"""
             logging.debug("found entity %s.%s",
                           dep_file.library, text.group(1))
-            dep_file.add_relation(
+            dep_file.add_provide(
                 DepRelation("%s.%s" % (dep_file.library, text.group(1)),
                             DepRelation.PROVIDE,
                             DepRelation.ENTITY))
@@ -116,11 +116,11 @@ class VHDLParser(DepParser):
             relations to the file"""
             logging.debug("found architecture %s of entity %s.%s",
                           text.group(1), dep_file.library, text.group(2))
-            dep_file.add_relation(
+            dep_file.add_provide(
                 DepRelation("%s.%s" % (dep_file.library, text.group(2)),
                             DepRelation.PROVIDE,
                             DepRelation.ARCHITECTURE))
-            dep_file.add_relation(
+            dep_file.add_require(
                 DepRelation("%s.%s" % (dep_file.library, text.group(2)),
                             DepRelation.USE,
                             DepRelation.ENTITY))
@@ -141,7 +141,7 @@ class VHDLParser(DepParser):
             relations to the file"""
             logging.debug("found package %s.%s", dep_file.library,
                           text.group(1))
-            dep_file.add_relation(
+            dep_file.add_provide(
                 DepRelation("%s.%s" % (dep_file.library, text.group(1)),
                             DepRelation.PROVIDE,
                             DepRelation.PACKAGE))
@@ -252,7 +252,7 @@ class VHDLParser(DepParser):
             lib = text.group("LIB")
             if not lib or lib == "work":
                 lib = dep_file.library
-            dep_file.add_relation(DepRelation(
+            dep_file.add_require(DepRelation(
                 "%s.%s" % (lib, text.group("ENTITY")),
                 DepRelation.USE, DepRelation.ENTITY))
             return "<hdlmake instance %s|%s|%s>" % (text.group("LABEL"),

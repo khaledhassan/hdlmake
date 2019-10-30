@@ -140,7 +140,8 @@ class File(object):
 class DepFile(File):
 
     """Class that serves as base to all those HDL files that can be
-    parsed and solved (Verilog, SystemVerilog, VHDL)"""
+    parsed and solved (Verilog, SystemVerilog, VHDL).  Inherit from
+    File but also provides dependencies"""
 
     def __init__(self, path, module):
         assert isinstance(path, six.string_types)
@@ -150,8 +151,14 @@ class DepFile(File):
         self.dep_level = None
         self.is_parsed = False
 
-    def add_relation(self, rel):
-        """Add a new relation to the set provided by the file"""
+    def add_require(self, rel):
+        """Add dependency :param rel:"""
+        assert rel.direction == DepRelation.USE
+        self.rels.add(rel)
+
+    def add_provide(self, rel):
+        """Add provide :param rel:"""
+        assert rel.direction == DepRelation.PROVIDE
         self.rels.add(rel)
 
     def satisfies(self, rel_b):

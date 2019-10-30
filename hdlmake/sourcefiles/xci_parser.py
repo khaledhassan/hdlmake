@@ -51,7 +51,7 @@ class XCIParser(DepParser):
             if not value is None:
                 modulename = value.text
                 logging.debug("found module %s.%s", dep_file.library, modulename)
-                dep_file.add_relation(
+                dep_file.add_provide(
                     DepRelation("%s.%s" % (dep_file.library, modulename),
                                 DepRelation.PROVIDE, DepRelation.MODULE))
 

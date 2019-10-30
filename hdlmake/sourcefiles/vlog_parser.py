@@ -528,7 +528,7 @@ class VerilogParser(DepParser):
             relations to the file"""
             logging.debug("file %s imports/uses %s.%s package",
                           dep_file.path, dep_file.library, text.group(1))
-            dep_file.add_relation(
+            dep_file.add_require(
                 DepRelation("%s.%s" % (dep_file.library, text.group(1)),
                             DepRelation.USE, DepRelation.PACKAGE))
         import_pattern.subn(do_imports, buf)
@@ -544,7 +544,7 @@ class VerilogParser(DepParser):
             relations to the file"""
             logging.debug("found pacakge %s.%s", dep_file.library,
                           text.group(1))
-            dep_file.add_relation(
+            dep_file.add_provide(
                 DepRelation("%s.%s" % (dep_file.library, text.group(1)),
                             DepRelation.PROVIDE, DepRelation.PACKAGE))
         m_inside_package.subn(do_package, buf)
@@ -568,7 +568,7 @@ class VerilogParser(DepParser):
             PROVIDE relations to the file"""
             logging.debug("found module %s.%s", dep_file.library,
                           text.group(1))
-            dep_file.add_relation(
+            dep_file.add_provide(
                 DepRelation("%s.%s" % (dep_file.library, text.group(1)),
                             DepRelation.PROVIDE, DepRelation.MODULE))
 
@@ -582,7 +582,7 @@ class VerilogParser(DepParser):
                     return
                 logging.debug("-> instantiates %s.%s as %s",
                               dep_file.library, text.group(1), text.group(2))
-                dep_file.add_relation(
+                dep_file.add_require(
                     DepRelation("%s.%s" % (dep_file.library, text.group(1)),
                                 DepRelation.USE, DepRelation.MODULE))
             for stmt in [x for x in m_stmt.split(text.group(2)) if x and x[-1] == ")"]:
@@ -590,7 +590,7 @@ class VerilogParser(DepParser):
                 if match:
                     do_inst(match)
         m_inside_module.subn(do_module, buf)
-        dep_file.add_relation(
+        dep_file.add_provide(
             DepRelation(
                 dep_file.path,
                 DepRelation.PROVIDE,

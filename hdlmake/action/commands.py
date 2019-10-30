@@ -110,7 +110,6 @@ class Commands(Action):
                 if not mod.isfetched:
                     logging.debug("Appended to fetch queue: "
                                   + str(mod.url))
-                    self._add(mod)
                     fetch_queue.append(mod)
                 else:
                     logging.debug("NOT appended to fetch queue: "

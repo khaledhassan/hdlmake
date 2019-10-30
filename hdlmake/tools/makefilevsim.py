@@ -166,8 +166,9 @@ class MakefileVsim(MakefileSim):
                 lib, purename, "." + purename + "_" + vhdl.extension()),
                 vhdl.rel_path()))
             # list dependencies, do not include the target file
-            for dep_file in [dfile for dfile in vhdl.depends_on
-                             if dfile is not vhdl]:
+            for dep_file in sorted([dfile for dfile in vhdl.depends_on
+                                    if dfile is not vhdl],
+                                    key=(lambda x: x.path)):
                 if dep_file in fileset:
                     name = dep_file.purename
                     extension = dep_file.extension()

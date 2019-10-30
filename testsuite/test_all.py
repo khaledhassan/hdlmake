@@ -495,6 +495,9 @@ def test_err_filetype():
         run([], path="092bad_filetype")
         assert False
 
+def test_multi_sat():
+    run_compare(path="093multi_sat")
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""

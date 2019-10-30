@@ -68,7 +68,6 @@ def solve(fileset, standard_libs=None):
             # logging.info("- relation: %s" % rel)
             # logging.info("- direction: %s" % rel.direction)
             # Only analyze USE relations, we are looking for dependencies
-            assert rel.direction == DepRelation.USE
             satisfied_by = set()
             for dep_file in fset:
                 if dep_file.satisfies(rel):
@@ -88,7 +87,6 @@ def solve(fileset, standard_libs=None):
                 required_lib = rel.obj_name.split('.')[0]
                 if (not standard_libs is None and
                     required_lib in standard_libs and
-                    rel.direction is DepRelation.USE and
                         rel.rel_type is DepRelation.PACKAGE):
                     logging.debug("Not satisfied relation %s in %s will "
                                   "be covered by the target compiler "
@@ -134,14 +132,9 @@ def make_dependency_set(fileset, top_level_entity, extra_modules=None):
         """ Check if :param test_file: provides the entity pointed by :param entity_name:"""
         if entity_name == None:
             return False
-        entity_rel_vhdl = DepRelation(
-            entity_name,
-            DepRelation.PROVIDE, DepRelation.ENTITY)
-        entity_rel_vlog = DepRelation(
-            "%s.%s" %
-            ("work", entity_name), DepRelation.PROVIDE, DepRelation.MODULE)
+        entity_rel = DepRelation(entity_name, "work", DepRelation.MODULE)
         for rel in test_file.provides:
-            if (rel == entity_rel_vhdl) or (rel == entity_rel_vlog):
+            if rel == entity_rel:
                 return True
         return False
 

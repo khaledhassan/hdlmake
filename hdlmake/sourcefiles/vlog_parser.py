@@ -526,11 +526,11 @@ class VerilogParser(DepParser):
             import_pattern in the Verilog code -- group() returns positive
             matches as indexed plain strings. It adds the found USE
             relations to the file"""
+            pkg_name = text.group(1)
             logging.debug("file %s imports/uses %s.%s package",
-                          dep_file.path, dep_file.library, text.group(1))
+                          dep_file.path, dep_file.library, pkg_name)
             dep_file.add_require(
-                DepRelation("%s.%s" % (dep_file.library, text.group(1)),
-                            DepRelation.USE, DepRelation.PACKAGE))
+                DepRelation(pkg_name, dep_file.library, DepRelation.PACKAGE))
         import_pattern.subn(do_imports, buf)
         # packages
         m_inside_package = re.compile(
@@ -542,11 +542,10 @@ class VerilogParser(DepParser):
             m_inside_pattern in the Verilog code -- group() returns positive
             matches as indexed plain strings. It adds the found PROVIDE
             relations to the file"""
-            logging.debug("found pacakge %s.%s", dep_file.library,
-                          text.group(1))
+            pkg_name = text.group(1)
+            logging.debug("found pacakge %s.%s", dep_file.library, pkg_name)
             dep_file.add_provide(
-                DepRelation("%s.%s" % (dep_file.library, text.group(1)),
-                            DepRelation.PROVIDE, DepRelation.PACKAGE))
+                DepRelation(pkg_name, dep_file.library, DepRelation.PACKAGE))
         m_inside_package.subn(do_package, buf)
 
         # modules and instantiations
@@ -566,11 +565,10 @@ class VerilogParser(DepParser):
             m_inside_module in the Verilog code -- group() returns
             positive  matches as indexed plain strings. It adds the found
             PROVIDE relations to the file"""
-            logging.debug("found module %s.%s", dep_file.library,
-                          text.group(1))
+            module_name = text.group(1)
+            logging.debug("found module %s.%s", dep_file.library, module_name)
             dep_file.add_provide(
-                DepRelation("%s.%s" % (dep_file.library, text.group(1)),
-                            DepRelation.PROVIDE, DepRelation.MODULE))
+                DepRelation(module_name, dep_file.library, DepRelation.MODULE))
 
             def do_inst(text):
                 """Function to be applied by re.sub to every match of the
@@ -579,20 +577,17 @@ class VerilogParser(DepParser):
                 relations to the file"""
                 mod_name = text.group(1)
                 if mod_name in self.reserved_words:
+                    # A gate (and, or, ...)
                     return
                 logging.debug("-> instantiates %s.%s as %s",
-                              dep_file.library, text.group(1), text.group(2))
+                              dep_file.library, mod_name, text.group(2))
                 dep_file.add_require(
-                    DepRelation("%s.%s" % (dep_file.library, text.group(1)),
-                                DepRelation.USE, DepRelation.MODULE))
+                    DepRelation(mod_name, dep_file.library, DepRelation.MODULE))
             for stmt in [x for x in m_stmt.split(text.group(2)) if x and x[-1] == ")"]:
                 match = m_instantiation.match(stmt)
                 if match:
                     do_inst(match)
         m_inside_module.subn(do_module, buf)
         dep_file.add_provide(
-            DepRelation(
-                dep_file.path,
-                DepRelation.PROVIDE,
-                DepRelation.INCLUDE))
+            DepRelation(dep_file.path, None, DepRelation.INCLUDE))
         dep_file.is_parsed = True

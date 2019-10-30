@@ -34,10 +34,6 @@ class DepRelation(object):
 
     """Class used to create instances representing HDL dependency relations"""
 
-    # direction
-    PROVIDE = 1
-    USE = 2
-
     # rel_type
     ENTITY = 1
     PACKAGE = 2
@@ -45,37 +41,32 @@ class DepRelation(object):
     ARCHITECTURE = 4
     MODULE = ENTITY
 
-    def __init__(self, obj_name, direction, rel_type):
-        assert direction in [DepRelation.PROVIDE, DepRelation.USE]
+    def __init__(self, obj_name, lib_name, rel_type):
         assert rel_type in [
             DepRelation.ENTITY,
             DepRelation.PACKAGE,
             DepRelation.INCLUDE,
             DepRelation.ARCHITECTURE,
             DepRelation.MODULE]
-        self.direction = direction
         self.rel_type = rel_type
         self.obj_name = obj_name.lower()
+        self.lib_name = None if lib_name is None else lib_name.lower()
 
     def satisfies(self, rel_b):
         """Check if the current dependency relation matches the provided one"""
-        if (rel_b.direction == DepRelation.PROVIDE or
-                self.direction == DepRelation.USE):
-            return False
-        if rel_b.rel_type == self.rel_type and rel_b.obj_name == self.obj_name:
-            return True
-        return False
+        return (rel_b.rel_type == self.rel_type 
+                and rel_b.obj_name == self.obj_name
+                and rel_b.lib_name == self.lib_name)
 
     def __repr__(self):
-        dstr = {self.USE: "Use", self.PROVIDE: "Provide"}
         ostr = {
             self.ENTITY: "entity",
             self.PACKAGE: "package",
             self.INCLUDE: "include/header",
             self.ARCHITECTURE: "architecture",
             self.MODULE: "module"}
-        return "%s %s '%s'" % (dstr[self.direction],
-                               ostr[self.rel_type],
+        return "%s '%s.%s'" % (ostr[self.rel_type],
+                               self.lib_name or '',
                                self.obj_name)
 
     def __hash__(self):
@@ -154,12 +145,10 @@ class DepFile(File):
 
     def add_require(self, rel):
         """Add dependency :param rel:"""
-        assert rel.direction == DepRelation.USE
         self.requires.add(rel)
 
     def add_provide(self, rel):
         """Add provide :param rel:"""
-        assert rel.direction == DepRelation.PROVIDE
         self.provides.add(rel)
 
     def satisfies(self, rel_b):

@@ -49,10 +49,9 @@ class XCIParser(DepParser):
             nsmap = dict(xmlnsre.findall(xml))
             value = ET.fromstring(xml).find('spirit:componentInstances/spirit:componentInstance/spirit:instanceName', nsmap)
             if not value is None:
-                modulename = value.text
-                logging.debug("found module %s.%s", dep_file.library, modulename)
+                module_name = value.text
+                logging.debug("found module %s.%s", dep_file.library, module_name)
                 dep_file.add_provide(
-                    DepRelation("%s.%s" % (dep_file.library, modulename),
-                                DepRelation.PROVIDE, DepRelation.MODULE))
+                    DepRelation(module_name, dep_file.library, DepRelation.MODULE))
 
         dep_file.is_parsed = True

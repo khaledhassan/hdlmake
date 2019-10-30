@@ -66,22 +66,15 @@ class VHDLParser(DepParser):
             use_pattern in the VHDL code -- group() returns positive matches
             as indexed plain strings. It adds the found USE relations to the
             file"""
-            if text.group(1).lower() == "work":
-                logging.debug("use package %s.%s",
-                              dep_file.library, text.group(2))
-                dep_file.add_require(
-                    DepRelation("%s.%s" % (dep_file.library, text.group(2)),
-                                DepRelation.USE,
-                                DepRelation.PACKAGE))
-            else:
-                logging.debug("use package %s.%s",
-                              text.group(1), text.group(2))
-                dep_file.add_require(
-                    DepRelation("%s.%s" % (text.group(1), text.group(2)),
-                                DepRelation.USE,
-                                DepRelation.PACKAGE))
-            return "<hdlmake use_pattern %s.%s>" % (text.group(1),
-                                                    text.group(2))
+            lib_name = text.group(1).lower()
+            pkg_name = text.group(2).lower()
+            if lib_name == "work":
+                # Work is an alias for the current library
+                lib_name = dep_file.library
+            logging.debug("use package %s.%s", lib_name, pkg_name)
+            dep_file.add_require(
+                DepRelation(pkg_name, lib_name, DepRelation.PACKAGE))
+            return "<hdlmake use_pattern %s.%s>" % (lib_name, pkg_name)
         buf = re.sub(use_pattern, do_use, buf)
         # new entity
         entity_pattern = re.compile(
@@ -93,14 +86,11 @@ class VHDLParser(DepParser):
             entity_pattern in the VHDL code -- group() returns positive matches
             as indexed plain strings. It adds the found PROVIDE relations
             to the file"""
-            logging.debug("found entity %s.%s",
-                          dep_file.library, text.group(1))
+            ent_name = text.group(1)
+            logging.debug("found entity %s.%s", dep_file.library, ent_name)
             dep_file.add_provide(
-                DepRelation("%s.%s" % (dep_file.library, text.group(1)),
-                            DepRelation.PROVIDE,
-                            DepRelation.ENTITY))
-            return "<hdlmake entity_pattern %s.%s>" % (dep_file.library,
-                                                       text.group(1))
+                DepRelation(ent_name, dep_file.library, DepRelation.ENTITY))
+            return "<hdlmake entity_pattern %s.%s>" % (dep_file.library, ent_name)
 
         buf = re.sub(entity_pattern, do_entity, buf)
 
@@ -114,16 +104,14 @@ class VHDLParser(DepParser):
             architecture_pattern in the VHDL code -- group() returns positive
             matches as indexed plain strings. It adds the found PROVIDE
             relations to the file"""
+            arch_name = text.group(1)
+            ent_name = text.group(2)
             logging.debug("found architecture %s of entity %s.%s",
-                          text.group(1), dep_file.library, text.group(2))
+                          arch_name, dep_file.library, ent_name)
             dep_file.add_provide(
-                DepRelation("%s.%s" % (dep_file.library, text.group(2)),
-                            DepRelation.PROVIDE,
-                            DepRelation.ARCHITECTURE))
+                DepRelation(ent_name, dep_file.library, DepRelation.ARCHITECTURE))
             dep_file.add_require(
-                DepRelation("%s.%s" % (dep_file.library, text.group(2)),
-                            DepRelation.USE,
-                            DepRelation.ENTITY))
+                DepRelation(ent_name, dep_file.library, DepRelation.ENTITY))
 
             return "<hdlmake architecture %s.%s>" % (dep_file.library,
                                                      text.group(2))
@@ -139,14 +127,11 @@ class VHDLParser(DepParser):
             package_pattern in the VHDL code -- group() returns positive
             matches as indexed plain strings. It adds the found PROVIDE
             relations to the file"""
-            logging.debug("found package %s.%s", dep_file.library,
-                          text.group(1))
+            pkg_name = text.group(1)
+            logging.debug("found package %s.%s", dep_file.library, pkg_name)
             dep_file.add_provide(
-                DepRelation("%s.%s" % (dep_file.library, text.group(1)),
-                            DepRelation.PROVIDE,
-                            DepRelation.PACKAGE))
-            return "<hdlmake package %s.%s>" % (dep_file.library,
-                                                text.group(1))
+                DepRelation(pkg_name, dep_file.library, DepRelation.PACKAGE))
+            return "<hdlmake package %s.%s>" % (dep_file.library, pkg_name)
         buf = re.sub(package_pattern, do_package, buf)
 
         # component declaration
@@ -160,10 +145,6 @@ class VHDLParser(DepParser):
             matches as indexed plain strings. It doesn't add any relation
             to the file"""
             logging.debug("found component declaration %s", text.group(1))
-            #dep_file.add_relation(
-            #    DepRelation("%s.%s" % (dep_file.library, text.group(1)),
-            #                DepRelation.USE,
-            #                DepRelation.ENTITY))
             return "<hdlmake component %s>" % text.group(1)
 
         buf = re.sub(component_pattern, do_component, buf)
@@ -249,15 +230,12 @@ class VHDLParser(DepParser):
             relations to the file"""
             logging.debug("-> instantiates %s.%s(%s) as %s",
                           text.group("LIB"), text.group("ENTITY"), text.group("ARCH"), text.group("LABEL"))
-            lib = text.group("LIB")
-            if not lib or lib == "work":
-                lib = dep_file.library
-            dep_file.add_require(DepRelation(
-                "%s.%s" % (lib, text.group("ENTITY")),
-                DepRelation.USE, DepRelation.ENTITY))
-            return "<hdlmake instance %s|%s|%s>" % (text.group("LABEL"),
-                                                    lib,
-                                                    text.group("ENTITY"))
+            lib_name = text.group("LIB")
+            if not lib_name or lib_name == "work":
+                lib_name = dep_file.library
+            ent_name = text.group("ENTITY")
+            dep_file.add_require(DepRelation(ent_name, lib_name, DepRelation.ENTITY))
+            return "<hdlmake instance %s|%s|%s>" % (text.group("LABEL"), lib_name, ent_name)
         buf = re.sub(instance_pattern, do_instance, buf)
 
         # libraries

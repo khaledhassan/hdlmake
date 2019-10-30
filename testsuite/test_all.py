@@ -221,6 +221,11 @@ def test_git_fetch_err():
         run(['fetch'], path="075err_git")
     shutil.rmtree('ipcores', ignore_errors=True)
 
+def test_svn_fetch_err():
+    with pytest.raises(SystemExit) as _:
+        run(['--full-error', 'fetch'], path="094err_svn")
+    shutil.rmtree('094err_svn/ipcores', ignore_errors=True)
+
 def test_svn_fetch():
     with Config(path="021svn_fetch") as _:
         hdlmake.main.hdlmake(['list-mods'])

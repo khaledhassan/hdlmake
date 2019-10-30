@@ -64,42 +64,41 @@ def solve(fileset, standard_libs=None):
     not_satisfied = 0
     for investigated_file in fset:
         # logging.info("INVESTIGATED FILE: %s" % investigated_file)
-        # print(investigated_file.rels)
-        for rel in investigated_file.rels:
+        for rel in investigated_file.requires:
             # logging.info("- relation: %s" % rel)
             # logging.info("- direction: %s" % rel.direction)
             # Only analyze USE relations, we are looking for dependencies
-            if rel.direction == DepRelation.USE:
-                satisfied_by = set()
-                for dep_file in fset:
-                    if dep_file.satisfies(rel):
-                        if dep_file is not investigated_file:
-                            investigated_file.depends_on.add(dep_file)
-                        satisfied_by.add(dep_file)
-                if len(satisfied_by) > 1:
-                    logging.warning(
-                        "Relation %s satisfied by multiple (%d) files:\n %s",
-                        str(rel),
-                        len(satisfied_by),
-                        '\n '.join([file_aux.path for
-                                   file_aux in list(satisfied_by)]))
-                elif len(satisfied_by) == 0:
-                    # if relation is a USE PACKAGE, check against
-                    # the standard libs provided by the tool HDL compiler
-                    required_lib = rel.obj_name.split('.')[0]
-                    if (not standard_libs is None and
-                        required_lib in standard_libs and
-                        rel.direction is DepRelation.USE and
-                            rel.rel_type is DepRelation.PACKAGE):
-                        logging.debug("Not satisfied relation %s in %s will "
-                                      "be covered by the target compiler "
-                                      "standard libs.",
-                                      str(rel), investigated_file.name)
-                    else:
-                        logging.warning("Relation %s in %s not satisfied by "
-                                        "any source file",
-                                        str(rel), investigated_file.name)
-                        not_satisfied += 1
+            assert rel.direction == DepRelation.USE
+            satisfied_by = set()
+            for dep_file in fset:
+                if dep_file.satisfies(rel):
+                    if dep_file is not investigated_file:
+                        investigated_file.depends_on.add(dep_file)
+                    satisfied_by.add(dep_file)
+            if len(satisfied_by) > 1:
+                logging.warning(
+                    "Relation %s satisfied by multiple (%d) files:\n %s",
+                    str(rel),
+                    len(satisfied_by),
+                    '\n '.join([file_aux.path for
+                               file_aux in list(satisfied_by)]))
+            elif len(satisfied_by) == 0:
+                # if relation is a USE PACKAGE, check against
+                # the standard libs provided by the tool HDL compiler
+                required_lib = rel.obj_name.split('.')[0]
+                if (not standard_libs is None and
+                    required_lib in standard_libs and
+                    rel.direction is DepRelation.USE and
+                        rel.rel_type is DepRelation.PACKAGE):
+                    logging.debug("Not satisfied relation %s in %s will "
+                                  "be covered by the target compiler "
+                                  "standard libs.",
+                                  str(rel), investigated_file.name)
+                else:
+                    logging.warning("Relation %s in %s not satisfied by "
+                                    "any source file",
+                                    str(rel), investigated_file.name)
+                    not_satisfied += 1
     logging.debug("SOLVE END")
     if not_satisfied != 0:
         logging.warning(
@@ -141,7 +140,7 @@ def make_dependency_set(fileset, top_level_entity, extra_modules=None):
         entity_rel_vlog = DepRelation(
             "%s.%s" %
             ("work", entity_name), DepRelation.PROVIDE, DepRelation.MODULE)
-        for rel in test_file.rels:
+        for rel in test_file.provides:
             if (rel == entity_rel_vhdl) or (rel == entity_rel_vlog):
                 return True
         return False

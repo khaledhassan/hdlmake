@@ -146,27 +146,28 @@ class DepFile(File):
     def __init__(self, path, module):
         assert isinstance(path, six.string_types)
         File.__init__(self, path=path, module=module)
-        self.rels = set()
-        self.depends_on = set()
+        self.provides = set()
+        self.requires = set()
+        self.depends_on = set()     # Set of files this file depends on.
         self.dep_level = None
         self.is_parsed = False
 
     def add_require(self, rel):
         """Add dependency :param rel:"""
         assert rel.direction == DepRelation.USE
-        self.rels.add(rel)
+        self.requires.add(rel)
 
     def add_provide(self, rel):
         """Add provide :param rel:"""
         assert rel.direction == DepRelation.PROVIDE
-        self.rels.add(rel)
+        self.provides.add(rel)
 
     def satisfies(self, rel_b):
         """Check if any of the file object relations match any of the relations
         listed in the parameter (rel_b)"""
         assert isinstance(rel_b, DepRelation)
         # self._parse_if_needed()
-        return any([x.satisfies(rel_b) for x in self.rels])
+        return any([x.satisfies(rel_b) for x in self.provides])
 
     def get_dep_level(self):
         """Get the dependency level for the file instance, so we can order

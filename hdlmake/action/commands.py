@@ -97,7 +97,7 @@ class Commands(Action):
                 new_modules.extend(module.modules[m])
             return new_modules
 
-        fetch_queue = [m for m in self.manifests]
+        fetch_queue = self.manifests[:] # Need a copy of the list
 
         while len(fetch_queue) > 0:
             cur_mod = fetch_queue.pop()

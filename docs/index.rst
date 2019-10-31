@@ -173,7 +173,7 @@ As a prerequisite, you must have the following programs installed in your host m
 
 - ``python``: you need a compatible Python deployment
 - ``git``: you need git for both fetching the ``hdlmake`` code and accessing to remote HDL repositories.
-- ``svn``: svn will only be used when accessing to remote SVN HDL repositories. 
+- ``svn``: svn will only be used when accessing to remote SVN HDL repositories.
 
 .. note:: In order to support Python 2.7.x and 3.x with a single codebase, the ``six`` Python package is now required to run ``hdlmake`` 3.0 version.
 
@@ -191,7 +191,7 @@ To install directly from `PyPI <https://pypi.python.org/pypi>`_ simply run:
 .. code-block:: bash
 
    pip install hdlmake
-   
+
 Alternatively, if you have already downloaded a source distribution, you can install it as follows:
 
 .. code-block:: bash
@@ -209,19 +209,19 @@ Fetch the code from the official ``hdlmake`` git repository, that can be found a
 Once you have a valid ``hdlmake`` source tree, you can install ``hdlmake`` into your Python site-packages directly via *setup.py install*:
 
 .. code-block:: bash
-   
+
    cd /path_to_hdlmake_sources/hdl-make
    python2.7 setup.py install
-   
+
 ``hdlmake`` is now installed into your active Python environment and can be run simply by executing ``hdlmake`` in your shell.
 
 As a developer, you may wish to avoid installing ``hdlmake`` directly into your site-packages, but can instead link directly to the sources instead:
 
 .. code-block:: bash
-   
+
    cd /path_to_hdlmake_sources/hdl-make
-   python2.7 setup.py develop
-   
+   pip install --user -e .
+
 Alternatively, you may choose to forgo installing anything in your Python environment and simply directly run from the source by creating a launch script.
 Create a launch script in /usr/bin or any other available location at shell $PATH. You can name the script as you prefer so, by doing this, multiple ``hdlmake`` versions can easily be used in the same machine. In any case, in this documentation we will consider that the name for this launch script is just ``hdlmake``.
 
@@ -230,7 +230,7 @@ Create a launch script in /usr/bin or any other available location at shell $PAT
    #!/usr/bin/env bash
    PYTHONPATH=/path_to_hdlmake_sources/hdl-make python2.7 -m hdlmake $@
 
-Once the launch script has been created, the appropriate execution rights must be set: 
+Once the launch script has been created, the appropriate execution rights must be set:
 
 .. code-block:: bash
 
@@ -246,7 +246,20 @@ In the above examples the following nomenclature is used:
 Windows specific guidelines
 ---------------------------
 
-From the new 3.0 version onwards, ``hdlmake`` supports execution on native ``Windows`` shell, including both the old ``cmd`` and the new ``PowerShell``. In this section, you'll find instructions on how to install and configure the tool and the required versions of the programs (``Git`` and ``Make``).
+As ``hdlmake`` uses ``Make``, the installation on Windows is slightly tricky.
+First you have to install ``Make``.  But there are two flavours of ``Make``:
+the native one (which uses ``cmd`` or ``PowerShell``) and the cygwin one (which
+uses ``bash``).
+
+The commands used are not the same.  For example to remove a file, ``del`` is
+used with the native flavour but ``rm`` is used for ``bash``.  The tool
+``hdlmake`` chooses the flavour according to the python executable.  So
+you have to use a matching pair of ``Python`` and ``Make``: either both
+native or both cygwin.
+
+In any case, you also need to install ``Git``.
+
+The instructions below are for the native flavour.
 
 Make
 ~~~~
@@ -680,7 +693,7 @@ Note that ``hdlmake`` and the examples included in the ``counter`` test have bee
 Handling remote modules
 -----------------------
 
-Let's take a simple example of how ``hdlmake`` handles repositories. 
+Let's take a simple example of how ``hdlmake`` handles repositories.
 
 First, consider that we have a project consisting on four HDL modules and one testbench. The project root folder looks like this:
 
@@ -869,30 +882,30 @@ commands into the Makefile.
 As a first option, multiple commands can be launched by spliting a single long string into one piece per command.
 The drawback for this approach is that the original single line is reconstructed an inserted into the Makefile, so
 the specific external command Makefile target include just a single entry. This is why, in the following example,
-semicolons are used in order to separate the sequential commands: 
+semicolons are used in order to separate the sequential commands:
 
 .. code-block:: python
 
    syn_pre_cmd = (
-       "mkdir /home/user/Workspace/test1;" 
-       "mkdir /home/user/Workspace/test2;" 
-       "mkdir /home/user/Workspace/test3;" 
-       "mkdir /home/user/Workspace/test4;" 
-       "mkdir /home/user/Workspace/test5" 
+       "mkdir /home/user/Workspace/test1;"
+       "mkdir /home/user/Workspace/test2;"
+       "mkdir /home/user/Workspace/test3;"
+       "mkdir /home/user/Workspace/test4;"
+       "mkdir /home/user/Workspace/test5"
    )
 
 A cleaner alternative, is using a multiline text in which line return and tabulation characters has been introduced
-in order to separate in different lines each of the commans when they are written into the Makefiles. In the 
+in order to separate in different lines each of the commans when they are written into the Makefiles. In the
 following example, this approach is exemplified:
 
 .. code-block:: python
 
    syn_pre_cmd = (
-       "mkdir /home/user/Workspace/test1\n\t\t" 
-       "mkdir /home/user/Workspace/test2\n\t\t" 
-       "mkdir /home/user/Workspace/test3\n\t\t" 
-       "mkdir /home/user/Workspace/test4\n\t\t" 
-       "mkdir /home/user/Workspace/test5" 
+       "mkdir /home/user/Workspace/test1\n\t\t"
+       "mkdir /home/user/Workspace/test2\n\t\t"
+       "mkdir /home/user/Workspace/test3\n\t\t"
+       "mkdir /home/user/Workspace/test4\n\t\t"
+       "mkdir /home/user/Workspace/test5"
    )
 
 
@@ -924,7 +937,7 @@ is used to select the content of the following ``modules`` to be scanned:
            "local" : [ "../../../modules/counter/verilog" ],
        }
 
-Now, in order to define the ``simulate_vhdl`` variable value, we can use two different approachs. 
+Now, in order to define the ``simulate_vhdl`` variable value, we can use two different approachs.
 The first one is to include this as a new variable in the top Manifest.py, i.e.:
 
 .. code-block:: python
@@ -1281,10 +1294,10 @@ In some version of Modelsim (e.g. ``Modelsim PE 10.5a``), we will need to fix th
    -  int max_ifg = 100;//us
    +  static int min_ifg = 1; //us
    +  static int max_ifg = 100;//us
-   
+
       tmpl                = new;
       tmpl.src                = '{'h22,'h33,'h44,'h44,'h55,'h66};
-   
+
 
 Once everything is ready, we can compile the design sources. As the ``HDLMake`` SystemVerilog parser is not very accurate yet and it is not able to successfully solve the complete hierarchy, we will need to pass the ``-a`` flag to the makefile generation command so that all the files are parsed and passed to the compiler -- even if we cannot relate them to the top entity by using dependency relations:
 
@@ -1339,7 +1352,7 @@ In order to allow for a more agile development, we have included these shortcuts
 
 
 Fetching submodules for a top module (``fetch``)
-------------------------------------------------               
+------------------------------------------------
 Fetch and/or update remote modules listed in Manifest. It is assumed that a projects can consist of modules, that are stored in different places (locally or a repo). The same thing is about each of those modules - they can be based on other modules. Hdlmake can fetch all of them and store them in specified places. For each module one can specify a target catalog with manifest variable ``fetchto``. Its value must be a name (existent or not) of a folder. The folder may be located anywhere in the filesystem. It must be then a relative path (``hdlmake`` support solely relative paths).
 
 Cleaning the fetched repositories (``clean``)
@@ -1373,7 +1386,7 @@ Summing everything up, the following table compiles the different kind of resour
 Now, here we have some examples of the outputs we should expect when using the ``list-mods`` command:
 
 .. code-block:: bash
-   
+
    user@host:~/hdl-make/tests/counter/syn/spec_v4_ise/vhdl$ hdlmake list-mods --with-files
    # MODULE START -> git@ohwr.org:misc/hdl-make.git
    # * This is the root module
@@ -1438,14 +1451,14 @@ Top Manifest variables
 
 +----------------+--------------+-----------------------------------------------------------------+-----------+
 | Name           | Type         | Description                                                     | Default   |
-+================+==============+=================================================================+===========+ 
-| action         | str          | What is the action that should be taken (simulation/synthesis)  | ""        | 
++================+==============+=================================================================+===========+
+| action         | str          | What is the action that should be taken (simulation/synthesis)  | ""        |
 +----------------+--------------+-----------------------------------------------------------------+-----------+
 | incl_makefiles | list         | List of .mk files included in the generated makefile            | []        |
 +----------------+--------------+-----------------------------------------------------------------+-----------+
 | language       | str          | Select the default HDL language if required (verilog, vhdl)     | "vhdl"    |
 +----------------+--------------+-----------------------------------------------------------------+-----------+
- 
+
 
 Universal variables
 -------------------
@@ -1458,7 +1471,7 @@ Universal variables
 | modules        | dict         | List of local modules                                           | {}        |
 +----------------+--------------+-----------------------------------------------------------------+-----------+
 | files          | str, list    | List of files from the current module                           | []        |
-+----------------+--------------+-----------------------------------------------------------------+-----------+ 
++----------------+--------------+-----------------------------------------------------------------+-----------+
 | library        | str          | Destination library for module's VHDL files                     | work      |
 +----------------+--------------+-----------------------------------------------------------------+-----------+
 | include_dirs   | list, str    | Include dirs for Verilog sources                                | None      |
@@ -1645,7 +1658,7 @@ As an example, this command will generate the Makefile and will try to print ``H
 
 
 ``-s, --suffix ARBITRARY_CODE``
-------------------------------
+-------------------------------
 Add arbitrary Python code from the command line that **will be evaluated after each Manifest.py** parse action across the hierarchy.
 
 As an example, this command will generate the Makefile but will try to print ``Bye, bye hdlmake`` after each ``Manifest.py`` run:
@@ -1653,4 +1666,3 @@ As an example, this command will generate the Makefile but will try to print ``B
 .. code-block:: bash
 
    hdlmake -s "print('Bye, bye hdlmake')" makefile
-

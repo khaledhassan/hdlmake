@@ -23,7 +23,7 @@ hdlmake.dep_file module
     :show-inheritance:
 
 hdlmake.new_dep_solver module
--------------------------
+-----------------------------
 
 .. automodule:: hdlmake.new_dep_solver
     :members:

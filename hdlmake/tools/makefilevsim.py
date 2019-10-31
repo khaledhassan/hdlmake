@@ -81,6 +81,10 @@ class MakefileVsim(MakefileSim):
         self.writeln("VLOG_FLAGS := %s" % vlog_flags)
         self.writeln("VMAP_FLAGS := %s" % vmap_flags)
 
+    def _get_stamp_file(self, dep_file):
+        name = dep_file.purename
+        return os.path.join(dep_file.library, name, ".{}_{}".format(name, dep_file.extension()))
+
     def _makefile_sim_compilation(self):
         """Write a properly formatted Makefile for the simulator.
         The Makefile format is shared, but flags, dependencies, clean rules,
@@ -126,17 +130,11 @@ class MakefileVsim(MakefileSim):
             self.write(" || {} {}\n\n".format(shell.del_command(), lib))
         # rules for all _primary.dat files for sv
         for vlog in fileset.filter(VerilogFile).sort():
-            self.write("%s: %s" % (os.path.join(
-                vlog.library, vlog.purename,
-                ".%s_%s" % (vlog.purename, vlog.extension())),
-                vlog.rel_path()))
+            self.write("%s: %s" % (self._get_stamp_file(vlog), vlog.rel_path()))
             # list dependencies, do not include the target file
             for dep_file in sorted(vlog.depends_on, key=(lambda x: x.path)):
                 if dep_file is not vlog:
-                    name = dep_file.purename
-                    extension = dep_file.extension()
-                    self.write(" \\\n" + os.path.join(
-                        dep_file.library, name, ".%s_%s" % (name, extension)))
+                    self.write(" \\\n" + self._get_stamp_file(dep_file))
             for dep_file in sorted(vlog.included_files):
                     self.write(" \\\n{}".format(path_mod.relpath(dep_file, cwd)))
             self.writeln()
@@ -152,25 +150,18 @@ class MakefileVsim(MakefileSim):
             self.writeln()
         # list rules for all _primary.dat files for vhdl
         for vhdl in fileset.filter(VHDLFile).sort():
-            lib = vhdl.library
-            purename = vhdl.purename
             # each .dat depends on corresponding .vhd file
-            self.write("%s: %s" % (os.path.join(
-                lib, purename, "." + purename + "_" + vhdl.extension()),
-                vhdl.rel_path()))
+            self.write("%s: %s" % (self._get_stamp_file(vhdl), vhdl.rel_path()))
             # list dependencies, do not include the target file
             for dep_file in sorted([dfile for dfile in vhdl.depends_on
                                     if dfile is not vhdl],
                                     key=(lambda x: x.path)):
                 if dep_file in fileset:
-                    name = dep_file.purename
-                    extension = dep_file.extension()
-                    self.write(" \\\n" + os.path.join(dep_file.library,
-                               name, ".%s_%s" % (name, extension)))
+                    self.write(" \\\n" + self._get_stamp_file(dep_file))
                 else:
                     self.write(" \\\n" + dep_file.rel_path())
             self.writeln()
             self.writeln(' '.join(["\t\tvcom $(VCOM_FLAGS)",
-                         "-work", lib, "$< "]))
+                         "-work", vhdl.library, "$< "]))
             self.writeln("\t\t@" + shell.mkdir_command() +
                 " $(dir $@) && " + shell.touch_command() + " $@ \n\n")

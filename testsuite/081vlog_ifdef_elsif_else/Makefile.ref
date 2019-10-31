@@ -33,8 +33,7 @@ $(VHDL_OBJ): $(LIB_IND) modelsim.ini
 modelsim.ini: $(MODELSIM_INI_PATH)/modelsim.ini
 		cp $< . 2>&1
 work/.work:
-	(vlib work && vmap $(VMAP_FLAGS) work && touch work/.work )|| rm -rf work 
-
+	(vlib work && vmap $(VMAP_FLAGS) work && touch work/.work) || rm -rf work
 
 work/mod_a/.mod_a_v: mod_a.v
 		vlog -work work $(VLOG_FLAGS)  ${INCLUDE_DIRS} $<

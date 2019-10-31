@@ -33,12 +33,10 @@ $(VHDL_OBJ): $(LIB_IND) modelsim.ini
 modelsim.ini: $(MODELSIM_INI_PATH)/modelsim.ini
 		cp $< . 2>&1
 sublib/.sublib:
-	(vlib sublib && vmap $(VMAP_FLAGS) sublib && touch sublib/.sublib )|| rm -rf sublib 
-
+	(vlib sublib && vmap $(VMAP_FLAGS) sublib && touch sublib/.sublib) || rm -rf sublib
 
 work/.work:
-	(vlib work && vmap $(VMAP_FLAGS) work && touch work/.work )|| rm -rf work 
-
+	(vlib work && vmap $(VMAP_FLAGS) work && touch work/.work) || rm -rf work
 
 work/gate3/.gate3_vhd: gate3.vhd \
 sublib/gate/.gate_vhdl

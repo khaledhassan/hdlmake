@@ -31,8 +31,7 @@ $(VHDL_OBJ): $(LIB_IND) modelsim.ini
 modelsim.ini: $(MODELSIM_INI_PATH)/modelsim.ini
 		copy $< . 2>&1
 work\.work:
-	(vlib work && vmap $(VMAP_FLAGS) work && type nul >> work\.work )|| del /s /q /f work 
-
+	(vlib work && vmap $(VMAP_FLAGS) work && type nul >> work\.work) || del /s /q /f work
 
 work/gate/.gate_vhdl: ../files/gate.vhdl
 		vcom $(VCOM_FLAGS) -work work $< 

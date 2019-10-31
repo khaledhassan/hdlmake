@@ -28,8 +28,7 @@ $(VERILOG_OBJ) :
 $(VHDL_OBJ): $(LIB_IND) 
 
 work/.work:
-	(vlib work && vmap $(VMAP_FLAGS) work && touch work/.work )|| rm -rf work 
-
+	(vlib work && vmap $(VMAP_FLAGS) work && touch work/.work) || rm -rf work
 
 work/gate/.gate_vhdl: ../files/gate.vhdl
 		vcom $(VCOM_FLAGS) -work work $< 

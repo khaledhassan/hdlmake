@@ -38,6 +38,7 @@ class Config(object):
 def compare_makefile():
     ref = open('Makefile.ref', 'r').read()
     out = open('Makefile', 'r').read()
+    # shutil.move('Makefile', 'Makefile.ref')  # To regenerate
     assert out == ref
     os.remove('Makefile')
 

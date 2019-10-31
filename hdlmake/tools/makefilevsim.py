@@ -121,12 +121,9 @@ class MakefileVsim(MakefileSim):
             self.write(__create_copy_rule(filename, filesource))
         for lib in libs:
             self.write(lib + shell.makefile_slash_char() + "." + lib + ":\n")
-            vmap_command = "vmap $(VMAP_FLAGS)"
-            self.write(' '.join(["\t(vlib", lib, "&&", vmap_command, lib, "&&",
-                shell.touch_command(), lib + shell.makefile_slash_char() +
-                "." + lib, ")"]))
-            self.write(' '.join(["||", shell.del_command(), lib, "\n"]))
-            self.write('\n\n')
+            self.write("\t(vlib {0} && vmap $(VMAP_FLAGS) {0} && {1} {0}{2}.{0} )".format(
+                lib, shell.touch_command(), shell.makefile_slash_char()))
+            self.write("|| {} {} \n\n\n".format(shell.del_command(), lib))
         # rules for all _primary.dat files for sv
         for vlog in fileset.filter(VerilogFile).sort():
             self.write("%s: %s" % (os.path.join(

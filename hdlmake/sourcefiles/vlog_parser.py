@@ -588,6 +588,4 @@ class VerilogParser(DepParser):
                 if match:
                     do_inst(match)
         m_inside_module.subn(do_module, buf)
-        dep_file.add_provide(
-            DepRelation(dep_file.path, None, DepRelation.INCLUDE))
         dep_file.is_parsed = True

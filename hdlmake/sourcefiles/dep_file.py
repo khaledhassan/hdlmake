@@ -35,17 +35,16 @@ class DepRelation(object):
     """Class used to create instances representing HDL dependency relations"""
 
     # rel_type
+    # Architecture is never required.
     ENTITY = 1
     PACKAGE = 2
-    INCLUDE = 3
-    ARCHITECTURE = 4
+    ARCHITECTURE = 3
     MODULE = ENTITY
 
     def __init__(self, obj_name, lib_name, rel_type):
         assert rel_type in [
             DepRelation.ENTITY,
             DepRelation.PACKAGE,
-            DepRelation.INCLUDE,
             DepRelation.ARCHITECTURE,
             DepRelation.MODULE]
         self.rel_type = rel_type
@@ -62,7 +61,6 @@ class DepRelation(object):
         ostr = {
             self.ENTITY: "entity",
             self.PACKAGE: "package",
-            self.INCLUDE: "include/header",
             self.ARCHITECTURE: "architecture",
             self.MODULE: "module"}
         return "%s '%s.%s'" % (ostr[self.rel_type],

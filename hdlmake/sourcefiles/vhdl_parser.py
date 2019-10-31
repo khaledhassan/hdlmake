@@ -76,6 +76,7 @@ class VHDLParser(DepParser):
                 DepRelation(pkg_name, lib_name, DepRelation.PACKAGE))
             return "<hdlmake use_pattern %s.%s>" % (lib_name, pkg_name)
         buf = re.sub(use_pattern, do_use, buf)
+        
         # new entity
         entity_pattern = re.compile(
             r"^\s*entity\s+(?P<name>\w+)\s+is\s+(?:port|generic|end)"
@@ -214,7 +215,7 @@ class VHDLParser(DepParser):
 
         buf = re.sub(function_pattern, do_function, buf)
 
-        # instantions
+        # instantiations
         libraries = set([dep_file.library])
         instance_pattern = re.compile(
             r"^\s*(?P<LABEL>\w+)\s*:"

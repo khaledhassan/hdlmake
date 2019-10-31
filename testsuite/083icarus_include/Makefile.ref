@@ -25,9 +25,8 @@ include_dirs:
 		echo "+incdir+inc" >> run.command
 
 
-work/macros/.macros_v: inc/macros.v
 work/vlog/.vlog_v: vlog.v \
-work/macros/.macros_v
+inc/macros.v
 		echo $< >> run.command
 		@mkdir -p $(dir $@) && touch $@ 
 

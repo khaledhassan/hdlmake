@@ -30,6 +30,7 @@ import string
 from .makefilesim import MakefileSim
 from ..util import shell
 from ..sourcefiles.srcfile import VerilogFile, VHDLFile, SVFile
+from ..util import path as path_mod
 import six
 
 
@@ -92,8 +93,10 @@ class MakefileVsim(MakefileSim):
 \t\t%s $< . 2>&1
 """ % (name, src, shell.copy_command())
             return rule
+
+        cwd = os.getcwd()
         fileset = self.fileset
-        if self.manifest_dict.get("include_dirs") == None:
+        if self.manifest_dict.get("include_dirs") is None:
             self.writeln("INCLUDE_DIRS :=")
         else:
             self.writeln("INCLUDE_DIRS := +incdir+%s" %
@@ -112,10 +115,7 @@ class MakefileVsim(MakefileSim):
             "simulation: %s $(LIB_IND) $(VERILOG_OBJ) $(VHDL_OBJ)" %
             (' '.join(self.additional_deps)),)
         self.writeln("$(VERILOG_OBJ) : " + ' '.join(self.additional_deps))
-        self.writeln(
-            "$(VHDL_OBJ): $(LIB_IND) " +
-            ' '.join(
-                self.additional_deps))
+        self.writeln("$(VHDL_OBJ): $(LIB_IND) " + ' '.join(self.additional_deps))
         self.writeln()
         for filename, filesource in six.iteritems(self.copy_rules):
             self.write(__create_copy_rule(filename, filesource))
@@ -129,23 +129,19 @@ class MakefileVsim(MakefileSim):
             self.write('\n\n')
         # rules for all _primary.dat files for sv
         for vlog in fileset.filter(VerilogFile).sort():
-            if vlog.is_include:
-              continue
             self.write("%s: %s" % (os.path.join(
                 vlog.library, vlog.purename,
                 ".%s_%s" % (vlog.purename, vlog.extension())),
                 vlog.rel_path()))
             # list dependencies, do not include the target file
-            for dep_file in sorted([dfile for dfile
-                                    in vlog.depends_on if dfile is not vlog],
-                                   key=(lambda x: x.path)):
-                if dep_file in fileset and not dep_file.is_include:
+            for dep_file in sorted(vlog.depends_on, key=(lambda x: x.path)):
+                if dep_file is not vlog:
                     name = dep_file.purename
                     extension = dep_file.extension()
                     self.write(" \\\n" + os.path.join(
                         dep_file.library, name, ".%s_%s" % (name, extension)))
-                else:  # the file is included -> we depend directly on the file
-                    self.write(" \\\n" + dep_file.rel_path())
+            for dep_file in sorted(vlog.included_files):
+                    self.write(" \\\n{}".format(path_mod.relpath(dep_file, cwd)))
             self.writeln()
             compile_template = string.Template(
                 "\t\tvlog -work ${library} $$(VLOG_FLAGS) "

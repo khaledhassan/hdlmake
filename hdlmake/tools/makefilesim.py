@@ -8,7 +8,7 @@ import logging
 from .makefile import ToolMakefile
 from ..util import shell
 from ..sourcefiles.srcfile import VerilogFile, VHDLFile, SVFile
-
+from ..util import path as path_mod
 
 def _check_simulation_manifest(top_manifest):
     """Check if the simulation keys are provided by the top manifest"""
@@ -75,14 +75,10 @@ TOP_MODULE := {top_module}
         fileset = self.fileset
         self.write("VERILOG_SRC := ")
         for vlog in fileset.filter(VerilogFile).sort():
-            if vlog.is_include:
-                continue
             self.writeln(vlog.rel_path() + " \\")
         self.writeln()
         self.write("VERILOG_OBJ := ")
         for vlog in fileset.filter(VerilogFile).sort():
-            if vlog.is_include:
-                continue
             # make a file compilation indicator (these .dat files are made even
             # if the compilation process fails) and add an ending according
             # to file's extension (.sv and .vhd files may have the same
@@ -102,6 +98,7 @@ TOP_MODULE := {top_module}
 
     def _makefile_sim_dep_files(self):
         """Print dummy targets to handle file dependencies"""
+        cwd = os.getcwd()
         fileset = self.fileset.sort()
         for file_aux in fileset:
             # Consider only HDL files.
@@ -112,21 +109,15 @@ TOP_MODULE := {top_module}
                     if dep_file is file_aux:
                         # Do not depend on itself.
                         continue
-                    if dep_file in fileset:
-                        self.write(" \\\n" + self.get_stamp_file(dep_file))
-                    else:
-                        # the file is included -> we depend directly on it
-                        self.write(" \\\n" + dep_file.rel_path())
+                    self.write(" \\\n" + self.get_stamp_file(dep_file))
+                for dep_file in sorted(file_aux.included_files):
+                    self.write(" \\\n{}".format(path_mod.relpath(dep_file, cwd)))
                 self.writeln()
-                is_include = False
                 if isinstance(file_aux, VHDLFile):
                     command_key = 'vhdl'
                 elif (isinstance(file_aux, VerilogFile) or
                       isinstance(file_aux, SVFile)):
-                    is_include = file_aux.is_include
                     command_key = 'vlog'
-                if is_include:
-                    continue
                 self.writeln("\t\t" + self.SIMULATOR_CONTROLS[command_key])
                 self.write("\t\t@" + shell.mkdir_command() + " $(dir $@)")
                 self.writeln(" && " + shell.touch_command()  + " $@ \n")

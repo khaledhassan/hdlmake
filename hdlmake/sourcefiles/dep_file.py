@@ -138,6 +138,7 @@ class DepFile(File):
         self.provides = set()
         self.requires = set()
         self.depends_on = set()     # Set of files this file depends on.
+        self.included_files = set()
         self.dep_level = None
         self.is_parsed = False
 

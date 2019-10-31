@@ -60,8 +60,7 @@ class VerilogPreprocessor(object):
         self.vlog_file = None
         # List of macro definitions
         self.vpp_macros = []
-        # Dictionary of files sub-included by each file parsed
-        self.vpp_filedeps = {}
+        self.included_files = set()
         self.macro_depth = 0
 
     def _search_include(self, filename, parent_dir=None):
@@ -192,8 +191,7 @@ class VerilogPreprocessor(object):
                                           "includes %s",
                                           file_name, library, included_file_path)
                             # add include file to the dependancies
-                            self.vpp_filedeps[file_name + library].append(
-                                included_file_path)
+                            self.included_files.add(included_file_path)
                             # tokenize the file & prepend to the current stack
                             decomment = _remove_comment(open(included_file_path).read())
                             tokens = _tok_string(decomment)
@@ -222,7 +220,6 @@ class VerilogPreprocessor(object):
             return re.sub(r'^\s*\n','', _proc_macros_layer(parts, vpp_macros)[0], flags=re.MULTILINE)
 
         # init dependencies
-        self.vpp_filedeps[file_name + library] = []
         logging.debug("preprocess file %s (of length %d) in library %s",
                       file_name, len(file_content), library)
         buf = _filter_protected_regions(_remove_comment(file_content))
@@ -500,14 +497,8 @@ class VerilogParser(DepParser):
 
         # Preprocess the file and add included files as dependencies
         buf = self.preprocessor.preprocess(dep_file)
-        includes = self.preprocessor.vpp_filedeps[
-            dep_file.path + dep_file.library]
-        for file_aux in includes:
-            dep_file.depends_on.add(
-                create_source_file(path=file_aux,
-                                   module=dep_file.module,
-                                   is_include=True))
-        logging.debug("%s has %d includes.", str(dep_file), len(includes))
+        dep_file.included_files = self.preprocessor.included_files
+        logging.debug("%s has %d includes.", str(dep_file), len(dep_file.included_files))
 
         # look for packages used inside in file
         # it may generate false dependencies as package in SV can be used by:
@@ -588,4 +579,5 @@ class VerilogParser(DepParser):
                 if match:
                     do_inst(match)
         m_inside_module.subn(do_module, buf)
+
         dep_file.is_parsed = True

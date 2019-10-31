@@ -40,10 +40,7 @@ class SourceFile(DepFile):
 
     def __init__(self, path, module, library):
         assert isinstance(path, six.string_types)
-        self.is_include = False
-        self.library = library
-        if not library:
-            self.library = "work"
+        self.library = library or "work"
         DepFile.__init__(self, path=path, module=module)
 
     def __hash__(self):
@@ -66,16 +63,12 @@ class VerilogFile(SourceFile):
 
     """This is the class providing the generic Verilog file"""
 
-    def __init__(self, path, module, library=None,
-                 include_dirs=None, is_include=False):
+    def __init__(self, path, module, library=None, include_dirs=None):
         SourceFile.__init__(self, path=path, module=module, library=library)
         from .vlog_parser import VerilogParser
-        self.include_dirs = []
-        if include_dirs:
-            self.include_dirs.extend(include_dirs)
+        self.include_dirs = include_dirs[:] if include_dirs else []
         self.include_dirs.append(path_mod.relpath(self.dirname))
         self.parser = VerilogParser(self)
-        self.is_include = is_include
 
 
 class SVFile(VerilogFile):
@@ -322,8 +315,7 @@ ALTERA_FILE_DICT = {
     'gdf': GDFFile}
 
 
-def create_source_file(path, module, library=None,
-                       include_dirs=None, is_include=False):
+def create_source_file(path, module, library=None, include_dirs=None):
     """Function that analyzes the given arguments and returns a new HDL source
     file of the appropriated type"""
     assert path
@@ -342,14 +334,12 @@ def create_source_file(path, module, library=None,
         new_file = VerilogFile(path=path,
                                module=module,
                                library=library,
-                               include_dirs=include_dirs,
-                               is_include=is_include)
+                               include_dirs=include_dirs)
     elif extension == 'sv' or extension == 'svh':
         new_file = SVFile(path=path,
                           module=module,
                           library=library,
-                          include_dirs=include_dirs,
-                          is_include=is_include)
+                          include_dirs=include_dirs)
     elif extension == 'wb':
         new_file = WBGenFile(path=path, module=module)
     elif extension == 'tcl':

@@ -153,15 +153,11 @@ class MakefileVsim(MakefileSim):
             # each .dat depends on corresponding .vhd file
             self.write("%s: %s" % (self._get_stamp_file(vhdl), vhdl.rel_path()))
             # list dependencies, do not include the target file
-            for dep_file in sorted([dfile for dfile in vhdl.depends_on
-                                    if dfile is not vhdl],
-                                    key=(lambda x: x.path)):
-                if dep_file in fileset:
-                    self.write(" \\\n" + self._get_stamp_file(dep_file))
-                else:
-                    self.write(" \\\n" + dep_file.rel_path())
+            for dep_file in sorted(vhdl.depends_on, key=(lambda x: x.path)):
+                if dep_file is vhdl:
+                    continue
+                self.write(" \\\n" + self._get_stamp_file(dep_file))
             self.writeln()
-            self.writeln(' '.join(["\t\tvcom $(VCOM_FLAGS)",
-                         "-work", vhdl.library, "$< "]))
+            self.writeln("\t\tvcom $(VCOM_FLAGS) -work {} $< ".format(vhdl.library))
             self.writeln("\t\t@" + shell.mkdir_command() +
                 " $(dir $@) && " + shell.touch_command() + " $@ \n\n")

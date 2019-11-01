@@ -90,14 +90,6 @@ class MakefileVsim(MakefileSim):
         The Makefile format is shared, but flags, dependencies, clean rules,
         etc are defined by the specific tool.
         """
-        def __create_copy_rule(name, src):
-            """Get a Makefile rule named name, which depends on src,
-            copying it to the local directory."""
-            rule = """%s: %s
-\t\t%s $< . 2>&1
-""" % (name, src, shell.copy_command())
-            return rule
-
         cwd = os.getcwd()
         fileset = self.fileset
         if self.manifest_dict.get("include_dirs") is None:
@@ -122,7 +114,8 @@ class MakefileVsim(MakefileSim):
         self.writeln("$(VHDL_OBJ): $(LIB_IND) " + ' '.join(self.additional_deps))
         self.writeln()
         for filename, filesource in six.iteritems(self.copy_rules):
-            self.write(__create_copy_rule(filename, filesource))
+            self.writeln("{}: {}".format(filename, filesource))
+            self.writeln("\t\t{} $< . 2>&1".format(shell.copy_command()))
         for lib in libs:
             self.write(lib + shell.makefile_slash_char() + "." + lib + ":\n")
             self.write("\t(vlib {0} && vmap $(VMAP_FLAGS) {0} && {1} {0}{2}.{0})".format(

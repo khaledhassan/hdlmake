@@ -116,12 +116,12 @@ def test_icestorm():
         hdlmake.main.hdlmake([])
         compare_makefile_filter("TOOL_PATH")
 
-def test_isim():
+def test_isim_010():
     with Config(path="010isim") as _:
         hdlmake.main.hdlmake([])
         compare_makefile_xilinx()
 
-def test_isim_windows():
+def test_isim_windows_060():
     with Config(path="060isim_windows",
                 my_os='windows', fakebin="windows_fakebin") as _:
         hdlmake.main.hdlmake([])
@@ -311,7 +311,7 @@ def test_no_syn_tool():
 def test_no_files():
     run([], path="042nofiles")
 
-def test_no_bin():
+def test_no_bin_061():
     with Config(path="061err_nobin", fakebin="no_fakebin") as _:
         hdlmake.main.hdlmake([])
         compare_makefile_xilinx()

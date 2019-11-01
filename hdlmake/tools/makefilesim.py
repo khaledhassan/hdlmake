@@ -110,7 +110,7 @@ TOP_MODULE := {top_module}
                 elif isinstance(file_aux, VerilogFile):
                     command_key = 'vlog'
                 self.writeln("\t\t" + self.SIMULATOR_CONTROLS[command_key].format(work=file_aux.library))
-                self._makefile_sim_file_touch_stamp()
+                self._makefile_touch_stamp_file()
                 self.writeln()
 
     def _makefile_sim_command(self):

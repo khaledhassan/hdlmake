@@ -103,7 +103,7 @@ class ToolMakefile(object):
         name = dep_file.purename
         return os.path.join(dep_file.library, name, ".{}_{}".format(name, dep_file.extension()))
 
-    def _makefile_sim_file_touch_stamp(self):
+    def _makefile_touch_stamp_file(self):
         self.write("\t\t@" + shell.mkdir_command() + " $(dir $@)")
         self.writeln(" && " + shell.touch_command()  + " $@\n")
 

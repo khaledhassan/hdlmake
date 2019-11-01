@@ -168,7 +168,7 @@ fuse:
                 self.write(' -i ')
                 self.write(' '.join(vl_file.include_dirs))
             self.writeln(" $<")
-            self._makefile_sim_file_touch_stamp()
+            self._makefile_touch_stamp_file()
             self.writeln()
         self.write("\n")
         # list rules for all _primary.dat files for vhdl
@@ -186,8 +186,7 @@ fuse:
                     lib, purename, "." + purename) + '\n')
             self.writeln("\t\tvhpcomp $(VHPCOMP_FLAGS) -work {lib}=.{slash}{lib} $< ".format(
                 lib=lib, slash=shell.makefile_slash_char()))
-            self.writeln("\t\t@" + shell.mkdir_command() +
-                         " $(dir $@) && " + shell.touch_command() + " $@\n")
+            self._makefile_touch_stamp_file()
             self.writeln()
             # dependency meta-target.
             # This rule just list the dependencies of the above file
@@ -201,5 +200,4 @@ fuse:
             for dep_file in vhdl_file.depends_on:
                 self.write(" \\\n" + self.get_stamp_file(dep_file))
             self.write('\n')
-            self.writeln("\t\t@" + shell.mkdir_command() +
-                         " $(dir $@) && " + shell.touch_command() + " $@\n")
+            self._makefile_touch_stamp_file()

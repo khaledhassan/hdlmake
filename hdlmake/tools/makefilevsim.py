@@ -121,11 +121,11 @@ class MakefileVsim(MakefileSim):
             self._makefile_sim_file_rule(vlog)
             self.writeln("\t\tvlog -work {library} $(VLOG_FLAGS) {sv_option} $(INCLUDE_DIRS) $<".format(
                 library=vlog.library, sv_option="-sv" if isinstance(vlog, SVFile) else ""))
-            self._makefile_sim_file_touch_stamp()
+            self._makefile_touch_stamp_file()
             self.writeln()
         # list rules for all _primary.dat files for vhdl
         for vhdl in fileset.filter(VHDLFile).sort():
             self._makefile_sim_file_rule(vhdl)
             self.writeln("\t\tvcom $(VCOM_FLAGS) -work {} $< ".format(vhdl.library))
-            self._makefile_sim_file_touch_stamp()
+            self._makefile_touch_stamp_file()
             self.writeln()

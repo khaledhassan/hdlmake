@@ -113,6 +113,11 @@ class ToolISim(MakefileSim):
             default_options + __get_rid_of_isim_incdirs(
             self.manifest_dict.get("vlog_opt", '')))
 
+    def _makefile_syn_file_rule(self, file_aux):
+        """Generate target and prerequisites for :param file_aux:"""
+        self.write("{}: {} ".format(self.get_stamp_file(file_aux), file_aux.rel_path()))
+        self.writeln(' '.join([fname.rel_path() for fname in file_aux.depends_on]))
+
     def _makefile_sim_compilation(self):
         """Print the compile simulation target for Xilinx ISim"""
         fileset = self.fileset
@@ -154,67 +159,33 @@ fuse:
             # "${XILINX_INI_PATH}/xilinxsim.ini"]))
         # rules for all _primary.dat files for sv
         # incdir = ""
-        objs = []
         for vl_file in fileset.filter(VerilogFile).sort():
-            comp_obj = os.path.join(vl_file.library, vl_file.purename)
-            objs.append(comp_obj)
-            # self.write(os.path.join(vl_file.library, vl_file.purename,
-            #            '.'+vl_file.purename+"_"+vl_file.extension())+': ')
-            # self.writeln(".PHONY: " + os.path.join(comp_obj,
-            # '.'+vl_file.purename+"_"+vl_file.extension()))
-            self.write(
-                os.path.join(
-                    comp_obj,
-                    '.' +
-                    vl_file.purename +
-                    "_" +
-                    vl_file.extension(
-                    )) +
-                ': ')
-            self.write(vl_file.rel_path() + ' ')
-            self.writeln(
-                ' '.join([fname.rel_path() for fname in vl_file.depends_on]))
-            self.write("\t\tvlogcomp -work " + vl_file.library
-                       + "=." + shell.makefile_slash_char() + vl_file.library)
+            self._makefile_syn_file_rule(vl_file)
+            self.write("\t\tvlogcomp -work {lib}=.{slash}{lib}".format(
+                lib=vl_file.library, slash=shell.makefile_slash_char()))
             self.write(" $(VLOGCOMP_FLAGS) ")
-            # if isinstance(vl_file, SVFile):
-            #    self.write(" -sv ")
-            # incdir = "-i "
-            # incdir += " -i ".join(vl_file.include_dirs)
-            # incdir += " "
             if vl_file.include_dirs:
                 self.write(' -i ')
                 self.write(' '.join(vl_file.include_dirs))
             self.writeln(" $<")
-            self.write("\t\t@" + shell.mkdir_command() + " $(dir $@)")
-            self.writeln(" && " + shell.touch_command() + " $@ \n\n")
+            self._makefile_sim_file_touch_stamp()
+            self.writeln()
         self.write("\n")
         # list rules for all _primary.dat files for vhdl
         for vhdl_file in fileset.filter(VHDLFile).sort():
             lib = vhdl_file.library
             purename = vhdl_file.purename
-            comp_obj = os.path.join(lib, purename)
-            objs.append(comp_obj)
             # each .dat depends on corresponding .vhd file and its dependencies
             # self.write(os.path.join(lib, purename, "."+purename+"_"
             #     + vhdl_file.extension()) + ": "+ vhdl_file.rel_path()+" "
             #     + os.path.join(lib, purename, "."+purename) + '\n')
             # self.writeln(".PHONY: " + os.path.join(comp_obj,
             # "."+purename+"_"+ vhdl_file.extension()))
-            self.write(
-                os.path.join(
-                    comp_obj,
-                    "." + purename + "_" + vhdl_file.extension(
-                    )) + ": " + vhdl_file.rel_path(
-                ) + " " + os.path.join(
-                    lib,
-                    purename,
-                    "." + purename) + '\n')
-            self.writeln(
-                ' '.join(["\t\tvhpcomp $(VHPCOMP_FLAGS)",
-                          "-work",
-                          lib + "=." + shell.makefile_slash_char() + lib,
-                          "$< "]))
+            self.write(self.get_stamp_file(vhdl_file)
+                 + ": " + vhdl_file.rel_path() + " " + os.path.join(
+                    lib, purename, "." + purename) + '\n')
+            self.writeln("\t\tvhpcomp $(VHPCOMP_FLAGS) -work {lib}=.{slash}{lib} $< ".format(
+                lib=lib, slash=shell.makefile_slash_char()))
             self.writeln("\t\t@" + shell.mkdir_command() +
                          " $(dir $@) && " + shell.touch_command() + " $@\n")
             self.writeln()
@@ -228,14 +199,7 @@ fuse:
             # if len(vhdl_file.depends_on) != 0:
             self.write(os.path.join(lib, purename, "." + purename) + ":")
             for dep_file in vhdl_file.depends_on:
-                if dep_file in fileset:
-                    name = dep_file.purename
-                    self.write(
-                        " \\\n" + os.path.join(dep_file.library,
-                                               name, "." + name + "_" +
-                                               dep_file.extension()))
-                else:
-                    self.write(" \\\n" + os.path.join(dep_file.rel_path()))
+                self.write(" \\\n" + self.get_stamp_file(dep_file))
             self.write('\n')
             self.writeln("\t\t@" + shell.mkdir_command() +
                          " $(dir $@) && " + shell.touch_command() + " $@\n")

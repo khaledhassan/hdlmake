@@ -63,11 +63,6 @@ TOP_MODULE := {top_module}
         self.writeln("#target for performing local simulation\n"
                      "local: sim_pre_cmd simulation sim_post_cmd\n")
 
-    def get_stamp_file(self, dep_file):
-        """Stamp file for source file :param file:"""
-        name = dep_file.purename
-        return os.path.join(dep_file.library, name, ".{}_{}".format(name, dep_file.extension()))
-
     def _makefile_sim_sources_lang(self, name, klass):
         """Generic method to write the simulation Makefile HDL sources"""
         fileset = self.fileset
@@ -103,10 +98,6 @@ TOP_MODULE := {top_module}
         for dep_file in sorted(file_aux.included_files):
             self.write(" \\\n{}".format(path_mod.relpath(dep_file, cwd)))
         self.writeln()
-
-    def _makefile_sim_file_touch_stamp(self):
-        self.write("\t\t@" + shell.mkdir_command() + " $(dir $@)")
-        self.writeln(" && " + shell.touch_command()  + " $@ \n")
 
     def _makefile_sim_dep_files(self):
         """Print dummy targets to handle file dependencies"""

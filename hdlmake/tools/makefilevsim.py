@@ -119,19 +119,14 @@ class MakefileVsim(MakefileSim):
         # rules for all _primary.dat files for sv
         for vlog in fileset.filter(VerilogFile).sort():
             self._makefile_sim_file_rule(vlog)
-            compile_template = string.Template(
-                "\t\tvlog -work ${library} $$(VLOG_FLAGS) "
-                "${sv_option} $${INCLUDE_DIRS} $$<")
-            compile_line = compile_template.substitute(
-                library=vlog.library, sv_option="-sv"
-                if isinstance(vlog, SVFile) else "")
-            self.writeln(compile_line)
-            self.write("\t\t@" + shell.mkdir_command() + " $(dir $@)")
-            self.writeln(" && " + shell.touch_command() + " $@ \n\n")
+            self.writeln("\t\tvlog -work {library} $(VLOG_FLAGS) {sv_option} ${{INCLUDE_DIRS}} $<".format(
+                library=vlog.library, sv_option="-sv" if isinstance(vlog, SVFile) else ""))
+            self._makefile_sim_file_touch_stamp()
+            self.writeln()
             self.writeln()
         # list rules for all _primary.dat files for vhdl
         for vhdl in fileset.filter(VHDLFile).sort():
             self._makefile_sim_file_rule(vhdl)
             self.writeln("\t\tvcom $(VCOM_FLAGS) -work {} $< ".format(vhdl.library))
-            self.writeln("\t\t@" + shell.mkdir_command() +
-                " $(dir $@) && " + shell.touch_command() + " $@ \n\n")
+            self._makefile_sim_file_touch_stamp()
+            self.writeln()

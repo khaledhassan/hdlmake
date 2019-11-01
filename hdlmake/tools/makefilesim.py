@@ -104,6 +104,10 @@ TOP_MODULE := {top_module}
             self.write(" \\\n{}".format(path_mod.relpath(dep_file, cwd)))
         self.writeln()
 
+    def _makefile_sim_file_touch_stamp(self):
+        self.write("\t\t@" + shell.mkdir_command() + " $(dir $@)")
+        self.writeln(" && " + shell.touch_command()  + " $@ \n")
+
     def _makefile_sim_dep_files(self):
         """Print dummy targets to handle file dependencies"""
         for file_aux in self.fileset.sort():
@@ -115,8 +119,7 @@ TOP_MODULE := {top_module}
                 elif isinstance(file_aux, VerilogFile):
                     command_key = 'vlog'
                 self.writeln("\t\t" + self.SIMULATOR_CONTROLS[command_key].format(work=file_aux.library))
-                self.write("\t\t@" + shell.mkdir_command() + " $(dir $@)")
-                self.writeln(" && " + shell.touch_command()  + " $@ \n")
+                self._makefile_sim_file_touch_stamp()
                 self.writeln()
 
     def _makefile_sim_command(self):

@@ -142,20 +142,12 @@ fuse:
         # ISim does not have a vmap command to insert additional libraries in
         #.ini file.
         for lib in libs:
-            self.write(lib + shell.makefile_slash_char() + "." + lib + ":\n")
-            self.write(
-                ' '.join(["\t(" + shell.mkdir_command(), lib, "&&",
-                          shell.touch_command(),
-                          lib + shell.makefile_slash_char() + "." + lib + " "]))
-            # self.write(' '.join(["&&", "echo", "\""+lib+"="+lib+"/."+lib+"\"
-            # ", ">>", "xilinxsim.ini) "]))
-            self.write(
-                ' '.join(["&&",
-                          "echo",
-                          lib + "=" + lib,
-                          " >>",
-                          "xilinxsim.ini) "]))
-            self.write(' '.join(["||", shell.del_command(), lib, "\n"]))
+            libfile = lib + shell.makefile_slash_char() + "." + lib
+            self.write("{}:\n".format(libfile))
+            self.write("\t({mkdir} {lib} && {touch} {libfile}".format(
+                lib=lib, libfile=libfile, mkdir=shell.mkdir_command(), touch=shell.touch_command()))
+            self.write(" && echo {lib}={lib}  >> xilinxsim.ini) ".format(lib=lib))
+            self.write("|| {rm} {lib} \n".format(lib=lib, rm=shell.del_command()))
             self.write('\n')
             # Modify xilinxsim.ini file by including the extra local libraries
             # self.write(' '.join(["\t(echo """, lib+"="+lib+"/."+lib, ">>",

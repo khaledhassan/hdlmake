@@ -82,13 +82,12 @@ class ToolISim(MakefileSim):
                 xilinx_dir, hdl_language, "hdp", os_prefix + arch_suffix)
             # Ensure the path is absolute and normalized
             return os.path.abspath(xilinx_ini_path)
-        self.writeln("""## variables #############################
-TOP_MODULE := """ + self.manifest_dict.get("sim_top", '') + """
-FUSE_OUTPUT ?= isim_proj
-
-XILINX_INI_PATH := """ + __get_xilinxsim_ini_dir() +
-                     """
-""")
+        self.writeln("## variables #############################")
+        self.writeln("TOP_MODULE := {}".format(self.manifest_dict.get("sim_top", '')))
+        self.writeln("FUSE_OUTPUT ?= isim_proj")
+        self.writeln()
+        self.writeln("XILINX_INI_PATH := {}".format(__get_xilinxsim_ini_dir()))
+        self.writeln()
 
     def _makefile_sim_options(self):
         """Print the Xilinx ISim simulation options in the Makefile"""

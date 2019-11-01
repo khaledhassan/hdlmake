@@ -96,6 +96,9 @@ def test_list_mods_none():
 def test_list_files():
     run(['list-files'], path="001ise")
 
+def test_circular_dep_096():
+    run(['list-files'], path="096circular_dep")
+
 def test_noact():
     with Config(path="005noact") as _:
         hdlmake.main.hdlmake(['manifest-help'])

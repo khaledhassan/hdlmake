@@ -512,6 +512,11 @@ def test_err_filetype():
 def test_multi_sat():
     run_compare(path="093multi_sat")
 
+def test_sys_package_097():
+    with Config(path="097sys_package") as _:
+        hdlmake.main.hdlmake([])
+        compare_makefile_xilinx()
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""

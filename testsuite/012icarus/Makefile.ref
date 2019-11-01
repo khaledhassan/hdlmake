@@ -26,7 +26,7 @@ include_dirs:
 
 work/gate2/.gate2_v: ../files/gate2.v
 		echo $< >> run.command
-		@mkdir -p $(dir $@) && touch $@ 
+		@mkdir -p $(dir $@) && touch $@
 
 
 # USER SIM COMMANDS

@@ -105,7 +105,7 @@ class MakefileVsim(MakefileSim):
         self.writeln(
             "simulation: %s $(LIB_IND) $(VERILOG_OBJ) $(VHDL_OBJ)" %
             (' '.join(self.additional_deps)),)
-        self.writeln("$(VERILOG_OBJ) : " + ' '.join(self.additional_deps))
+        self.writeln("$(VERILOG_OBJ): " + ' '.join(self.additional_deps))
         self.writeln("$(VHDL_OBJ): $(LIB_IND) " + ' '.join(self.additional_deps))
         self.writeln()
         for filename, filesource in six.iteritems(self.copy_rules):

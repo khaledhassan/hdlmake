@@ -19,7 +19,7 @@ simulation: $(VERILOG_OBJ) $(VHDL_OBJ)
 
 work/gate/.gate_vhdl: ../files/gate.vhdl
 		xvhdl $<
-		@mkdir -p $(dir $@) && touch $@ 
+		@mkdir -p $(dir $@) && touch $@
 
 
 # USER SIM COMMANDS

@@ -24,7 +24,7 @@ LIBS := work
 LIB_IND := work/.work
 
 simulation:  $(LIB_IND) $(VERILOG_OBJ) $(VHDL_OBJ)
-$(VERILOG_OBJ) : 
+$(VERILOG_OBJ): 
 $(VHDL_OBJ): $(LIB_IND) 
 
 work/.work:
@@ -32,7 +32,7 @@ work/.work:
 
 work/gate/.gate_vhdl: ../files/gate.vhdl
 		vcom $(VCOM_FLAGS) -work work $< 
-		@mkdir -p $(dir $@) && touch $@ 
+		@mkdir -p $(dir $@) && touch $@
 
 
 # USER SIM COMMANDS

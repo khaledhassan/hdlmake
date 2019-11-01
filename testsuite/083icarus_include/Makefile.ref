@@ -28,7 +28,7 @@ include_dirs:
 work/vlog/.vlog_v: vlog.v \
 inc/macros.v
 		echo $< >> run.command
-		@mkdir -p $(dir $@) && touch $@ 
+		@mkdir -p $(dir $@) && touch $@
 
 
 # USER SIM COMMANDS

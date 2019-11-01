@@ -105,7 +105,7 @@ class ToolMakefile(object):
 
     def _makefile_sim_file_touch_stamp(self):
         self.write("\t\t@" + shell.mkdir_command() + " $(dir $@)")
-        self.writeln(" && " + shell.touch_command()  + " $@ \n")
+        self.writeln(" && " + shell.touch_command()  + " $@\n")
 
     def makefile_check_tool(self, path_key):
         """Check if the binary is available in the O.S. environment"""

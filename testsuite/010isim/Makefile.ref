@@ -41,7 +41,7 @@ work/.work:
 
 work/gate3_tb/.gate3_tb_v: ../files/gate3_tb.v ../files/gate3.vhd
 		vlogcomp -work work=./work $(VLOGCOMP_FLAGS)  -i ../files $<
-		@mkdir -p $(dir $@) && touch $@ 
+		@mkdir -p $(dir $@) && touch $@
 
 
 

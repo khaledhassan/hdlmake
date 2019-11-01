@@ -25,13 +25,13 @@ simulation: $(VERILOG_OBJ) $(VHDL_OBJ)
 
 work/gate/.gate_vhdl: ../files/gate.vhdl
 		$(GHDL) -a --work=work $(GHDL_OPT) $<
-		@mkdir -p $(dir $@) && touch $@ 
+		@mkdir -p $(dir $@) && touch $@
 
 
 work/gate3/.gate3_vhd: ../files/gate3.vhd \
 work/gate/.gate_vhdl
 		$(GHDL) -a --work=work $(GHDL_OPT) $<
-		@mkdir -p $(dir $@) && touch $@ 
+		@mkdir -p $(dir $@) && touch $@
 
 
 # USER SIM COMMANDS

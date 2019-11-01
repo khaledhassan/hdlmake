@@ -25,7 +25,7 @@ LIBS := work
 LIB_IND := work/.work
 
 simulation: modelsim.ini $(LIB_IND) $(VERILOG_OBJ) $(VHDL_OBJ)
-$(VERILOG_OBJ) : modelsim.ini
+$(VERILOG_OBJ): modelsim.ini
 $(VHDL_OBJ): $(LIB_IND) modelsim.ini
 
 modelsim.ini: $(MODELSIM_INI_PATH)/modelsim.ini
@@ -35,7 +35,7 @@ work/.work:
 
 work/vlog/.vlog_v: vlog.v
 		vlog -work work $(VLOG_FLAGS)  $(INCLUDE_DIRS) $<
-		@mkdir -p $(dir $@) && touch $@ 
+		@mkdir -p $(dir $@) && touch $@
 
 
 # USER SIM COMMANDS

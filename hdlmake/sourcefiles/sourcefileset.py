@@ -31,9 +31,6 @@ class SourceFileSet(set):
         super(SourceFileSet, self).__init__()
         self = []
 
-    def __str__(self):
-        return str([str(f) for f in self])
-
     def add(self, files):
         """Add a set of files to the source fileset instance"""
         if files is None:

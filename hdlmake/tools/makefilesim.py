@@ -70,31 +70,26 @@ TOP_MODULE := {top_module}
                     file.purename,
                     ".{}_{}".format(file.purename, file.extension()))
 
-    def _makefile_sim_sources(self):
+    def _makefile_sim_sources_lang(self, name, klass):
         """Generic method to write the simulation Makefile HDL sources"""
         fileset = self.fileset
-        self.write("VERILOG_SRC := ")
-        for vlog in fileset.filter(VerilogFile).sort():
+        self.write("{}_SRC := ".format(name))
+        for vlog in fileset.filter(klass).sort():
             self.writeln(vlog.rel_path() + " \\")
         self.writeln()
-        self.write("VERILOG_OBJ := ")
-        for vlog in fileset.filter(VerilogFile).sort():
+        self.write("{}_OBJ := ".format(name))
+        for vlog in fileset.filter(klass).sort():
             # make a file compilation indicator (these .dat files are made even
             # if the compilation process fails) and add an ending according
             # to file's extension (.sv and .vhd files may have the same
             # corename and this causes a mess
             self.writeln(self.get_stamp_file(vlog) + " \\")
         self.writeln()
-        self.write("VHDL_SRC := ")
-        for vhdl in fileset.filter(VHDLFile).sort():
-            self.writeln(vhdl.rel_path() + " \\")
-        self.writeln()
-        # list vhdl objects (_primary.dat files)
-        self.write("VHDL_OBJ := ")
-        for vhdl in fileset.filter(VHDLFile).sort():
-            # file compilation indicator (important: add _vhd ending)
-            self.writeln(self.get_stamp_file(vhdl) + " \\")
-        self.writeln()
+
+    def _makefile_sim_sources(self):
+        """Generic method to write the simulation Makefile HDL sources"""
+        self._makefile_sim_sources_lang("VERILOG", VerilogFile)
+        self._makefile_sim_sources_lang("VHDL", VHDLFile)
 
     def _makefile_sim_dep_files(self):
         """Print dummy targets to handle file dependencies"""
@@ -110,13 +105,13 @@ TOP_MODULE := {top_module}
                         # Do not depend on itself.
                         continue
                     self.write(" \\\n" + self.get_stamp_file(dep_file))
+                # Add included files
                 for dep_file in sorted(file_aux.included_files):
                     self.write(" \\\n{}".format(path_mod.relpath(dep_file, cwd)))
                 self.writeln()
                 if isinstance(file_aux, VHDLFile):
                     command_key = 'vhdl'
-                elif (isinstance(file_aux, VerilogFile) or
-                      isinstance(file_aux, SVFile)):
+                elif isinstance(file_aux, VerilogFile):
                     command_key = 'vlog'
                 self.writeln("\t\t" + self.SIMULATOR_CONTROLS[command_key])
                 self.write("\t\t@" + shell.mkdir_command() + " $(dir $@)")

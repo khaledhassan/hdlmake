@@ -300,6 +300,11 @@ def test_manifest_except():
         run([], path="031manifest_except")
         assert False
 
+def test_manifest_nameerr_098():
+    with pytest.raises(SystemExit) as _:
+        run([], path="098manifest_nameerr")
+        assert False
+
 def test_manifest_vars():
     run([], path="032manifest_vars")
 

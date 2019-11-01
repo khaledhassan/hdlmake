@@ -36,16 +36,14 @@ work/.work:
 	(vlib work && vmap $(VMAP_FLAGS) work && touch work/.work) || rm -rf work
 
 work/pkg/.pkg_sv: pkg.sv
-		vlog -work work $(VLOG_FLAGS) -sv ${INCLUDE_DIRS} $<
+		vlog -work work $(VLOG_FLAGS) -sv $(INCLUDE_DIRS) $<
 		@mkdir -p $(dir $@) && touch $@ 
-
 
 
 work/vlog/.vlog_sv: vlog.sv \
 work/pkg/.pkg_sv
-		vlog -work work $(VLOG_FLAGS) -sv ${INCLUDE_DIRS} $<
+		vlog -work work $(VLOG_FLAGS) -sv $(INCLUDE_DIRS) $<
 		@mkdir -p $(dir $@) && touch $@ 
-
 
 
 # USER SIM COMMANDS

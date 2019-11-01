@@ -34,9 +34,8 @@ work/.work:
 	(vlib work && vmap $(VMAP_FLAGS) work && touch work/.work) || rm -rf work
 
 work/vlog/.vlog_v: vlog.v
-		vlog -work work $(VLOG_FLAGS)  ${INCLUDE_DIRS} $<
+		vlog -work work $(VLOG_FLAGS)  $(INCLUDE_DIRS) $<
 		@mkdir -p $(dir $@) && touch $@ 
-
 
 
 # USER SIM COMMANDS

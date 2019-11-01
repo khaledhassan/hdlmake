@@ -35,9 +35,8 @@ work/.work:
 
 work/vlog/.vlog_v: vlog.v \
 inc/macros.v
-		vlog -work work $(VLOG_FLAGS)  ${INCLUDE_DIRS} $<
+		vlog -work work $(VLOG_FLAGS)  $(INCLUDE_DIRS) $<
 		@mkdir -p $(dir $@) && touch $@ 
-
 
 
 # USER SIM COMMANDS

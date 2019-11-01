@@ -113,9 +113,11 @@ class MakefileVsim(MakefileSim):
             self.writeln("\t\t{} $< . 2>&1".format(shell.copy_command()))
         for lib in libs:
             self.write(lib + shell.makefile_slash_char() + "." + lib + ":\n")
-            self.write("\t(vlib {0} && vmap $(VMAP_FLAGS) {0} && {1} {0}{2}.{0})".format(
-                lib, shell.touch_command(), shell.makefile_slash_char()))
-            self.write(" || {} {}\n\n".format(shell.del_command(), lib))
+            self.writeln("\t(vlib {lib} && vmap $(VMAP_FLAGS) {lib} "
+                         "&& {touch} {lib}{slash}.{lib}) || {rm} {lib}".format(
+                lib=lib, touch=shell.touch_command(), slash=shell.makefile_slash_char(),
+                rm=shell.del_command()))
+            self.writeln()
         # rules for all _primary.dat files for sv
         for vlog in fileset.filter(VerilogFile).sort():
             self._makefile_sim_file_rule(vlog)

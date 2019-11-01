@@ -113,7 +113,7 @@ TOP_MODULE := {top_module}
                     command_key = 'vhdl'
                 elif isinstance(file_aux, VerilogFile):
                     command_key = 'vlog'
-                self.writeln("\t\t" + self.SIMULATOR_CONTROLS[command_key])
+                self.writeln("\t\t" + self.SIMULATOR_CONTROLS[command_key].format(work=file_aux.library))
                 self.write("\t\t@" + shell.mkdir_command() + " $(dir $@)")
                 self.writeln(" && " + shell.touch_command()  + " $@ \n")
                 self.writeln()

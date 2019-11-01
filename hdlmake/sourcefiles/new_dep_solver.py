@@ -66,12 +66,12 @@ def solve(fileset, standard_libs=None):
         # logging.info("INVESTIGATED FILE: %s" % investigated_file)
         for rel in investigated_file.requires:
             # logging.info("- relation: %s" % rel)
-            # logging.info("- direction: %s" % rel.direction)
             # Only analyze USE relations, we are looking for dependencies
             satisfied_by = set()
             for dep_file in fset:
                 if dep_file.satisfies(rel):
                     if dep_file is not investigated_file:
+                        # A file cannot depends on itself.
                         investigated_file.depends_on.add(dep_file)
                     satisfied_by.add(dep_file)
             if len(satisfied_by) > 1:
@@ -84,10 +84,10 @@ def solve(fileset, standard_libs=None):
             elif len(satisfied_by) == 0:
                 # if relation is a USE PACKAGE, check against
                 # the standard libs provided by the tool HDL compiler
-                required_lib = rel.obj_name.split('.')[0]
-                if (not standard_libs is None and
-                    required_lib in standard_libs and
-                        rel.rel_type is DepRelation.PACKAGE):
+                required_lib = rel.lib_name
+                if (standard_libs is not None
+                     and rel.rel_type is DepRelation.PACKAGE
+                     and required_lib in standard_libs):
                     logging.debug("Not satisfied relation %s in %s will "
                                   "be covered by the target compiler "
                                   "standard libs.",

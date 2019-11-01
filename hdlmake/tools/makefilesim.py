@@ -63,12 +63,10 @@ TOP_MODULE := {top_module}
         self.writeln("#target for performing local simulation\n"
                      "local: sim_pre_cmd simulation sim_post_cmd\n")
 
-    def get_stamp_file(self, file):
+    def get_stamp_file(self, dep_file):
         """Stamp file for source file :param file:"""
-        return os.path.join(
-                    file.library,
-                    file.purename,
-                    ".{}_{}".format(file.purename, file.extension()))
+        name = dep_file.purename
+        return os.path.join(dep_file.library, name, ".{}_{}".format(name, dep_file.extension()))
 
     def _makefile_sim_sources_lang(self, name, klass):
         """Generic method to write the simulation Makefile HDL sources"""
@@ -91,24 +89,27 @@ TOP_MODULE := {top_module}
         self._makefile_sim_sources_lang("VERILOG", VerilogFile)
         self._makefile_sim_sources_lang("VHDL", VHDLFile)
 
+    def _makefile_sim_file_rule(self, file_aux):
+        """Generate target and prerequisites for :param file_aux:"""
+        cwd = os.getcwd()
+        self.write("{}: {}".format(self.get_stamp_file(file_aux), file_aux.rel_path()))
+        # list dependencies, do not include the target file
+        for dep_file in sorted(file_aux.depends_on, key=(lambda x: x.path)):
+            if dep_file is file_aux:
+                # Do not depend on itself.
+                continue
+            self.write(" \\\n" + self.get_stamp_file(dep_file))
+        # Add included files
+        for dep_file in sorted(file_aux.included_files):
+            self.write(" \\\n{}".format(path_mod.relpath(dep_file, cwd)))
+        self.writeln()
+
     def _makefile_sim_dep_files(self):
         """Print dummy targets to handle file dependencies"""
-        cwd = os.getcwd()
-        fileset = self.fileset.sort()
-        for file_aux in fileset:
+        for file_aux in self.fileset.sort():
             # Consider only HDL files.
             if isinstance(file_aux, tuple(self.HDL_FILES)):
-                self.write("{}: {}".format(self.get_stamp_file(file_aux), file_aux.rel_path()))
-                # list dependencies, do not include the target file
-                for dep_file in sorted(file_aux.depends_on, key=(lambda x: x.path)):
-                    if dep_file is file_aux:
-                        # Do not depend on itself.
-                        continue
-                    self.write(" \\\n" + self.get_stamp_file(dep_file))
-                # Add included files
-                for dep_file in sorted(file_aux.included_files):
-                    self.write(" \\\n{}".format(path_mod.relpath(dep_file, cwd)))
-                self.writeln()
+                self._makefile_sim_file_rule(file_aux)
                 if isinstance(file_aux, VHDLFile):
                     command_key = 'vhdl'
                 elif isinstance(file_aux, VerilogFile):

@@ -81,16 +81,11 @@ class MakefileVsim(MakefileSim):
         self.writeln("VLOG_FLAGS := %s" % vlog_flags)
         self.writeln("VMAP_FLAGS := %s" % vmap_flags)
 
-    def _get_stamp_file(self, dep_file):
-        name = dep_file.purename
-        return os.path.join(dep_file.library, name, ".{}_{}".format(name, dep_file.extension()))
-
     def _makefile_sim_compilation(self):
         """Write a properly formatted Makefile for the simulator.
         The Makefile format is shared, but flags, dependencies, clean rules,
         etc are defined by the specific tool.
         """
-        cwd = os.getcwd()
         fileset = self.fileset
         if self.manifest_dict.get("include_dirs") is None:
             self.writeln("INCLUDE_DIRS :=")
@@ -123,14 +118,7 @@ class MakefileVsim(MakefileSim):
             self.write(" || {} {}\n\n".format(shell.del_command(), lib))
         # rules for all _primary.dat files for sv
         for vlog in fileset.filter(VerilogFile).sort():
-            self.write("%s: %s" % (self._get_stamp_file(vlog), vlog.rel_path()))
-            # list dependencies, do not include the target file
-            for dep_file in sorted(vlog.depends_on, key=(lambda x: x.path)):
-                if dep_file is not vlog:
-                    self.write(" \\\n" + self._get_stamp_file(dep_file))
-            for dep_file in sorted(vlog.included_files):
-                    self.write(" \\\n{}".format(path_mod.relpath(dep_file, cwd)))
-            self.writeln()
+            self._makefile_sim_file_rule(vlog)
             compile_template = string.Template(
                 "\t\tvlog -work ${library} $$(VLOG_FLAGS) "
                 "${sv_option} $${INCLUDE_DIRS} $$<")
@@ -143,14 +131,7 @@ class MakefileVsim(MakefileSim):
             self.writeln()
         # list rules for all _primary.dat files for vhdl
         for vhdl in fileset.filter(VHDLFile).sort():
-            # each .dat depends on corresponding .vhd file
-            self.write("%s: %s" % (self._get_stamp_file(vhdl), vhdl.rel_path()))
-            # list dependencies, do not include the target file
-            for dep_file in sorted(vhdl.depends_on, key=(lambda x: x.path)):
-                if dep_file is vhdl:
-                    continue
-                self.write(" \\\n" + self._get_stamp_file(dep_file))
-            self.writeln()
+            self._makefile_sim_file_rule(vhdl)
             self.writeln("\t\tvcom $(VCOM_FLAGS) -work {} $< ".format(vhdl.library))
             self.writeln("\t\t@" + shell.mkdir_command() +
                 " $(dir $@) && " + shell.touch_command() + " $@ \n\n")

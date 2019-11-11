@@ -62,6 +62,7 @@ class Commands(Action):
     def makefile(self):
         """Write the Makefile for the current design"""
         # Handle the --make option
+        # Need to use __dict__ as the 'makefile' subparser may not have been selected.
         commands = self.options.__dict__.get('make')
         if commands:
             shell.set_commands_os(commands)

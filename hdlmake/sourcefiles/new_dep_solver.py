@@ -155,7 +155,7 @@ def make_dependency_set(fileset, top_level_entity, extra_modules=None):
         else:
             logging.critical(
                     'Could not find a top level file that provides the '
-                    'top_module="%s". Continuing with the full file set.',
+                    '"%s" top module. Continuing with the full file set.',
                      top_level_entity)
         return fileset
     # Collect only the files that the top level entity is dependant on, by

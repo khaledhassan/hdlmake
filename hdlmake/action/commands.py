@@ -145,6 +145,35 @@ class Commands(Action):
             logging.info("There are no modules to be removed")
         logging.info("Modules cleaned.")
 
+    def list_json(self):
+        from ..sourcefiles.srcfile import VHDLFile, SVFile, VerilogFile
+        self._check_all_fetched()
+        self.build_file_set()
+        self.solve_file_set()
+        file_list = dep_solver.make_dependency_sorted_list(
+            self.parseable_fileset)
+        cwd = os.getcwd()
+        first=True
+        print ('{')
+        print ('  "files": [')
+        for f in file_list:
+            if not first:
+                print(',')
+            else:
+                first=False
+            if isinstance(f, VHDLFile):
+                lang='vhdl'
+            elif isinstance(f, SVFile):
+                lang='sv'
+            elif isinstance(f, VerilogFile):
+                lang='verilog'
+            else:
+                lang='unknown'
+            print ('  {{ "file": "{file}", "language": "{lang}"}}'.format(
+                file=f.rel_path(cwd), lang=lang), end='')
+        print(' ]')
+        print('}')
+
     def list_files(self):
         """List the files added to the design across the pool hierarchy"""
         unfetched_modules = [mod_aux for mod_aux in self.manifests

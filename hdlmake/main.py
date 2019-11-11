@@ -90,6 +90,8 @@ def _action_runner(action):
         action.list_modules()
     elif options.command == "list-files":
         action.list_files()
+    elif options.command == "list-json":
+        action.list_json()
     elif options.command == "tree":
         action.generate_tree()
     else:
@@ -169,6 +171,10 @@ def _get_parser():
         "--mode", dest="mode", default="mods",
         help="set the working mode for the tree generator: "
              "(mods, dfs, bfs)")
+
+    subparsers.add_parser(
+        "list-json",
+        help="list all the files using a JSON list")
 
     subparsers.add_parser(
         "manifest-help",

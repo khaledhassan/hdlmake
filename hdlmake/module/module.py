@@ -76,7 +76,7 @@ class Module(object):
         self.modules = {'local': [], 'git': [], 'gitsm': [], 'svn': []}
         self.incl_makefiles = []                # List of paths of makefile files to include.
         self.library = "work"
-        self.action = None
+        self.action = action
         self.top_manifest = action.get_top_manifest()
         self.manifest_dict = {}
         self.source = module_args.source        # The fetcher (module, git, ...)
@@ -87,7 +87,6 @@ class Module(object):
         self.path = None                        # Relative path to the module.
         self.isfetched = False                  # True if the module exists on the file system.
         self.init_config(module_args)
-        self.action = action
         self.module_args = module_args
 
     def __str__(self):

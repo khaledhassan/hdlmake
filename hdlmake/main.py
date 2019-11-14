@@ -202,6 +202,9 @@ def _get_parser():
     parser.add_argument(
         "--full-error", default=False, action="store_true", dest="full_error",
         help="display full error log with traceback")
+    parser.add_argument(
+        "--fetchto", dest="fetchto", default=None,
+        help="overrides the fetchto variable")
     return parser
 
 

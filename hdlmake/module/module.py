@@ -231,12 +231,15 @@ class Module(object):
 
     def _get_fetchto(self):
         """Calculate the fetchto folder"""
+        # Maybe set on the command line
+        if self.action.options.fetchto is not None:
+            return self.action.options.fetchto
+        # Get the variable from the manifest file
         fetchto = self.manifest_dict.get('fetchto')
-        if fetchto is None:
-            fetchto = self.fetchto()
-        else:
-            fetchto = path_mod.rel2abs(fetchto, self.path)
-        return fetchto
+        if fetchto is not None:
+            return path_mod.rel2abs(fetchto, self.path)
+        # Default: return module path.
+        return self.fetchto()
 
     def _process_manifest_modules(self):
         """Process the submodules required by the HDLMake module"""

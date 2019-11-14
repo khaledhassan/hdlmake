@@ -13,13 +13,15 @@ def load_syn_tool(tool_name):
     from .diamond import ToolDiamond
     from .libero import ToolLibero
     from .icestorm import ToolIcestorm
+    from .ghdl_syn import GhdlSyn
     available_tools = {'ise': ToolISE,
                        'planahead':  ToolPlanAhead,
                        'vivado': ToolVivado,
                        'quartus': ToolQuartus,
                        'diamond': ToolDiamond,
                        'libero': ToolLibero,
-                       'icestorm': ToolIcestorm}
+                       'icestorm': ToolIcestorm,
+                       'ghdl': GhdlSyn}
     if tool_name in available_tools:
         logging.debug("Synthesis tool to be used found: %s", tool_name)
         return available_tools[tool_name]()

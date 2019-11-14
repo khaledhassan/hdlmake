@@ -25,7 +25,7 @@ def load_syn_tool(tool_name):
         return available_tools[tool_name]()
     else:
         raise Exception("Unknown synthesis tool: " + tool_name
-                        + "    Supported synthesis tools are " + available_tools.keys())
+                        + ", supported synthesis tools are: {}".format(', '.join(available_tools.keys())))
 
 
 def load_sim_tool(tool_name):

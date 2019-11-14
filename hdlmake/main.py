@@ -43,8 +43,10 @@ def hdlmake(args):
         -- prepare the global module containing the heavy common stuff
     """
 
+    # Command 'makefile' is the default one.
     # Command 'makefile' is impled by '-f'.
-    if len(args) == 2 and args[0] in ('-f', '--filename'):
+    if len(args) == 0 \
+       or len(args) == 2 and args[0] in ('-f', '--filename'):
         args.insert(0, 'makefile')
 
     # Options

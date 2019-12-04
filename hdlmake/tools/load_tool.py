@@ -12,6 +12,7 @@ def load_syn_tool(tool_name):
     from .quartus import ToolQuartus
     from .diamond import ToolDiamond
     from .libero import ToolLibero
+    from .liberosoc import ToolLiberoSoC
     from .icestorm import ToolIcestorm
     available_tools = {'ise': ToolISE,
                        'planahead':  ToolPlanAhead,
@@ -19,6 +20,7 @@ def load_syn_tool(tool_name):
                        'quartus': ToolQuartus,
                        'diamond': ToolDiamond,
                        'libero': ToolLibero,
+                       'liberosoc': ToolLiberoSoC,
                        'icestorm': ToolIcestorm}
     if tool_name in available_tools:
         logging.debug("Synthesis tool to be used found: %s", tool_name)

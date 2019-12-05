@@ -1,0 +1,30 @@
+# Microsemi Physical design constraints file
+# Family: IGLOO2, Die: M2GL060, Package: 484 FBGA, Speed grade: -1
+
+#
+# IO banks setting
+#
+set_iobank Bank2 -vcci 3.3 -fixed yes 
+set_iobank Bank4 -vcci 3.3 -fixed no 
+set_iobank Bank5 -vcci 3.3 -fixed yes 
+set_iobank Bank6 -vcci 3.3 -fixed yes 
+set_iobank Bank9 -vcci 3.3 -fixed yes 
+
+#
+# I/O constraints
+#
+set_io led_o\[0\] -iostd LVTTL -pinname G3 -fixed yes -direction OUTPUT
+set_io led_o\[1\] -iostd LVTTL -pinname H3 -fixed yes -direction OUTPUT
+set_io led_o\[2\] -iostd LVTTL -pinname H1 -fixed yes -direction OUTPUT
+set_io led_o\[3\] -iostd LVTTL -pinname G1 -fixed yes -direction OUTPUT
+set_io led_o\[4\] -iostd LVTTL -pinname H4 -fixed yes -direction OUTPUT
+set_io led_o\[5\] -iostd LVTTL -pinname H5 -fixed yes -direction OUTPUT
+set_io led_o\[6\] -iostd LVTTL -pinname H6 -fixed yes -direction OUTPUT
+set_io led_o\[7\] -iostd LVTTL -pinname J1 -fixed yes -direction OUTPUT
+
+set_io clear_i -iostd LVTTL -pinname B1 -fixed yes
+set_io count_i -iostd LVTTL -pinname C1 -fixed yes
+
+# 40MHz clock
+set_io clock_i -iostd LVTTL -pinname J20 -fixed yes
+

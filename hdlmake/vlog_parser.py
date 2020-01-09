@@ -531,7 +531,7 @@ class VerilogParser(DepParser):
         DepParser.__init__(self, dep_file)
         self.preprocessor = VerilogPreprocessor()
 
-    def parse(self, dep_file):
+    def parse(self, dep_file, action=None):
         """Parse the provided Verilog file and add to its properties
         all of the detected dependency relations"""
         if dep_file.is_parsed:

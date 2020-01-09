@@ -38,7 +38,7 @@ class VHDLParser(DepParser):
         DepParser.__init__(self, dep_file)
         # self.preprocessor = VHDLPreprocessor()
 
-    def parse(self, dep_file):
+    def parse(self, dep_file, action=None):
         """Parse the provided VHDL file and add the detected relations to it"""
         from .dep_file import DepRelation
         if dep_file.is_parsed:
@@ -49,6 +49,9 @@ class VHDLParser(DepParser):
             """Preprocess the supplied VHDL file instance"""
             def _preprocess_file(file_content, file_name, library):
                 """Preprocess the suplied string using the arguments"""
+                def _remove_synthesis_translate_on_off_block(text):
+                    pattern = re.compile(r'--\s*synthesis\s+translate_off.*?--\s*synthesis\s+translate_on', re.DOTALL | re.MULTILINE)
+                    return re.sub(pattern, "", text)
                 def _remove_comments_and_strings(text):
                     """Remove the comments and strings from the VHDL code"""
                     pattern = re.compile('--.*?$|".?"',
@@ -57,12 +60,19 @@ class VHDLParser(DepParser):
                 logging.debug(
                     "preprocess file %s (of length %d) in library %s",
                     file_name, len(file_content), library)
-                return _remove_comments_and_strings(file_content)
+
+                text = file_content
+                if action == "synthesis":
+                    text = _remove_synthesis_translate_on_off_block(text)
+                text = _remove_comments_and_strings(text)
+                return text
+
             file_path = vhdl_file.file_path
             buf = open(file_path, "r").read()
             return _preprocess_file(file_content=buf,
                                     file_name=file_path,
                                     library=vhdl_file.library)
+
         buf = _preprocess(dep_file)
         # use packages
         use_pattern = re.compile(

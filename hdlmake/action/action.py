@@ -107,11 +107,15 @@ class Action(object):
     def solve_file_set(self):
         """Build file set with only those files required by the top entity"""
         if not self._deps_solved:
-            if self.tool == None:
-                dep_solver.solve(self.parseable_fileset)
-            else:
-                dep_solver.solve(self.parseable_fileset,
-                                 self.tool.get_standard_libs())
+            std_libs=[]
+            manifest_libs = self.config.get("standard_libs")
+            if manifest_libs is not None:
+                std_libs.extend(manifest_libs)
+            if self.tool is not None:
+                std_libs.extend(self.tool.get_standard_libs())
+            dep_solver.solve(self.parseable_fileset,
+                             std_libs,
+                             action=self.config.get("action"))
             self._deps_solved = True
         if self.options.all_files:
             return

@@ -36,7 +36,7 @@ class XCIParser(DepParser):
     def __init__(self, dep_file):
         DepParser.__init__(self, dep_file)
 
-    def parse(self, dep_file):
+    def parse(self, dep_file, action=None):
         """Parse a Xilinx XCI IP description file to determine the provided module(s)"""
         if dep_file.is_parsed:
             return

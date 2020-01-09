@@ -37,12 +37,12 @@ class DepParser(object):
     def __init__(self, dep_file):
         self.dep_file = dep_file
 
-    def parse(self, dep_file):
+    def parse(self, dep_file, action=None):
         """Base dummy interface method for the HDL parse execution"""
         pass
 
 
-def solve(fileset, standard_libs=None):
+def solve(fileset, standard_libs=None, action=None):
     """Function that Parses and Solves the provided HDL fileset. Note
        that it doesn't return a new fileset, but modifies the original one"""
     from .srcfile import SourceFileSet
@@ -51,6 +51,7 @@ def solve(fileset, standard_libs=None):
     fset = fileset.filter(DepFile)
     # print(fileset)
     # print(fset)
+    print(standard_libs)
     not_satisfied = 0
     logging.debug("PARSE BEGIN: Here, we will parse all the files in the "
                   "fileset: no parsing should be done beyond this point")
@@ -58,7 +59,7 @@ def solve(fileset, standard_libs=None):
         logging.debug("INVESTIGATED FILE: %s", investigated_file)
         if not investigated_file.is_parsed:
             logging.debug("Not parsed yet, let's go!")
-            investigated_file.parser.parse(investigated_file)
+            investigated_file.parser.parse(investigated_file, action)
     logging.debug("PARSE END: now the parsing is done")
     logging.debug("SOLVE BEGIN")
     for investigated_file in fset:

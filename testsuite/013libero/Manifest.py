@@ -1,6 +1,7 @@
 action = "synthesis"
 
 syn_tool="libero"
+syn_family="ProASIC3"
 syn_device="anfpga"
 syn_grade="3"
 syn_package="ff"

@@ -56,9 +56,9 @@ class ToolLibero(MakefileSyn):
                      'mrproper': ["*.pdb", "*.stp"]}
 
     TCL_CONTROLS = {
-        'create': 'new_project -location {{./{0}}} -name {{{0}}}'
-                  ' -hdl {{VHDL}} -family {{ProASIC3}} -die {{{1}}}'
-                  ' -package {{{2}}} -speed {{{3}}} -die_voltage {{1.5}}',
+        'create': 'new_project -location {{./{project}}} -name {{{project}}}'
+                  ' -hdl {{VHDL}} -family {{{family}}} -die {{{device}}}'
+                  ' -package {{{package}}} -speed {{{grade}}} -die_voltage {{1.5}}',
         'open': 'open_project -file {$(PROJECT)/$(PROJECT_FILE)}',
         'save': 'save_project',
         'close': 'close_project',
@@ -74,6 +74,18 @@ class ToolLibero(MakefileSyn):
                      '$(TCL_CLOSE)',
         'install_source': '$(PROJECT)/designer/impl1/$(SYN_TOP).pdb'}
 
+    # Override the build command, because no space is expected between TCL_INTERPRETER and the tcl file
+    MAKEFILE_SYN_BUILD_CMD="""\
+{0}.tcl:
+{3}
+
+{0}: {1} {0}.tcl
+\t$(SYN_PRE_{2}_CMD)
+\t$(TCL_INTERPRETER)$@.tcl
+\t$(SYN_POST_{2}_CMD)
+\t{4} $@
+"""
+
     def __init__(self):
         super(ToolLibero, self).__init__()
         self._tcl_controls.update(ToolLibero.TCL_CONTROLS)
@@ -81,14 +93,17 @@ class ToolLibero(MakefileSyn):
     def _makefile_syn_tcl(self):
         """Create a Libero synthesis project by TCL"""
         syn_project = self.manifest_dict["syn_project"]
+        syn_family = self.manifest_dict["syn_family"]
         syn_device = self.manifest_dict["syn_device"]
         syn_grade = self.manifest_dict["syn_grade"]
         syn_package = self.manifest_dict["syn_package"]
+        # Template substitute for 'create'.
         create_tmp = self._tcl_controls["create"]
-        self._tcl_controls["create"] = create_tmp.format(syn_project,
-                                                         syn_device.upper(),
-                                                         syn_package.upper(),
-                                                         syn_grade)
+        self._tcl_controls["create"] = create_tmp.format(project=syn_project,
+                                                         family=syn_family,
+                                                         device=syn_device,
+                                                         package=syn_package,
+                                                         grade=syn_grade)
         project_tmp = self._tcl_controls["project"]
         synthesis_constraints = []
         compilation_constraints = []

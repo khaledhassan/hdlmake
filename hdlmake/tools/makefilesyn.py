@@ -22,6 +22,24 @@ class MakefileSyn(ToolMakefile):
 
     """Class that provides the synthesis Makefile writing methods and status"""
 
+    """Makefile template to build and execute a command.
+    Arguments:
+    {0}: name of the stage (project, bitstream, ...)
+    {1}: prevous stage (for dependency)
+    {2}: name of the stage, in upper case
+    {3}: commands to create the tcp script
+    {4}: touch command"""
+    MAKEFILE_SYN_BUILD_CMD="""\
+{0}.tcl:
+{3}
+
+{0}: {1} {0}.tcl
+\t\t$(SYN_PRE_{2}_CMD)
+\t\t$(TCL_INTERPRETER) $@.tcl
+\t\t$(SYN_POST_{2}_CMD)
+\t\t{4} $@
+"""
+
     def __init__(self):
         super(MakefileSyn, self).__init__()
         self._tcl_controls = {}
@@ -148,17 +166,9 @@ endif""")
                 if shell.check_windows_commands():
                     command_string = command_string.replace(
                         "'", "")
-                self.writeln("""\
-{0}.tcl:
-{3}
-
-{0}: {1} {0}.tcl
-\t\t$(SYN_PRE_{2}_CMD)
-\t\t$(TCL_INTERPRETER) $@.tcl
-\t\t$(SYN_POST_{2}_CMD)
-\t\t{4} $@
-""".format(stage, stage_previous, stage.upper(),
-           command_string, shell.touch_command()))
+                self.writeln(self.MAKEFILE_SYN_BUILD_CMD.format(
+                    stage, stage_previous, stage.upper(),
+                    command_string, shell.touch_command()))
                 stage_previous = stage
 
     def _makefile_syn_command(self):

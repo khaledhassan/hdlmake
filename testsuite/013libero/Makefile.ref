@@ -12,12 +12,12 @@ ifneq ($(strip $(TOOL_PATH)),)
 TCL_INTERPRETER := $(TOOL_PATH)/$(TCL_INTERPRETER)
 endif
 
-SYN_FAMILY := 
+SYN_FAMILY := ProASIC3
 SYN_DEVICE := anfpga
 SYN_PACKAGE := ff
 SYN_GRADE := 3
 
-TCL_CREATE := new_project -location {./gate} -name {gate} -hdl {VHDL} -family {ProASIC3} -die {ANFPGA} -package {FF} -speed {3} -die_voltage {1.5}
+TCL_CREATE := new_project -location {./gate} -name {gate} -hdl {VHDL} -family {ProASIC3} -die {anfpga} -package {ff} -speed {3} -die_voltage {1.5}
 TCL_OPEN := open_project -file {$(PROJECT)/$(PROJECT_FILE)}
 TCL_SAVE := save_project
 TCL_CLOSE := close_project
@@ -58,10 +58,10 @@ project.tcl:
 		echo $(TCL_CLOSE) >> $@
 
 project: files.tcl project.tcl
-		$(SYN_PRE_PROJECT_CMD)
-		$(TCL_INTERPRETER) $@.tcl
-		$(SYN_POST_PROJECT_CMD)
-		touch $@
+	$(SYN_PRE_PROJECT_CMD)
+	$(TCL_INTERPRETER)$@.tcl
+	$(SYN_POST_PROJECT_CMD)
+	touch $@
 
 bitstream.tcl:
 		echo $(TCL_OPEN) >> $@
@@ -70,10 +70,10 @@ bitstream.tcl:
 		echo $(TCL_CLOSE) >> $@
 
 bitstream: project bitstream.tcl
-		$(SYN_PRE_BITSTREAM_CMD)
-		$(TCL_INTERPRETER) $@.tcl
-		$(SYN_POST_BITSTREAM_CMD)
-		touch $@
+	$(SYN_PRE_BITSTREAM_CMD)
+	$(TCL_INTERPRETER)$@.tcl
+	$(SYN_POST_BITSTREAM_CMD)
+	touch $@
 
 CLEAN_TARGETS := $(LIBS) $(PROJECT)
 

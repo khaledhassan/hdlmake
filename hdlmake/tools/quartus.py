@@ -243,5 +243,6 @@ class ToolQuartus(MakefileSyn):
             command_list.append(self._emit_property(self.SET_GLOBAL_ASSIGNMENT,
                                 {'name': 'POST_FLOW_SCRIPT_FILE',
                                 'value': postflow}))
-        self._tcl_controls["files"] = '\n'.join(command_list)
+        if command_list:
+            self._tcl_controls["files"] = '\n'.join(command_list)
         super(ToolQuartus, self)._makefile_syn_files()

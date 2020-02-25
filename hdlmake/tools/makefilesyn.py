@@ -110,6 +110,7 @@ endif""")
         sources_list = []
         fileset_dict.update(self.HDL_FILES)
         fileset_dict.update(self.SUPPORTED_FILES)
+        # Create variabke SOURCES_xxx for every language.
         for filetype in fileset_dict:
             file_list = []
             for file_aux in self.fileset:
@@ -118,7 +119,7 @@ endif""")
                         # Discard SVerilog files for verilog type.
                         continue
                     file_list.append(shell.tclpath(file_aux.rel_path()))
-            if not file_list == []:
+            if file_list:
                 ret.append(
                    'SOURCES_{0} := \\\n'
                    '{1}\n'.format(filetype.__name__,
@@ -126,23 +127,20 @@ endif""")
                 if not fileset_dict[filetype] is None:
                     sources_list.append(filetype)
         self.writeln('\n'.join(ret))
+        # Create files.tcl target
         self.writeln('files.tcl:')
         if "files" in self._tcl_controls:
-            echo_command = '\t\t@echo {0} >> $@'
-            tcl_command = []
             for command in self._tcl_controls["files"].split('\n'):
-                tcl_command.append(echo_command.format(command))
-            command_string = "\n".join(tcl_command)
-            if shell.check_windows_commands():
-                command_string = command_string.replace("'", "")
-            self.writeln(command_string)
+                command_string = '\t\t@echo {0} >> $@'.format(command)
+                if shell.check_windows_commands():
+                    command_string = command_string.replace("'", "")
+                self.writeln(command_string)
         for filetype in sources_list:
             filetype_string = ('\t\t@$(foreach sourcefile,'
                 ' $(SOURCES_{0}), echo "{1}" >> $@ &)'.format(
                 filetype.__name__, fileset_dict[filetype]))
             if shell.check_windows_commands():
-                filetype_string = filetype_string.replace(
-                    '"', '')
+                filetype_string = filetype_string.replace('"', '')
             self.writeln(filetype_string)
         self.writeln()
 

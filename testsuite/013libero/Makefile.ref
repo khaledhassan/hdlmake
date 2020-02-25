@@ -38,9 +38,9 @@ SOURCES_PDCFile := \
 comp.pdc
 
 files.tcl:
-		@$(foreach sourcefile, $(SOURCES_VHDLFile), echo "create_links -hdl_source $(sourcefile)" >> $@ &)
-		@$(foreach sourcefile, $(SOURCES_SDCFile), echo "create_links -sdc $(sourcefile)" >> $@ &)
-		@$(foreach sourcefile, $(SOURCES_PDCFile), echo "create_links -pdc $(sourcefile)" >> $@ &)
+		echo "create_links -hdl_source ../files/gate.vhdl" >> $@
+		echo "create_links -pdc comp.pdc" >> $@
+		echo "create_links -sdc syn.sdc" >> $@
 
 SYN_PRE_PROJECT_CMD := 
 SYN_POST_PROJECT_CMD := 

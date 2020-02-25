@@ -42,7 +42,7 @@ class ToolLibero(MakefileSyn):
 
     STANDARD_LIBS = ['ieee', 'std']
 
-    _LIBERO_SOURCE = 'create_links {0} $(sourcefile)'
+    _LIBERO_SOURCE = 'create_links {0} {{srcfile}}'
 
     SUPPORTED_FILES = {
         SDCFile: _LIBERO_SOURCE.format('-sdc'),

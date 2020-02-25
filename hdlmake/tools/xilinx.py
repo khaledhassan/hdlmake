@@ -35,15 +35,15 @@ class ToolXilinx(MakefileSyn):
     """Class providing the interface for Xilinx Vivado synthesis"""
 
     _XILINX_SOURCE = (
-        "add_files -norecurse $(sourcefile); "
-        "set_property IS_GLOBAL_INCLUDE 1 [get_files $(sourcefile)]")
+        "add_files -norecurse {srcfile}; "
+        "set_property IS_GLOBAL_INCLUDE 1 [get_files {srcfile}]")
 
     HDL_FILES = {
         VHDLFile: _XILINX_SOURCE,
         VerilogFile: _XILINX_SOURCE,
         SVFile: _XILINX_SOURCE}
 
-    SUPPORTED_FILES = {TCLFile: 'source $(sourcefile)'}
+    SUPPORTED_FILES = {TCLFile: 'source {srcfile}'}
 
     CLEAN_TARGETS = {'mrproper': ["*.bit", "*.bin"]}
 

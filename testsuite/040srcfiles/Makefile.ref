@@ -32,7 +32,7 @@ SOURCES_SVFile := \
 f2.sv
 
 files.tcl:
-		@$(foreach sourcefile, $(SOURCES_SVFile), echo "xfile add $(sourcefile)" >> $@ &)
+		echo "xfile add f2.sv" >> $@
 
 SYN_PRE_PROJECT_CMD := 
 SYN_POST_PROJECT_CMD := 

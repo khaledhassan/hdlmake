@@ -36,7 +36,7 @@ class Config(object):
         hdlmake.util.shell.check_windows_commands = self.prev_check_windows_commands
 
 def compare_makefile():
-    # shutil.move('Makefile', 'Makefile.ref')  # To regenerate
+    # shutil.copy('Makefile', 'Makefile.ref')  # To regenerate
     ref = open('Makefile.ref', 'r').read()
     out = open('Makefile', 'r').read()
     assert out == ref

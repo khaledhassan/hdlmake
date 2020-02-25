@@ -33,7 +33,7 @@ files.tcl:
 		@echo set_global_assignment -name PRE_FLOW_SCRIPT_FILE \""quartus_sh:none.tcl"\" >> $@
 		@echo set_global_assignment -name POST_MODULE_SCRIPT_FILE \""quartus_sh:none.tcl"\" >> $@
 		@echo set_global_assignment -name POST_FLOW_SCRIPT_FILE \""quartus_sh:none.tcl"\" >> $@
-		@$(foreach sourcefile, $(SOURCES_VHDLFile), echo "set_global_assignment -name VHDL_FILE $(sourcefile) -library work" >> $@ &)
+		echo "set_global_assignment -name VHDL_FILE ../files/gate.vhdl -library work" >> $@
 
 SYN_PRE_PROJECT_CMD := 
 SYN_POST_PROJECT_CMD := 

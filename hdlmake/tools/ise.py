@@ -63,16 +63,16 @@ class ToolISE(MakefileSyn):
                      'synopsys', 'unimacro', 'unisim', 'XilinxCoreLib']
 
     SUPPORTED_FILES = {
-        UCFFile: 'xfile add $(sourcefile)',
-        CDCFile: 'xfile add $(sourcefile)',
-        BMMFile: 'xfile add $(sourcefile)',
-        NGCFile: 'xfile add $(sourcefile)',
-        XCOFile: 'xfile add $(sourcefile)'}
+        UCFFile: 'xfile add {srcfile}',
+        CDCFile: 'xfile add {srcfile}',
+        BMMFile: 'xfile add {srcfile}',
+        NGCFile: 'xfile add {srcfile}',
+        XCOFile: 'xfile add {srcfile}'}
 
     HDL_FILES = {
-        VHDLFile: 'xfile add $(sourcefile)',
-        VerilogFile: 'xfile add $(sourcefile)',
-        SVFile: 'xfile add $(sourcefile)'}
+        VHDLFile: 'xfile add {srcfile}',
+        VerilogFile: 'xfile add {srcfile}',
+        SVFile: 'xfile add {srcfile}'}
 
     CLEAN_TARGETS = {'clean': ["xst", "xlnx_auto_0_xdb", "iseconfig _xmsgs",
                                "_ngo", "*.b", "*_summary.html",

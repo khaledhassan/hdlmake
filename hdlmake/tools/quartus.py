@@ -49,7 +49,7 @@ class ToolQuartus(MakefileSyn):
 
     STANDARD_LIBS = ['altera', 'altera_mf', 'lpm', 'ieee', 'std']
 
-    _QUARTUS_SOURCE = 'set_global_assignment -name {0} $(sourcefile)'
+    _QUARTUS_SOURCE = 'set_global_assignment -name {0} {{srcfile}}'
 
     SUPPORTED_FILES = {
         SignalTapFile: _QUARTUS_SOURCE.format('SIGNALTAP_FILE'),
@@ -63,15 +63,12 @@ class ToolQuartus(MakefileSyn):
         TDFFile: _QUARTUS_SOURCE.format('AHDL_FILE'),
         GDFFile: _QUARTUS_SOURCE.format('GDF_FILE')}
 
-    _QUARTUS_LIBRARY = " -library {0}".format('work')
+    _QUARTUS_LIBRARY = " -library {library}"
 
     HDL_FILES = {
-        VHDLFile: _QUARTUS_SOURCE.format('VHDL_FILE') +
-                  _QUARTUS_LIBRARY,
-        VerilogFile: _QUARTUS_SOURCE.format('VERILOG_FILE') +
-                     _QUARTUS_LIBRARY,
-        SVFile: _QUARTUS_SOURCE.format('SYSTEMVERILOG_FILE') +
-                 _QUARTUS_LIBRARY}
+        VHDLFile: _QUARTUS_SOURCE.format('VHDL_FILE') + _QUARTUS_LIBRARY,
+        VerilogFile: _QUARTUS_SOURCE.format('VERILOG_FILE') + _QUARTUS_LIBRARY,
+        SVFile: _QUARTUS_SOURCE.format('SYSTEMVERILOG_FILE') + _QUARTUS_LIBRARY}
 
     CLEAN_TARGETS = {'clean': ["*.rpt", "*.smsg", "*.summary",
                                "*.done", "*.jdi", "*.pin", "*.qws",

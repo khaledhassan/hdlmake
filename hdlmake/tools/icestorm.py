@@ -44,7 +44,7 @@ class ToolIcestorm(MakefileSyn):
 
     SUPPORTED_FILES = {PCFFile: None}
 
-    HDL_FILES = {VerilogFile: 'read_verilog $(sourcefile)'}
+    HDL_FILES = {VerilogFile: 'read_verilog {srcfile}'}
 
     CLEAN_TARGETS = {'clean': ["$(PROJECT).asc", "$(PROJECT).blif"],
                      'mrproper': ["$(PROJECT).bin"]}

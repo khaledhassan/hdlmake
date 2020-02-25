@@ -34,7 +34,7 @@ SOURCES_VHDLFile := \
 ../files/gate.vhdl
 
 files.tcl:
-		@$(foreach sourcefile, $(SOURCES_VHDLFile), echo "xfile add $(sourcefile)" >> $@ &)
+		echo "xfile add ../files/gate.vhdl" >> $@
 
 SYN_PRE_PROJECT_CMD := 
 SYN_POST_PROJECT_CMD := 

@@ -42,7 +42,7 @@ class ToolDiamond(MakefileSyn):
 
     STANDARD_LIBS = ['ieee', 'std']
 
-    _LATTICE_SOURCE = 'prj_src {0} $(sourcefile)'
+    _LATTICE_SOURCE = 'prj_src {0} {{srcfile}}'
 
     SUPPORTED_FILES = {
         EDFFile: _LATTICE_SOURCE.format('add'),

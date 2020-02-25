@@ -27,7 +27,7 @@ SOURCES_VerilogFile := \
 ../files/gate2.v
 
 files.tcl:
-		@$(foreach sourcefile, $(SOURCES_VerilogFile), echo "read_verilog $(sourcefile)" >> $@ &)
+		echo "read_verilog ../files/gate2.v" >> $@
 
 SYN_PRE_SYNTHESIZE_CMD := 
 SYN_POST_SYNTHESIZE_CMD := 

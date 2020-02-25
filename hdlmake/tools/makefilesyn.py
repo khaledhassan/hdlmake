@@ -7,7 +7,7 @@ import logging
 from .makefile import ToolMakefile
 from ..util import shell
 
-from ..sourcefiles.srcfile import VerilogFile, SVFile
+from ..sourcefiles.srcfile import VerilogFile, SVFile, SourceFile
 
 
 def _check_synthesis_manifest(top_manifest):
@@ -135,13 +135,20 @@ endif""")
                 if shell.check_windows_commands():
                     command_string = command_string.replace("'", "")
                 self.writeln(command_string)
-        for filetype in sources_list:
-            filetype_string = ('\t\t@$(foreach sourcefile,'
-                ' $(SOURCES_{0}), echo "{1}" >> $@ &)'.format(
-                filetype.__name__, fileset_dict[filetype]))
-            if shell.check_windows_commands():
-                filetype_string = filetype_string.replace('"', '')
-            self.writeln(filetype_string)
+        for srcfile in self.fileset:
+            command = fileset_dict.get(type(srcfile))
+            if command is not None:
+                # Libraries are defined only for hdl files.
+                if isinstance(srcfile, SourceFile):
+                    library = srcfile.library
+                else:
+                    library = None
+                command = command.format(srcfile=shell.tclpath(srcfile.rel_path()),
+                                         library=library)
+                command = '\t\techo "{}" >> $@'.format(command)
+                if shell.check_windows_commands():
+                    command = command.replace('"', '')
+                self.writeln(command)
         self.writeln()
 
     def _makefile_syn_local(self):

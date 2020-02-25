@@ -143,8 +143,7 @@ class ToolMakefile(object):
         self.writeln("CLEAN_TARGETS := $(LIBS) " +
             ' '.join(self.CLEAN_TARGETS["clean"]) + "\n")
         self.writeln("clean:")
-        tmp = "\t\t" + shell.del_command() + " $(CLEAN_TARGETS)"
-        self.writeln(tmp)
+        self.writeln("\t\t" + shell.del_command() + " $(CLEAN_TARGETS)")
         if shell.check_windows_commands():
             tmp = "\t\t@-" + shell.rmdir_command() + \
             " $(CLEAN_TARGETS) >nul 2>&1"

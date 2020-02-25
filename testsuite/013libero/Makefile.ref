@@ -28,19 +28,10 @@ endif
 #target for performing local synthesis
 all: bitstream
 
-SOURCES_VHDLFile := \
-../files/gate.vhdl
-
-SOURCES_SDCFile := \
-syn.sdc
-
-SOURCES_PDCFile := \
-comp.pdc
-
 files.tcl:
-		echo "create_links -hdl_source ../files/gate.vhdl" >> $@
 		echo "create_links -pdc comp.pdc" >> $@
 		echo "create_links -sdc syn.sdc" >> $@
+		echo "create_links -hdl_source ../files/gate.vhdl" >> $@
 
 SYN_PRE_PROJECT_CMD := 
 SYN_POST_PROJECT_CMD := 

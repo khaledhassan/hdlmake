@@ -28,9 +28,6 @@ endif
 #target for performing local synthesis
 all: bitstream
 
-SOURCES_VHDLFile := \
-../files/gate.vhdl
-
 files.tcl:
 		echo "prj_src add ../files/gate.vhdl" >> $@
 

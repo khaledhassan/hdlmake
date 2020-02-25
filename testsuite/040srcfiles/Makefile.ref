@@ -28,9 +28,6 @@ endif
 #target for performing local synthesis
 all: bitstream
 
-SOURCES_SVFile := \
-f2.sv
-
 files.tcl:
 		echo "xfile add f2.sv" >> $@
 

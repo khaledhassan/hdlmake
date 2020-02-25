@@ -27,9 +27,6 @@ endif
 #target for performing local synthesis
 all: bitstream
 
-SOURCES_VHDLFile := \
-../files/gate.vhdl
-
 files.tcl:
 		echo "add_files -norecurse ../files/gate.vhdl; set_property IS_GLOBAL_INCLUDE 1 [get_files ../files/gate.vhdl]" >> $@
 

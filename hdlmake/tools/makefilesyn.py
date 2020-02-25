@@ -105,28 +105,9 @@ endif""")
 
     def _makefile_syn_files(self):
         """Write the files TCL section of the Makefile"""
-        ret = []
         fileset_dict = {}
-        sources_list = []
         fileset_dict.update(self.HDL_FILES)
         fileset_dict.update(self.SUPPORTED_FILES)
-        # Create variabke SOURCES_xxx for every language.
-        for filetype in fileset_dict:
-            file_list = []
-            for file_aux in self.fileset:
-                if isinstance(file_aux, filetype):
-                    if filetype == VerilogFile and isinstance(file_aux, SVFile):
-                        # Discard SVerilog files for verilog type.
-                        continue
-                    file_list.append(shell.tclpath(file_aux.rel_path()))
-            if file_list:
-                ret.append(
-                   'SOURCES_{0} := \\\n'
-                   '{1}\n'.format(filetype.__name__,
-                               ' \\\n'.join(file_list)))
-                if not fileset_dict[filetype] is None:
-                    sources_list.append(filetype)
-        self.writeln('\n'.join(ret))
         # Create files.tcl target
         self.writeln('files.tcl:')
         if "files" in self._tcl_controls:
@@ -135,8 +116,9 @@ endif""")
                 if shell.check_windows_commands():
                     command_string = command_string.replace("'", "")
                 self.writeln(command_string)
-        for srcfile in self.fileset:
+        for srcfile in self.fileset.sort():
             command = fileset_dict.get(type(srcfile))
+            # Put the file in files.tcl only if it is supported.
             if command is not None:
                 # Libraries are defined only for hdl files.
                 if isinstance(srcfile, SourceFile):

@@ -26,9 +26,6 @@ endif
 #target for performing local synthesis
 all: bitstream
 
-SOURCES_VHDLFile := \
-../files/gate.vhdl
-
 files.tcl:
 		echo "set_global_assignment -name VHDL_FILE ../files/gate.vhdl -library work" >> $@
 

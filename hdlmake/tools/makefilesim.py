@@ -115,7 +115,7 @@ class MakefileSim(ToolMakefile):
         cmd = self.SIMULATOR_CONTROLS.get(key)
         if cmd is None:
             return None
-        return "\t\t" + cmd.format(work=srcfile.library)
+        return cmd.format(work=srcfile.library)
 
     def _makefile_sim_dep_files(self):
         """Print dummy targets to handle file dependencies"""
@@ -123,7 +123,7 @@ class MakefileSim(ToolMakefile):
             cmd = self._makefile_sim_compile_file(file_aux)
             if cmd is not None:
                 self._makefile_sim_file_rule(file_aux)
-                self.writeln(cmd)
+                self.writeln("\t\t" + cmd)
                 self._makefile_touch_stamp_file()
                 self.writeln()
 

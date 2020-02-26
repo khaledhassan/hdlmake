@@ -39,19 +39,20 @@ fuse:
 work/.work:
 	(mkdir -p work && touch work/.work && echo work=work  >> xilinxsim.ini) || rm -rf work 
 
-work/gate3_tb/.gate3_tb_v: ../files/gate3_tb.v ../files/gate3.vhd
+work/gate/.gate_vhdl: ../files/gate.vhdl
+		vhpcomp $(VHPCOMP_FLAGS) -work work=./work $< 
+		@mkdir -p $(dir $@) && touch $@
+
+
+work/gate3/.gate3_vhd: ../files/gate3.vhd \
+work/gate/.gate_vhdl
+		vhpcomp $(VHPCOMP_FLAGS) -work work=./work $< 
+		@mkdir -p $(dir $@) && touch $@
+
+
+work/gate3_tb/.gate3_tb_v: ../files/gate3_tb.v \
+work/gate3/.gate3_vhd
 		vlogcomp -work work=./work $(VLOGCOMP_FLAGS)  -i ../files $<
-		@mkdir -p $(dir $@) && touch $@
-
-
-
-work/gate/.gate_vhdl: ../files/gate.vhdl 
-		vhpcomp $(VHPCOMP_FLAGS) -work work=./work $< 
-		@mkdir -p $(dir $@) && touch $@
-
-
-work/gate3/.gate3_vhd: ../files/gate3.vhd ../files/gate.vhdl
-		vhpcomp $(VHPCOMP_FLAGS) -work work=./work $< 
 		@mkdir -p $(dir $@) && touch $@
 
 

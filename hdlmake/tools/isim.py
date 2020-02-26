@@ -118,9 +118,23 @@ class ToolISim(MakefileSim):
         self.write("{}: {} ".format(self.get_stamp_file(file_aux), file_aux.rel_path()))
         self.writeln(' '.join([fname.rel_path() for fname in file_aux.depends_on]))
 
+    def _makefile_sim_compile_file(self, srcfile):
+        if isinstance(srcfile, VerilogFile):
+            res = "vlogcomp -work {lib}=.{slash}{lib} $(VLOGCOMP_FLAGS) ".format(
+                lib=srcfile.library, slash=shell.makefile_slash_char())
+            if srcfile.include_dirs:
+                res += ' -i '
+                res += ' '.join(srcfile.include_dirs)
+            res += " $<"
+            return res
+        elif isinstance(srcfile, VHDLFile):
+            return "vhpcomp $(VHPCOMP_FLAGS) -work {lib}=.{slash}{lib} $< ".format(
+                lib=srcfile.library, slash=shell.makefile_slash_char())
+        else:
+            return None
+
     def _makefile_sim_compilation(self):
         """Print the compile simulation target for Xilinx ISim"""
-        fileset = self.fileset
         libs = set(f.library for f in self.fileset)
         self.writeln('LIBS := ' + ' '.join(libs))
         # tell how to make libraries
@@ -155,24 +169,4 @@ fuse:
             # Modify xilinxsim.ini file by including the extra local libraries
             # self.write(' '.join(["\t(echo """, lib+"="+lib+"/."+lib, ">>",
             # "${XILINX_INI_PATH}/xilinxsim.ini"]))
-        # rules for all _primary.dat files for sv
-        # incdir = ""
-        for vl_file in fileset.filter(VerilogFile).sort():
-            self._makefile_syn_file_rule(vl_file)
-            self.write("\t\tvlogcomp -work {lib}=.{slash}{lib}".format(
-                lib=vl_file.library, slash=shell.makefile_slash_char()))
-            self.write(" $(VLOGCOMP_FLAGS) ")
-            if vl_file.include_dirs:
-                self.write(' -i ')
-                self.write(' '.join(vl_file.include_dirs))
-            self.writeln(" $<")
-            self._makefile_touch_stamp_file()
-            self.writeln()
-        self.write("\n")
-        # list rules for all _primary.dat files for vhdl
-        for vhdl_file in fileset.filter(VHDLFile).sort():
-            self._makefile_syn_file_rule(vhdl_file)
-            self.writeln("\t\tvhpcomp $(VHPCOMP_FLAGS) -work {lib}=.{slash}{lib} $< ".format(
-                lib=vhdl_file.library, slash=shell.makefile_slash_char()))
-            self._makefile_touch_stamp_file()
-            self.writeln()
+        self._makefile_sim_dep_files()

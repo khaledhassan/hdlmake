@@ -35,8 +35,7 @@ fuse:
 work/.work:
 	(mkdir -p work && touch work/.work && echo work=work  >> xilinxsim.ini) || rm -rf work 
 
-
-work/gate/.gate_vhdl: gate.vhdl 
+work/gate/.gate_vhdl: gate.vhdl
 		vhpcomp $(VHPCOMP_FLAGS) -work work=./work $< 
 		@mkdir -p $(dir $@) && touch $@
 

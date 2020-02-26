@@ -105,17 +105,25 @@ class MakefileSim(ToolMakefile):
             self.write(" \\\n{}".format(path_mod.relpath(dep_file, cwd)))
         self.writeln()
 
+    def _makefile_sim_compile_file(self, srcfile):
+        if isinstance(srcfile, VHDLFile):
+            key = 'vhdl'
+        elif isinstance(srcfile, VerilogFile):
+            key = 'vlog'
+        else:
+            return None
+        cmd = self.SIMULATOR_CONTROLS.get(key)
+        if cmd is None:
+            return None
+        return "\t\t" + cmd.format(work=srcfile.library)
+
     def _makefile_sim_dep_files(self):
         """Print dummy targets to handle file dependencies"""
         for file_aux in self.fileset.sort():
-            # Consider only HDL files.
-            if isinstance(file_aux, tuple(self.HDL_FILES)):
+            cmd = self._makefile_sim_compile_file(file_aux)
+            if cmd is not None:
                 self._makefile_sim_file_rule(file_aux)
-                if isinstance(file_aux, VHDLFile):
-                    command_key = 'vhdl'
-                elif isinstance(file_aux, VerilogFile):
-                    command_key = 'vlog'
-                self.writeln("\t\t" + self.SIMULATOR_CONTROLS[command_key].format(work=file_aux.library))
+                self.writeln(cmd)
                 self._makefile_touch_stamp_file()
                 self.writeln()
 

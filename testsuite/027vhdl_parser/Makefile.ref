@@ -19,12 +19,12 @@ VERILOG_OBJ :=
 VHDL_SRC := gate.vhdl \
 pkg.vhdl \
 
-VHDL_OBJ := work/gate/.gate_vhdl \
-work/pkg/.pkg_vhdl \
+VHDL_OBJ := work/hdlmake/gate_vhdl \
+work/hdlmake/pkg_vhdl \
 
 INCLUDE_DIRS :=
 LIBS := work
-LIB_IND := work/.work
+LIB_IND := work/hdlmake/work-stamp
 
 simulation: modelsim.ini $(LIB_IND) $(VERILOG_OBJ) $(VHDL_OBJ)
 $(VERILOG_OBJ): modelsim.ini
@@ -32,19 +32,18 @@ $(VHDL_OBJ): $(LIB_IND) modelsim.ini
 
 modelsim.ini: $(MODELSIM_INI_PATH)/modelsim.ini
 		cp $< . 2>&1
-work/.work:
-	(vlib work && vmap $(VMAP_FLAGS) work && touch work/.work) || rm -rf work
 
-work/gate/.gate_vhdl: gate.vhdl \
-work/pkg/.pkg_vhdl
+work/hdlmake/work-stamp:
+	(vlib work && vmap $(VMAP_FLAGS) work && mkdir -p work/hdlmake && touch work/hdlmake/work-stamp) || rm -rf work
+
+work/hdlmake/gate_vhdl: gate.vhdl \
+work/hdlmake/pkg_vhdl
 		vcom $(VCOM_FLAGS) -work work $< 
-		@mkdir -p $(dir $@) && touch $@
+		@touch $@
 
-
-work/pkg/.pkg_vhdl: pkg.vhdl
+work/hdlmake/pkg_vhdl: pkg.vhdl
 		vcom $(VCOM_FLAGS) -work work $< 
-		@mkdir -p $(dir $@) && touch $@
-
+		@touch $@
 
 # USER SIM COMMANDS
 sim_pre_cmd:

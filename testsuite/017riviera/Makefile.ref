@@ -17,23 +17,22 @@ VERILOG_SRC :=
 VERILOG_OBJ := 
 VHDL_SRC := ../files/gate.vhdl \
 
-VHDL_OBJ := work/gate/.gate_vhdl \
+VHDL_OBJ := work/hdlmake/gate_vhdl \
 
 INCLUDE_DIRS :=
 LIBS := work
-LIB_IND := work/.work
+LIB_IND := work/hdlmake/work-stamp
 
 simulation:  $(LIB_IND) $(VERILOG_OBJ) $(VHDL_OBJ)
 $(VERILOG_OBJ): 
 $(VHDL_OBJ): $(LIB_IND) 
 
-work/.work:
-	(vlib work && vmap $(VMAP_FLAGS) work && touch work/.work) || rm -rf work
+work/hdlmake/work-stamp:
+	(vlib work && vmap $(VMAP_FLAGS) work && mkdir -p work/hdlmake && touch work/hdlmake/work-stamp) || rm -rf work
 
-work/gate/.gate_vhdl: ../files/gate.vhdl
+work/hdlmake/gate_vhdl: ../files/gate.vhdl
 		vcom $(VCOM_FLAGS) -work work $< 
-		@mkdir -p $(dir $@) && touch $@
-
+		@touch $@
 
 # USER SIM COMMANDS
 sim_pre_cmd:

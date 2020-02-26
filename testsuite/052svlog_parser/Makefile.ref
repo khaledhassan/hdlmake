@@ -17,14 +17,14 @@ local: sim_pre_cmd simulation sim_post_cmd
 VERILOG_SRC := pkg.sv \
 vlog.sv \
 
-VERILOG_OBJ := work/pkg/.pkg_sv \
-work/vlog/.vlog_sv \
+VERILOG_OBJ := work/hdlmake/pkg_sv \
+work/hdlmake/vlog_sv \
 
 VHDL_SRC := 
 VHDL_OBJ := 
 INCLUDE_DIRS :=
 LIBS := work
-LIB_IND := work/.work
+LIB_IND := work/hdlmake/work-stamp
 
 simulation: modelsim.ini $(LIB_IND) $(VERILOG_OBJ) $(VHDL_OBJ)
 $(VERILOG_OBJ): modelsim.ini
@@ -32,19 +32,18 @@ $(VHDL_OBJ): $(LIB_IND) modelsim.ini
 
 modelsim.ini: $(MODELSIM_INI_PATH)/modelsim.ini
 		cp $< . 2>&1
-work/.work:
-	(vlib work && vmap $(VMAP_FLAGS) work && touch work/.work) || rm -rf work
 
-work/pkg/.pkg_sv: pkg.sv
+work/hdlmake/work-stamp:
+	(vlib work && vmap $(VMAP_FLAGS) work && mkdir -p work/hdlmake && touch work/hdlmake/work-stamp) || rm -rf work
+
+work/hdlmake/pkg_sv: pkg.sv
 		vlog -work work $(VLOG_FLAGS) -sv $(INCLUDE_DIRS) $<
-		@mkdir -p $(dir $@) && touch $@
+		@touch $@
 
-
-work/vlog/.vlog_sv: vlog.sv \
-work/pkg/.pkg_sv
+work/hdlmake/vlog_sv: vlog.sv \
+work/hdlmake/pkg_sv
 		vlog -work work $(VLOG_FLAGS) -sv $(INCLUDE_DIRS) $<
-		@mkdir -p $(dir $@) && touch $@
-
+		@touch $@
 
 # USER SIM COMMANDS
 sim_pre_cmd:

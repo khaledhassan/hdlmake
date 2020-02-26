@@ -18,11 +18,11 @@ VERILOG_SRC :=
 VERILOG_OBJ := 
 VHDL_SRC := ../files/gate.vhdl \
 
-VHDL_OBJ := work/gate/.gate_vhdl \
+VHDL_OBJ := work/hdlmake/gate_vhdl \
 
 INCLUDE_DIRS :=
 LIBS := work
-LIB_IND := work\.work
+LIB_IND := work/hdlmake/work-stamp
 
 simulation: modelsim.ini $(LIB_IND) $(VERILOG_OBJ) $(VHDL_OBJ)
 $(VERILOG_OBJ): modelsim.ini
@@ -30,13 +30,13 @@ $(VHDL_OBJ): $(LIB_IND) modelsim.ini
 
 modelsim.ini: $(MODELSIM_INI_PATH)/modelsim.ini
 		copy $< . 2>&1
-work\.work:
-	(vlib work && vmap $(VMAP_FLAGS) work && type nul >> work\.work) || del /s /q /f work
 
-work/gate/.gate_vhdl: ../files/gate.vhdl
+work/hdlmake/work-stamp:
+	(vlib work && vmap $(VMAP_FLAGS) work && mkdir work/hdlmake && type nul >> work/hdlmake/work-stamp) || del /s /q /f work
+
+work/hdlmake/gate_vhdl: ../files/gate.vhdl
 		vcom $(VCOM_FLAGS) -work work $< 
-		@mkdir $(dir $@) && type nul >> $@
-
+		@type nul >> $@
 
 # USER SIM COMMANDS
 sim_pre_cmd:

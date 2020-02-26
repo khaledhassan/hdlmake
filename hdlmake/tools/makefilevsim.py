@@ -90,13 +90,32 @@ class MakefileVsim(MakefileSim):
         else:
             return None
 
+    def get_stamp_library_dir(self, lib):
+        """Return the directory that contains the stamp files"""
+        return os.path.join(lib, "hdlmake")
+
+    def get_stamp_library(self, lib):
+        """Return the stamp file for :param lib:  It must be a proper file
+        and not a directory (whose mtime is updated when a new file is created)"""
+        return os.path.join(self.get_stamp_library_dir(lib), lib + "-stamp")
+
+    def get_stamp_file(self, dep_file):
+        """Stamp file for source file :param file:"""
+        return os.path.join(self.get_stamp_library_dir(dep_file.library),
+            "{}_{}".format(dep_file.purename, dep_file.extension()))
+
+    def _makefile_touch_stamp_file(self):
+        self.write("\t\t@" + shell.touch_command() + " $@\n")
+
     def _makefile_sim_libraries(self, libs):
         for lib in libs:
-            libfile = self.get_stamp_library(lib)
-            self.writeln("{}:".format(libfile))
+            stampdir = self.get_stamp_library_dir(lib)
+            stamplib = self.get_stamp_library(lib)
+            self.writeln("{}:".format(stamplib))
             self.writeln("\t(vlib {lib} && vmap $(VMAP_FLAGS) {lib} "
-                         "&& {touch} {libfile}) || {rm} {lib}".format(
-                lib=lib, touch=shell.touch_command(), libfile=libfile,
+                         "&& {mkdir} {stampdir} && {touch} {stamplib}) || {rm} {lib}".format(
+                lib=lib, mkdir=shell.mkdir_command(), stampdir=stampdir,
+                touch=shell.touch_command(), stamplib=stamplib,
                 rm=shell.del_command()))
             self.writeln()
 
@@ -121,5 +140,6 @@ class MakefileVsim(MakefileSim):
         for filename, filesource in six.iteritems(self.copy_rules):
             self.writeln("{}: {}".format(filename, filesource))
             self.writeln("\t\t{} $< . 2>&1".format(shell.copy_command()))
+            self.writeln()
         self._makefile_sim_libraries(libs)
         self._makefile_sim_dep_files()

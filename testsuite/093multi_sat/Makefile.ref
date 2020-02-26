@@ -20,13 +20,13 @@ VHDL_SRC := lgate.vhdl \
 ../files/gate.vhdl \
 ../files/gate3.vhd \
 
-VHDL_OBJ := work/lgate/.lgate_vhdl \
-work/gate/.gate_vhdl \
-work/gate3/.gate3_vhd \
+VHDL_OBJ := work/hdlmake/lgate_vhdl \
+work/hdlmake/gate_vhdl \
+work/hdlmake/gate3_vhd \
 
 INCLUDE_DIRS :=
 LIBS := work
-LIB_IND := work/.work
+LIB_IND := work/hdlmake/work-stamp
 
 simulation: modelsim.ini $(LIB_IND) $(VERILOG_OBJ) $(VHDL_OBJ)
 $(VERILOG_OBJ): modelsim.ini
@@ -34,27 +34,25 @@ $(VHDL_OBJ): $(LIB_IND) modelsim.ini
 
 modelsim.ini: $(MODELSIM_INI_PATH)/modelsim.ini
 		cp $< . 2>&1
-work/.work:
-	(vlib work && vmap $(VMAP_FLAGS) work && touch work/.work) || rm -rf work
 
-work/lgate/.lgate_vhdl: lgate.vhdl \
-work/gate/.gate_vhdl
+work/hdlmake/work-stamp:
+	(vlib work && vmap $(VMAP_FLAGS) work && mkdir -p work/hdlmake && touch work/hdlmake/work-stamp) || rm -rf work
+
+work/hdlmake/lgate_vhdl: lgate.vhdl \
+work/hdlmake/gate_vhdl
 		vcom $(VCOM_FLAGS) -work work $< 
-		@mkdir -p $(dir $@) && touch $@
+		@touch $@
 
-
-work/gate/.gate_vhdl: ../files/gate.vhdl \
-work/lgate/.lgate_vhdl
+work/hdlmake/gate_vhdl: ../files/gate.vhdl \
+work/hdlmake/lgate_vhdl
 		vcom $(VCOM_FLAGS) -work work $< 
-		@mkdir -p $(dir $@) && touch $@
+		@touch $@
 
-
-work/gate3/.gate3_vhd: ../files/gate3.vhd \
-work/lgate/.lgate_vhdl \
-work/gate/.gate_vhdl
+work/hdlmake/gate3_vhd: ../files/gate3.vhd \
+work/hdlmake/lgate_vhdl \
+work/hdlmake/gate_vhdl
 		vcom $(VCOM_FLAGS) -work work $< 
-		@mkdir -p $(dir $@) && touch $@
-
+		@touch $@
 
 # USER SIM COMMANDS
 sim_pre_cmd:

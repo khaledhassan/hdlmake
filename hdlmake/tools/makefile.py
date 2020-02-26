@@ -98,15 +98,6 @@ class ToolMakefile(object):
         else:
             return self.TOOL_INFO["linux_bin"]
 
-    def get_stamp_file(self, dep_file):
-        """Stamp file for source file :param file:"""
-        name = dep_file.purename
-        return os.path.join(dep_file.library, name, ".{}_{}".format(name, dep_file.extension()))
-
-    def _makefile_touch_stamp_file(self):
-        self.write("\t\t@" + shell.mkdir_command() + " $(dir $@)")
-        self.writeln(" && " + shell.touch_command()  + " $@\n")
-
     def makefile_check_tool(self, path_key):
         """Check if the binary is available in the O.S. environment"""
         name = self.TOOL_INFO['name']

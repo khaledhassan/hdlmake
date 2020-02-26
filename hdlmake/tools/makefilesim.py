@@ -55,6 +55,15 @@ class MakefileSim(ToolMakefile):
         section"""
         pass
 
+    def get_stamp_file(self, dep_file):
+        """Stamp file for source file :param file:"""
+        name = dep_file.purename
+        return os.path.join(dep_file.library, name, ".{}_{}".format(name, dep_file.extension()))
+
+    def _makefile_touch_stamp_file(self):
+        self.write("\t\t@" + shell.mkdir_command() + " $(dir $@)")
+        self.writeln(" && " + shell.touch_command()  + " $@\n")
+
     def _makefile_sim_local(self):
         """Generic method to write the simulation Makefile local target"""
         self.writeln("#target for performing local simulation\n"

@@ -21,7 +21,7 @@
 # along with Hdlmake.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-"""Module providing common stuff for Modelsim, Vsim... like simulators"""
+"""Module providing common stuff for Modelsim, Vsim and riviera like simulators"""
 
 from __future__ import absolute_import
 import os
@@ -81,6 +81,15 @@ class MakefileVsim(MakefileSim):
         self.writeln("VLOG_FLAGS := %s" % vlog_flags)
         self.writeln("VMAP_FLAGS := %s" % vmap_flags)
 
+    def _makefile_sim_compile_file(self, srcfile):
+        if isinstance(srcfile, VerilogFile):
+            return "vlog -work {library} $(VLOG_FLAGS) {sv_option} $(INCLUDE_DIRS) $<".format(
+                library=srcfile.library, sv_option="-sv" if isinstance(srcfile, SVFile) else "")
+        elif isinstance(srcfile, VHDLFile):
+            return "vcom $(VCOM_FLAGS) -work {} $< ".format(srcfile.library)
+        else:
+            return None
+
     def _makefile_sim_compilation(self):
         """Write a properly formatted Makefile for the simulator.
         The Makefile format is shared, but flags, dependencies, clean rules,
@@ -91,8 +100,7 @@ class MakefileVsim(MakefileSim):
         else:
             self.writeln("INCLUDE_DIRS := +incdir+%s" %
                 ('+'.join(self.manifest_dict.get("include_dirs"))))
-        fileset = self.fileset
-        libs = sorted(set(f.library for f in fileset))
+        libs = sorted(set(f.library for f in self.fileset))
         self.writeln('LIBS := ' + ' '.join(libs))
         # tell how to make libraries
         self.write('LIB_IND := ')
@@ -116,16 +124,4 @@ class MakefileVsim(MakefileSim):
                 lib=lib, touch=shell.touch_command(), slash=shell.makefile_slash_char(),
                 rm=shell.del_command()))
             self.writeln()
-        # rules for all _primary.dat files for sv
-        for vlog in fileset.filter(VerilogFile).sort():
-            self._makefile_sim_file_rule(vlog)
-            self.writeln("\t\tvlog -work {library} $(VLOG_FLAGS) {sv_option} $(INCLUDE_DIRS) $<".format(
-                library=vlog.library, sv_option="-sv" if isinstance(vlog, SVFile) else ""))
-            self._makefile_touch_stamp_file()
-            self.writeln()
-        # list rules for all _primary.dat files for vhdl
-        for vhdl in fileset.filter(VHDLFile).sort():
-            self._makefile_sim_file_rule(vhdl)
-            self.writeln("\t\tvcom $(VCOM_FLAGS) -work {} $< ".format(vhdl.library))
-            self._makefile_touch_stamp_file()
-            self.writeln()
+        self._makefile_sim_dep_files()

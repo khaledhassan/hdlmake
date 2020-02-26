@@ -21,6 +21,7 @@ VHDL_OBJ := work/gate/.gate_vhdl \
 
 LIBS := work
 LIB_IND := work/.work
+
 simulation: xilinxsim.ini $(LIB_IND) $(VERILOG_OBJ) $(VHDL_OBJ) fuse
 $(VERILOG_OBJ): $(LIB_IND) xilinxsim.ini
 $(VHDL_OBJ): $(LIB_IND) xilinxsim.ini

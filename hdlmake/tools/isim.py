@@ -135,13 +135,8 @@ class ToolISim(MakefileSim):
 
     def _makefile_sim_compilation(self):
         """Print the compile simulation target for Xilinx ISim"""
-        libs = set(f.library for f in self.fileset)
-        self.writeln('LIBS := ' + ' '.join(libs))
-        # tell how to make libraries
-        self.write('LIB_IND := ')
-        self.write(' '.join([lib + shell.makefile_slash_char() +
-            "." + lib for lib in libs]))
-        self.write('\n')
+        libs = self.get_all_libs()
+        self._makefile_sim_libs_variables(libs)
         self.writeln("""\
 simulation: xilinxsim.ini $(LIB_IND) $(VERILOG_OBJ) $(VHDL_OBJ) fuse
 $(VERILOG_OBJ): $(LIB_IND) xilinxsim.ini

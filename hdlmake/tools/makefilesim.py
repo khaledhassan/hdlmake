@@ -127,6 +127,19 @@ class MakefileSim(ToolMakefile):
                 self._makefile_touch_stamp_file()
                 self.writeln()
 
+    def get_all_libs(self):
+        """Return a sorted list of all the libraries name"""
+        return sorted(set(f.library for f in self.fileset))
+
+    def _makefile_sim_libs_variables(self, libs):
+        """Create variables for libraries name"""
+        self.writeln('LIBS := ' + ' '.join(libs))
+        self.write('LIB_IND := ')
+        self.write(' '.join([lib + shell.makefile_slash_char() +
+                   "." + lib for lib in libs]))
+        self.write('\n')
+        self.writeln()
+
     def _makefile_sim_command(self):
         """Generic method to write the simulation Makefile user commands"""
         self.writeln("# USER SIM COMMANDS")

@@ -90,6 +90,16 @@ class MakefileVsim(MakefileSim):
         else:
             return None
 
+    def _makefile_sim_libraries(self, libs):
+        for lib in libs:
+            libfile = self.get_stamp_library(lib)
+            self.writeln("{}:".format(libfile))
+            self.writeln("\t(vlib {lib} && vmap $(VMAP_FLAGS) {lib} "
+                         "&& {touch} {libfile}) || {rm} {lib}".format(
+                lib=lib, touch=shell.touch_command(), libfile=libfile,
+                rm=shell.del_command()))
+            self.writeln()
+
     def _makefile_sim_compilation(self):
         """Write a properly formatted Makefile for the simulator.
         The Makefile format is shared, but flags, dependencies, clean rules,
@@ -111,11 +121,5 @@ class MakefileVsim(MakefileSim):
         for filename, filesource in six.iteritems(self.copy_rules):
             self.writeln("{}: {}".format(filename, filesource))
             self.writeln("\t\t{} $< . 2>&1".format(shell.copy_command()))
-        for lib in libs:
-            self.write(lib + shell.makefile_slash_char() + "." + lib + ":\n")
-            self.writeln("\t(vlib {lib} && vmap $(VMAP_FLAGS) {lib} "
-                         "&& {touch} {lib}{slash}.{lib}) || {rm} {lib}".format(
-                lib=lib, touch=shell.touch_command(), slash=shell.makefile_slash_char(),
-                rm=shell.del_command()))
-            self.writeln()
+        self._makefile_sim_libraries(libs)
         self._makefile_sim_dep_files()

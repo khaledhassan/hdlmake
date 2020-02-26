@@ -60,6 +60,9 @@ class MakefileSim(ToolMakefile):
         name = dep_file.purename
         return os.path.join(dep_file.library, name, ".{}_{}".format(name, dep_file.extension()))
 
+    def get_stamp_library(self, lib):
+        return lib + shell.makefile_slash_char() + "." + lib
+
     def _makefile_touch_stamp_file(self):
         self.write("\t\t@" + shell.mkdir_command() + " $(dir $@)")
         self.writeln(" && " + shell.touch_command()  + " $@\n")
@@ -134,10 +137,7 @@ class MakefileSim(ToolMakefile):
     def _makefile_sim_libs_variables(self, libs):
         """Create variables for libraries name"""
         self.writeln('LIBS := ' + ' '.join(libs))
-        self.write('LIB_IND := ')
-        self.write(' '.join([lib + shell.makefile_slash_char() +
-                   "." + lib for lib in libs]))
-        self.write('\n')
+        self.writeln('LIB_IND := ' + ' '.join([self.get_stamp_library(lib) for lib in libs]))
         self.writeln()
 
     def _makefile_sim_command(self):

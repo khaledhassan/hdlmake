@@ -133,6 +133,19 @@ class ToolISim(MakefileSim):
         else:
             return None
 
+    def _makefile_sim_libraries(self, libs):
+        # ISim does not have a vmap command to insert additional libraries in
+        #.ini file.
+        for lib in libs:
+            libfile = self.get_stamp_library(lib)
+            self.writeln("{}:".format(libfile))
+            self.write("\t({mkdir} {lib} && {touch} {libfile}".format(
+                lib=lib, libfile=libfile, mkdir=shell.mkdir_command(), touch=shell.touch_command()))
+            # Modify xilinxsim.ini file by including the extra local libraries
+            self.write(" && echo {lib}={lib}  >> xilinxsim.ini) ".format(lib=lib))
+            self.write("|| {rm} {lib} \n".format(lib=lib, rm=shell.del_command()))
+            self.writeln()
+
     def _makefile_sim_compilation(self):
         """Print the compile simulation target for Xilinx ISim"""
         libs = self.get_all_libs()
@@ -151,17 +164,5 @@ fuse:
 \t\tfuse work.$(TOP_MODULE) -intstyle ise -incremental -o $(FUSE_OUTPUT)
 
 """)
-        # ISim does not have a vmap command to insert additional libraries in
-        #.ini file.
-        for lib in libs:
-            libfile = lib + shell.makefile_slash_char() + "." + lib
-            self.write("{}:\n".format(libfile))
-            self.write("\t({mkdir} {lib} && {touch} {libfile}".format(
-                lib=lib, libfile=libfile, mkdir=shell.mkdir_command(), touch=shell.touch_command()))
-            self.write(" && echo {lib}={lib}  >> xilinxsim.ini) ".format(lib=lib))
-            self.write("|| {rm} {lib} \n".format(lib=lib, rm=shell.del_command()))
-            self.write('\n')
-            # Modify xilinxsim.ini file by including the extra local libraries
-            # self.write(' '.join(["\t(echo """, lib+"="+lib+"/."+lib, ">>",
-            # "${XILINX_INI_PATH}/xilinxsim.ini"]))
+        self._makefile_sim_libraries(libs)
         self._makefile_sim_dep_files()

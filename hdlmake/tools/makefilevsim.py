@@ -86,16 +86,14 @@ class MakefileVsim(MakefileSim):
         The Makefile format is shared, but flags, dependencies, clean rules,
         etc are defined by the specific tool.
         """
-        fileset = self.fileset
         if self.manifest_dict.get("include_dirs") is None:
             self.writeln("INCLUDE_DIRS :=")
         else:
             self.writeln("INCLUDE_DIRS := +incdir+%s" %
                 ('+'.join(self.manifest_dict.get("include_dirs"))))
+        fileset = self.fileset
         libs = sorted(set(f.library for f in fileset))
-        self.write('LIBS := ')
-        self.write(' '.join(libs))
-        self.write('\n')
+        self.writeln('LIBS := ' + ' '.join(libs))
         # tell how to make libraries
         self.write('LIB_IND := ')
         self.write(' '.join([lib + shell.makefile_slash_char() +

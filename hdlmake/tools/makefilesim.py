@@ -43,11 +43,8 @@ class MakefileSim(ToolMakefile):
 
     def _makefile_sim_top(self):
         """Generic method to write the simulation Makefile top section"""
-        top_parameter = """\
-TOP_MODULE := {top_module}
-"""
-        self.writeln(top_parameter.format(
-            top_module=self.manifest_dict["sim_top"]))
+        self.writeln("TOP_MODULE := {}".format(self.manifest_dict["sim_top"]))
+        self.writeln()
 
     def _makefile_sim_options(self):
         """End stub method to write the simulation Makefile options section"""
@@ -115,16 +112,12 @@ TOP_MODULE := {top_module}
 
     def _makefile_sim_command(self):
         """Generic method to write the simulation Makefile user commands"""
-        sim_pre_cmd = self.manifest_dict.get("sim_pre_cmd", '')
-        sim_post_cmd = self.manifest_dict.get("sim_post_cmd", '')
-        sim_command = """# USER SIM COMMANDS
-sim_pre_cmd:
-\t\t{sim_pre_cmd}
-sim_post_cmd:
-\t\t{sim_post_cmd}
-"""
-        self.writeln(sim_command.format(sim_pre_cmd=sim_pre_cmd,
-                                        sim_post_cmd=sim_post_cmd))
+        self.writeln("# USER SIM COMMANDS")
+        self.writeln("sim_pre_cmd:")
+        self.writeln("\t\t" + self.manifest_dict.get("sim_pre_cmd", ''))
+        self.writeln("sim_post_cmd:")
+        self.writeln("\t\t" + self.manifest_dict.get("sim_post_cmd", ''))
+        self.writeln()
 
     def _makefile_sim_clean(self):
         """Generic method to write the simulation Makefile user clean target"""

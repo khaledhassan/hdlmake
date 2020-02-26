@@ -46,6 +46,7 @@ def compare_makefile_filter(start):
     ref = open('Makefile.ref', 'r').readlines()
     out = open('Makefile', 'r').readlines()
     out = [l for l in out if not l.startswith(start)]
+    # open('Makefile.ref', 'w').writelines(out) # To regenerate
     assert out == ref
     os.remove('Makefile')
 

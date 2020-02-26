@@ -45,22 +45,15 @@ work/gate3_tb/.gate3_tb_v: ../files/gate3_tb.v ../files/gate3.vhd
 
 
 
-work/gate/.gate_vhdl: ../files/gate.vhdl work/gate/.gate
+work/gate/.gate_vhdl: ../files/gate.vhdl 
 		vhpcomp $(VHPCOMP_FLAGS) -work work=.\work $< 
 		@mkdir $(dir $@) && type nul >> $@
 
 
-work/gate/.gate:
-		@mkdir $(dir $@) && type nul >> $@
-
-work/gate3/.gate3_vhd: ../files/gate3.vhd work/gate3/.gate3
+work/gate3/.gate3_vhd: ../files/gate3.vhd ../files/gate.vhdl
 		vhpcomp $(VHPCOMP_FLAGS) -work work=.\work $< 
 		@mkdir $(dir $@) && type nul >> $@
 
-
-work/gate3/.gate3: \
-work/gate/.gate_vhdl
-		@mkdir $(dir $@) && type nul >> $@
 
 # USER SIM COMMANDS
 sim_pre_cmd:

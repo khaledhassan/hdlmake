@@ -171,31 +171,8 @@ fuse:
         self.write("\n")
         # list rules for all _primary.dat files for vhdl
         for vhdl_file in fileset.filter(VHDLFile).sort():
-            lib = vhdl_file.library
-            purename = vhdl_file.purename
-            # each .dat depends on corresponding .vhd file and its dependencies
-            # self.write(os.path.join(lib, purename, "."+purename+"_"
-            #     + vhdl_file.extension()) + ": "+ vhdl_file.rel_path()+" "
-            #     + os.path.join(lib, purename, "."+purename) + '\n')
-            # self.writeln(".PHONY: " + os.path.join(comp_obj,
-            # "."+purename+"_"+ vhdl_file.extension()))
-            self.write(self.get_stamp_file(vhdl_file)
-                 + ": " + vhdl_file.rel_path() + " " + os.path.join(
-                    lib, purename, "." + purename) + '\n')
+            self._makefile_syn_file_rule(vhdl_file)
             self.writeln("\t\tvhpcomp $(VHPCOMP_FLAGS) -work {lib}=.{slash}{lib} $< ".format(
-                lib=lib, slash=shell.makefile_slash_char()))
+                lib=vhdl_file.library, slash=shell.makefile_slash_char()))
             self._makefile_touch_stamp_file()
             self.writeln()
-            # dependency meta-target.
-            # This rule just list the dependencies of the above file
-            # if len(vhdl_file.depends_on) != 0:
-            # self.writeln(".PHONY: " + os.path.join(
-            #     lib, purename, "."+purename))
-            # Touch the dependency file as well. In this way, "make" will
-            # recompile only what is needed (out of date)
-            # if len(vhdl_file.depends_on) != 0:
-            self.write(os.path.join(lib, purename, "." + purename) + ":")
-            for dep_file in vhdl_file.depends_on:
-                self.write(" \\\n" + self.get_stamp_file(dep_file))
-            self.write('\n')
-            self._makefile_touch_stamp_file()

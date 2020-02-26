@@ -121,10 +121,8 @@ class ToolISim(MakefileSim):
     def _makefile_sim_compilation(self):
         """Print the compile simulation target for Xilinx ISim"""
         fileset = self.fileset
-        libs = set(f.library for f in fileset)
-        self.write('LIBS := ')
-        self.write(' '.join(libs))
-        self.write('\n')
+        libs = set(f.library for f in self.fileset)
+        self.writeln('LIBS := ' + ' '.join(libs))
         # tell how to make libraries
         self.write('LIB_IND := ')
         self.write(' '.join([lib + shell.makefile_slash_char() +

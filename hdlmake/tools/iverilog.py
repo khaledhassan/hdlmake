@@ -73,8 +73,5 @@ class ToolIVerilog(MakefileSim):
 
     def _makefile_sim_options(self):
         """Print the IVerilog options to the Makefile"""
-        iverilog_opt = self.manifest_dict.get("iverilog_opt", '')
-        iverilog_string = string.Template(
-            """IVERILOG_OPT := ${iverilog_opt}\n""")
-        self.writeln(iverilog_string.substitute(
-            iverilog_opt=iverilog_opt))
+        self.writeln("IVERILOG_OPT := {}\n".format(
+            self.manifest_dict.get("iverilog_opt", '')))

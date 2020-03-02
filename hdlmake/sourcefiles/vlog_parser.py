@@ -541,7 +541,8 @@ class VerilogParser(DepParser):
 
         # modules and instantiations
         m_inside_module = re.compile(
-            r"(?:module|interface)\s+(\w+)\s*(?:#\s*\(.*?\)\s*)?(?:\(.*?\))?\s*;\s*(.+?)"
+            #  start                 name    opt-parameters     opt-ports          stmts
+            r"(?:module|interface)\s+(\w+)\s*(?:#\s*\(.*?\)\s*)?(?:\(.*?\))?\s*;\s*(.*?)"
             r"(?:endmodule|endinterface)",
             re.DOTALL | re.MULTILINE)
         m_instantiation = re.compile(

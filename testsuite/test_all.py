@@ -268,11 +268,14 @@ def test_err_fetch():
 def test_xci():
     run_compare(path="023xci")
 
-def test_vlog_parser():
+def test_vlog_parser024():
     run_compare(path="024vlog_parser")
 
 def test_vlog_parser025():
     run_compare(path="025vlog_parser")
+
+def test_vlog_parser099():
+    run_compare(path="099vlog_parser")
 
 def test_gitsm_fetch026():
     with Config(path="026gitsm_fetch") as _:

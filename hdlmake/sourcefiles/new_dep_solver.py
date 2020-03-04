@@ -49,8 +49,8 @@ def solve(fileset, standard_libs=None):
     from .dep_file import DepRelation
     assert isinstance(fileset, SourceFileSet)
     fset = fileset.filter(DepFile)
-    # print(fileset)
-    # print(fset)
+    
+    # Parse source files
     logging.debug("PARSE BEGIN: Here, we will parse all the files in the "
                   "fileset: no parsing should be done beyond this point")
     for investigated_file in fset:

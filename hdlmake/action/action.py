@@ -42,7 +42,7 @@ class Action(object):
     def __init__(self, options):
         super(Action, self).__init__()
         self.top_manifest = None
-        self.manifests = []
+        self.all_manifests = []
         self.parseable_fileset = SourceFileSet()
         self.privative_fileset = SourceFileSet()
         self._deps_solved = False
@@ -55,7 +55,7 @@ class Action(object):
         Thanks to it the pool can easily control its content
         """
         # If the module is already present, do not create it.
-        for mod in self.manifests:
+        for mod in self.all_manifests:
             if mod.url == url:
                 return None
         # A new module will be added, dependencies have to be computed.
@@ -63,7 +63,7 @@ class Action(object):
         args = ModuleArgs()
         args.set_args(parent, url, source, fetchto)
         res = Module(args, self)
-        self.manifests.append(res)
+        self.all_manifests.append(res)
         return res
 
     def load_all_manifests(self):
@@ -106,7 +106,7 @@ class Action(object):
         """Build file set with all the files listed in the complete pool"""
         logging.debug("Begin build complete file set")
         all_manifested_files = SourceFileSet()
-        for manifest in self.manifests:
+        for manifest in self.all_manifests:
             all_manifested_files.add(manifest.files)
         logging.debug("End build complete file set")
         return all_manifested_files
@@ -143,11 +143,10 @@ class Action(object):
     def solve_file_set(self):
         """Build file set with only those files required by the top entity"""
         if not self._deps_solved:
-            if self.tool == None:
-                dep_solver.solve(self.parseable_fileset)
-            else:
-                dep_solver.solve(self.parseable_fileset,
-                                 self.tool.get_standard_libs())
+            libs = None
+            if self.tool is not None:
+                libs = self.tool.get_standard_libs()
+            dep_solver.solve(self.parseable_fileset, libs)
             self._deps_solved = True
         if self.options.all_files:
             # If option -all is used, no need to compute dependencies.
@@ -164,4 +163,4 @@ class Action(object):
 
     def __str__(self):
         """Cast the module list as a list of strings"""
-        return str([str(m) for m in self.manifests])
+        return str([str(m) for m in self.all_manifests])

@@ -128,15 +128,16 @@ class Module(object):
                 logging.debug("Module %s (parent: %s) is NOT fetched.",
                               url, self.parent.path)
 
-    def process_manifest(self):
-        """Process the content section of the manifest_dict"""
+    def _process_manifest(self):
+        """Internal function called by parse_manifest.
+        Process the content section of the manifest_dict"""
         logging.debug("Process manifest at: " + os.path.dirname(self.path))
-        self._process_manifest_universal()
+        self._process_manifest_library()
         self._process_manifest_files()
         self._process_manifest_modules()
         self._process_manifest_makefiles()
 
-    def _process_manifest_universal(self):
+    def _process_manifest_library(self):
         """Method processing the universal manifest directives;
            set library (inherited if not set)."""
         # Libraries
@@ -358,7 +359,7 @@ PARSE START: %s
                     self.path, type(name_error), name_error))
 
         # Process the parsed manifest_dict to assign the module properties
-        self.process_manifest()
+        self._process_manifest()
 
         # Recurse: parse every detected submodule
         for submod in self.submodules():

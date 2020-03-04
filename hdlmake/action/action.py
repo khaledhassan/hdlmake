@@ -70,7 +70,7 @@ class Action(object):
         return new_module
 
     def load_all_manifests(self):
-        # Top level module.
+        # Load the top level module (which is in the current directory).
         assert self.top_manifest is None
         self.top_manifest = self.new_module(parent=None,
                                             url=os.getcwd(),

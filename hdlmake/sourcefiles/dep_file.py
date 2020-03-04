@@ -55,7 +55,7 @@ class DepRelation(object):
         """Check if the current dependency relation matches the provided one"""
         return (rel_b.rel_type == self.rel_type 
                 and rel_b.obj_name == self.obj_name
-                and rel_b.lib_name == self.lib_name)
+                and (self.lib_name is None or rel_b.lib_name == self.lib_name))
 
     def __repr__(self):
         ostr = {

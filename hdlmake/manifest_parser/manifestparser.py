@@ -83,6 +83,7 @@ class ManifestParser(ConfigParser):
         self.add_allowed_key('modules', key="git")
         self.add_allowed_key('modules', key="gitsm")
         self.add_allowed_key('modules', key="local")
+        self.add_allowed_key('modules', key="system")
         fetch_options = [
             {'name': 'fetchto',
              'default': None,

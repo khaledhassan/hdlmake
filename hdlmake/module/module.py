@@ -107,6 +107,10 @@ class Module(object):
                     + "\nThis module was instantiated in: " + str(self.parent))
             self.path = path_mod.relpath(url)
             self.isfetched = True
+        elif self.source == 'system':
+            self.url, self.branch, self.revision = url, None, None
+            self.path = '<internal>'
+            self.isfetch = True
         else:
             # Split URL (extract basename, revision, branch...)
             if self.source == 'svn':
@@ -268,6 +272,10 @@ class Module(object):
                 if mod is not None:
                     mods.append(mod)
             self.modules[m] = mods
+        # Handle 'system'.
+        paths = path_mod.flatten_list(self.manifest_dict["modules"].get('system', []))
+        for path in paths:
+            self.action.add_system_lib(parent=self, url=path)
 
     def _process_manifest_makefiles(self):
         """Get the extra makefiles defined in the HDLMake module"""

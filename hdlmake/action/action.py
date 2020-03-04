@@ -34,6 +34,7 @@ from ..sourcefiles import new_dep_solver as dep_solver
 from ..sourcefiles.srcfile import VHDLFile, VerilogFile, SVFile
 from ..sourcefiles.sourcefileset import SourceFileSet
 from ..module.module import Module, ModuleArgs
+from ..sourcefiles import systemlibs
 
 class Action(object):
 
@@ -43,6 +44,7 @@ class Action(object):
         super(Action, self).__init__()
         self.top_manifest = None
         self.all_manifests = []
+        self.system_libs = set()
         self.parseable_fileset = SourceFileSet()
         self.privative_fileset = SourceFileSet()
         self._deps_solved = False
@@ -65,6 +67,12 @@ class Action(object):
         res = Module(args, self)
         self.all_manifests.append(res)
         return res
+
+    def add_system_lib(self, parent, url):
+        if url not in self.system_libs:
+            if url not in systemlibs.all_system_libs:
+                raise Exception("Unknown system module '{}' in '{}'".format(url, parent))
+            self.system_libs.add(url)
 
     def load_all_manifests(self):
         # Load the top level module (which is in the current directory).
@@ -146,7 +154,7 @@ class Action(object):
             libs = None
             if self.tool is not None:
                 libs = self.tool.get_standard_libs()
-            dep_solver.solve(self.parseable_fileset, libs)
+            dep_solver.solve(self.parseable_fileset, self.system_libs, libs)
             self._deps_solved = True
         if self.options.all_files:
             # If option -all is used, no need to compute dependencies.

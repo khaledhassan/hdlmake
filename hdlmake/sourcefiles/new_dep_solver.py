@@ -28,6 +28,7 @@ from __future__ import absolute_import
 import logging
 
 from ..sourcefiles.dep_file import DepFile
+from .systemlibs import all_system_libs
 
 
 class DepParser(object):
@@ -42,14 +43,14 @@ class DepParser(object):
         pass
 
 
-def solve(fileset, standard_libs=None):
+def solve(fileset, syslibs, standard_libs=None):
     """Function that Parses and Solves the provided HDL fileset. Note
        that it doesn't return a new fileset, but modifies the original one"""
     from .sourcefileset import SourceFileSet
     from .dep_file import DepRelation
     assert isinstance(fileset, SourceFileSet)
     fset = fileset.filter(DepFile)
-    
+
     # Parse source files
     logging.debug("PARSE BEGIN: Here, we will parse all the files in the "
                   "fileset: no parsing should be done beyond this point")
@@ -59,6 +60,11 @@ def solve(fileset, standard_libs=None):
             logging.debug("Not parsed yet, let's go!")
             investigated_file.parser.parse(investigated_file)
     logging.debug("PARSE END: now the parsing is done")
+
+    # Dependencies provided by system libraries.
+    system_rels = []
+    for e in syslibs:
+        system_rels.extend(all_system_libs[e]())
 
     logging.debug("SOLVE BEGIN")
     not_satisfied = 0
@@ -74,6 +80,9 @@ def solve(fileset, standard_libs=None):
                         # A file cannot depends on itself.
                         investigated_file.depends_on.add(dep_file)
                     satisfied_by.add(dep_file)
+            if len(satisfied_by) == 1:
+                # Perfect!
+                continue
             if len(satisfied_by) > 1:
                 logging.warning(
                     "Relation %s satisfied by multiple (%d) files:\n %s",
@@ -81,22 +90,34 @@ def solve(fileset, standard_libs=None):
                     len(satisfied_by),
                     '\n '.join([file_aux.path for
                                file_aux in list(satisfied_by)]))
-            elif len(satisfied_by) == 0:
-                # if relation is a USE PACKAGE, check against
-                # the standard libs provided by the tool HDL compiler
-                required_lib = rel.lib_name
-                if (standard_libs is not None
-                     and rel.rel_type is DepRelation.PACKAGE
-                     and required_lib in standard_libs):
-                    logging.debug("Not satisfied relation %s in %s will "
-                                  "be covered by the target compiler "
-                                  "standard libs.",
-                                  str(rel), investigated_file.name)
-                else:
-                    logging.warning("Relation %s in %s not satisfied by "
-                                    "any source file",
-                                    str(rel), investigated_file.name)
-                    not_satisfied += 1
+                continue
+            # So we are handling an unsatisfied dependency.
+            assert(len(satisfied_by) == 0)
+
+            # Maybe provided by system libraries
+            found = False
+            for r in system_rels:
+                if r.satisfies(rel):
+                    found = True
+                    break
+            if found:
+                continue
+
+            # if relation is a USE PACKAGE, check against
+            # the standard libs provided by the tool HDL compiler
+            required_lib = rel.lib_name
+            if (standard_libs is not None
+                 and rel.rel_type is DepRelation.PACKAGE
+                 and required_lib in standard_libs):
+                logging.debug("Not satisfied relation %s in %s will "
+                              "be covered by the target compiler "
+                              "standard libs.",
+                              str(rel), investigated_file.name)
+                continue
+            logging.warning("Relation %s in %s not satisfied by "
+                            "any source file",
+                            str(rel), investigated_file.name)
+            not_satisfied += 1
     logging.debug("SOLVE END")
     if not_satisfied != 0:
         logging.warning(

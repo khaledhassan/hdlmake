@@ -48,26 +48,23 @@ class Action(object):
         self._deps_solved = False
         self.options = options
 
-    def __contains(self, module):
-        """Check if the pool contains the given module by checking the URL"""
-        for mod in self.manifests:
-            if mod.url == module.url:
-                return True
-        return False
-
     def new_module(self, parent, url, source, fetchto):
         """Add new module to the pool.
 
         This is the only way to add new modules to the pool
         Thanks to it the pool can easily control its content
         """
+        # If the module is already present, do not create it.
+        for mod in self.manifests:
+            if mod.url == url:
+                return None
+        # A new module will be added, dependencies have to be computed.
         self._deps_solved = False
         args = ModuleArgs()
         args.set_args(parent, url, source, fetchto)
-        new_module = Module(args, self)
-        if not self.__contains(new_module):
-            self.manifests.append(new_module)
-        return new_module
+        res = Module(args, self)
+        self.manifests.append(res)
+        return res
 
     def load_all_manifests(self):
         # Load the top level module (which is in the current directory).
@@ -153,6 +150,7 @@ class Action(object):
                                  self.tool.get_standard_libs())
             self._deps_solved = True
         if self.options.all_files:
+            # If option -all is used, no need to compute dependencies.
             return
         solved_files = SourceFileSet()
         solved_files.add(dep_solver.make_dependency_set(

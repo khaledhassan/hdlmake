@@ -262,8 +262,11 @@ class Module(object):
                         raise Exception("Found an absolute path (" + path +
                                         ") in a manifest(" + self.path + ")")
                     path = path_mod.rel2abs(path, self.path)
-                mods.append(self.action.new_module(
-                    parent=self, url=path, source=m, fetchto=fetchto))
+                # Create a module if not already loaded.
+                mod = self.action.new_module(
+                    parent=self, url=path, source=m, fetchto=fetchto)
+                if mod is not None:
+                    mods.append(mod)
             self.modules[m] = mods
 
     def _process_manifest_makefiles(self):

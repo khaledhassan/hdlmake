@@ -79,8 +79,9 @@ class VHDLParser(DepParser):
         
         # new entity
         entity_pattern = re.compile(
-            r"^\s*entity\s+(?P<name>\w+)\s+is\s+(?:port|generic|end)"
-            r".*?((?P=name)|entity)\s*;",
+            r"^\s*entity\s+(?P<name>\w+)\s+is\s+"
+              r".*?"
+            r"end\s*(entity\s*)?(?P=name)?\s*;",
             re.DOTALL | re.MULTILINE | re.IGNORECASE)
         def do_entity(text):
             """Function to be applied by re.sub to every match of the

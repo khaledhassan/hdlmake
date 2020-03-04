@@ -208,7 +208,8 @@ class Module(object):
         return srcs
 
     def _process_manifest_files(self):
-        """Process the files instantiated by the HDLMake module"""
+        """Process the files instantiated by the HDLMake module
+        Set self.files"""
         from ..sourcefiles.sourcefileset import SourceFileSet
         # HDL files provided by the module
         files = self.manifest_dict.get('files')
@@ -250,6 +251,7 @@ class Module(object):
         fetchto = self._get_fetchto()
         for m in self.modules:
             if m not in self.manifest_dict["modules"]:
+                # No modules m in the manifest
                 continue
             paths = path_mod.flatten_list(self.manifest_dict["modules"][m])
             self.manifest_dict["modules"][m] = paths
@@ -280,8 +282,10 @@ class Module(object):
 
     def submodules(self):
         """Get a list with all the submodules this module instance requires"""
-        return self.modules['local'] + self.modules['git'] \
-            + self.modules['gitsm'] + self.modules['svn']
+        res = []
+        for s in self.modules:
+            res.extend(self.modules[s])
+        return res
 
     def remove_dir_from_disk(self):
         """Delete the module dir if it is already fetched and available"""

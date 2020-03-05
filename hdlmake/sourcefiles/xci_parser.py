@@ -39,7 +39,7 @@ class XCIParser(DepParser):
     def parse(self, dep_file):
         """Parse a Xilinx XCI IP description file to determine the provided module(s)"""
         assert not dep_file.is_parsed
-        logging.debug("Parsing %s", dep_file.path)
+        logging.debug("Parsing %s in library %s", dep_file.path, dep_file.library)
 
         with open(dep_file.path) as f:
             # extract namespaces with a regex -- not really ideal, but without pulling in

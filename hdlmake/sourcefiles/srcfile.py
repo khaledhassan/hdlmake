@@ -346,6 +346,8 @@ def create_source_file(path, module, library=None, include_dirs=None):
         new_file = TCLFile(path=path, module=module)
     elif extension == 'sdc':
         new_file = SDCFile(path=path, module=module)
+    elif extension == 'xci':
+        new_file = XCIFile(path=path, module=module, library=library)
     elif extension in XILINX_FILE_DICT:
         new_file = XILINX_FILE_DICT[extension](path=path, module=module)
     elif extension in ALTERA_FILE_DICT:

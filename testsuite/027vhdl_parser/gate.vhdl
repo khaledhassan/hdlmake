@@ -20,4 +20,7 @@ architecture arch of gate is
 begin
    assert false report msg;
    inst1: entity work.ent1 port map (s);
+   inst2: comp port map (s);
+   inst3: component comp port map (s);
+   inst4: entity work.ent1(arch) port map (s);
 end arch;

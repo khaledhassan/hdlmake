@@ -33,17 +33,17 @@ def build_xilinx():
     add_package(res, 'unisim', 'vcomponents')
     for n in ['ibuf', 'ibufds', 'ibufgds', 'ibufds_diff_out',
               'ibufds_gte2',
-              'obufds', 'obuft', 'obuftds',
+              'obufds', 'obuft', 'obuftds', 'oddr',
               'oserdes2', 'oserdese2', 'iserdese2', 'iodelay2', 'odelaye2', 'idelaye2', 'idelayctrl',
               'iobuf', 'iobufds',
               'pullup', 'pulldown',
               'bufio', 'bufio2',
-              'bufgmux_ctrl', 'bufg', 'bufgce', 'bufr', 'bufpll',
+              'bufgmux_ctrl', 'bufg', 'bufgce', 'bufr', 'bufpll', 'bufmr',
               'startupe2',
               'mmcme2_adv', 'mmcme2_base', 'pll_base', 'pll_adv', 'dcm_base', 'dcm_adv', 'dcm_sp',
               'bufpll_mcb', 'mcb', 'iodrp2', 'iodrp2_mcb',
               'icap_spartan6', 'bscan_spartan6',
-              'gtxe2_channel', 'gtpa1_dual',
+              'gtxe2_channel', 'gtxe2_common', 'gtpa1_dual',
               'dsp48a1',
               'srlc32e']:
         add_entity(res, n)

@@ -221,7 +221,7 @@ class VHDLParser(DepParser):
             r"^\s*(?P<LABEL>\w+)\s*:"
             r"\s*(?:entity\s+(?P<LIB>\w+)\.)?(?P<ENTITY>\w+)"
             r"\s*(?:\(\s*(?P<ARCH>\w+)\s*\)\s*)?"
-            r"(?:port|generic)\s+map.*?",
+            r"(?:port|generic)\s+map.*?;",
             re.DOTALL | re.MULTILINE | re.IGNORECASE)
 
         def do_instance(text):

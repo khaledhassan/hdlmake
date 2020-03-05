@@ -36,7 +36,8 @@ class ToolXilinx(MakefileSyn):
 
     _XILINX_SOURCE = (
         "add_files -norecurse {srcfile}; "
-        "set_property IS_GLOBAL_INCLUDE 1 [get_files {srcfile}]")
+        "set_property IS_GLOBAL_INCLUDE 1 [get_files {srcfile}]; "
+        "set_property LIBRARY {library} [get_files {srcfile}]")
 
     HDL_FILES = {
         VHDLFile: _XILINX_SOURCE,

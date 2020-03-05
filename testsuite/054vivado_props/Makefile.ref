@@ -28,7 +28,7 @@ endif
 all: bitstream
 
 files.tcl:
-		echo "add_files -norecurse ../files/gate.vhdl; set_property IS_GLOBAL_INCLUDE 1 [get_files ../files/gate.vhdl]" >> $@
+		echo "add_files -norecurse ../files/gate.vhdl; set_property IS_GLOBAL_INCLUDE 1 [get_files ../files/gate.vhdl]; set_property LIBRARY work [get_files ../files/gate.vhdl]" >> $@
 
 SYN_PRE_PROJECT_CMD := 
 SYN_POST_PROJECT_CMD := 

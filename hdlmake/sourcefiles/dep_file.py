@@ -39,6 +39,7 @@ class DepRelation(object):
     ENTITY = 1
     PACKAGE = 2
     ARCHITECTURE = 3
+    CONTEXT = 4
     MODULE = ENTITY
 
     def __init__(self, obj_name, lib_name, rel_type):
@@ -46,6 +47,7 @@ class DepRelation(object):
             DepRelation.ENTITY,
             DepRelation.PACKAGE,
             DepRelation.ARCHITECTURE,
+            DepRelation.CONTEXT,
             DepRelation.MODULE]
         self.rel_type = rel_type
         self.obj_name = obj_name.lower()
@@ -62,6 +64,7 @@ class DepRelation(object):
             self.ENTITY: "entity",
             self.PACKAGE: "package",
             self.ARCHITECTURE: "architecture",
+            self.CONTEXT: "context",
             self.MODULE: "module"}
         return "%s '%s.%s'" % (ostr[self.rel_type],
                                self.lib_name or '',

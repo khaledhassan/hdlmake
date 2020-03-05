@@ -77,6 +77,45 @@ class VHDLParser(DepParser):
             return "<hdlmake use_pattern %s.%s>" % (lib_name, pkg_name)
         buf = re.sub(use_pattern, do_use, buf)
         
+        use_context_pattern = re.compile(
+            r"^\s*context\s+(\w+)\s*\.\s*(\w+)\s*;",
+            re.DOTALL | re.MULTILINE | re.IGNORECASE)
+
+        def do_use_context(text):
+            """Function to be applied by re.sub to every match of the
+            context_pattern in the VHDL code -- group() returns positive matches
+            as indexed plain strings. It adds the found CONTEXT relations to the
+            file"""
+            lib_name = text.group(1).lower()
+            pkg_name = text.group(2).lower()
+            if lib_name == "work":
+                # Work is an alias for the current library
+                lib_name = dep_file.library
+            logging.debug("use package %s.%s", lib_name, pkg_name)
+            dep_file.add_require(
+                DepRelation(pkg_name, lib_name, DepRelation.CONTEXT))
+            return "<hdlmake use_pattern %s.%s>" % (lib_name, pkg_name)
+        buf = re.sub(use_context_pattern, do_use_context, buf)
+
+        context_declaration_pattern = re.compile(
+            r"^\s*context\s+(?P<name>\w+)\s+is\s+"
+              r".*?"
+            r"end\s*(context\s*)?(?P=name)?\s*;",
+            re.DOTALL | re.MULTILINE | re.IGNORECASE)
+        def do_context_declaration(text):
+            """Function to be applied by re.sub to every match of the
+            context_declaration_pattern in the VHDL code -- group() returns
+            positive matches as indexed plain strings. It adds the found PROVIDE
+            relations to the file
+
+            """
+            ctx_name = text.group(1)
+            logging.debug("found entity %s.%s", dep_file.library, ctx_name)
+            dep_file.add_provide(
+                DepRelation(ctx_name, dep_file.library, DepRelation.CONTEXT))
+            return "<hdlmake entity_pattern %s.%s>" % (dep_file.library, ctx_name)
+        buf = re.sub(context_declaration_pattern, do_context_declaration, buf)
+
         # new entity
         entity_pattern = re.compile(
             r"^\s*entity\s+(?P<name>\w+)\s+is\s+"

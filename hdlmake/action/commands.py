@@ -234,3 +234,17 @@ class Commands(Action):
                     self._print_file_list(mod_aux.files)
                 self._print_comment("# MODULE END -> %s" % mod_aux.url)
             self._print_comment("")
+
+    def list_deps(self):
+        self.build_file_set()
+        self.solve_file_set()
+
+        from ..sourcefiles.srcfile import DepFile
+        from ..sourcefiles.dep_file import DepRelation
+        fset = self.parseable_fileset.filter(DepFile)
+        for f in sorted(fset, key=(lambda x: x.path)):
+            print('{}:'.format(f.path))
+            for dep in sorted([str(x) for x in f.provides]):
+                print(' provide {}'.format(dep))
+            for dep in sorted([str(x) for x in f.requires]):
+                print(' require {}'.format(dep))

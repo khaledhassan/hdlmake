@@ -94,6 +94,8 @@ def _action_runner(action):
         action.list_files()
     elif options.command == "list-json":
         action.list_json()
+    elif options.command == "list-deps":
+        action.list_deps()
     elif options.command == "tree":
         action.generate_tree()
     else:
@@ -162,6 +164,10 @@ def _get_parser():
     listfiles.add_argument(
         "--top", dest="top", default=None,
         help="print only those files required to build 'top'")
+
+    subparsers.add_parser(
+        "list-deps",
+        help="print all dependencies")
 
     tree = subparsers.add_parser(
         "tree",

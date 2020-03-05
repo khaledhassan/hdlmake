@@ -110,7 +110,7 @@ class Action(object):
         else:
             raise Exception("Unknown requested action: {}".format(action))
 
-    def build_complete_file_set(self):
+    def _build_complete_file_set(self):
         """Build file set with all the files listed in the complete pool"""
         logging.debug("Begin build complete file set")
         all_manifested_files = SourceFileSet()
@@ -121,8 +121,8 @@ class Action(object):
 
     def build_file_set(self):
         """Initialize the parseable and privative fileset contents"""
-        total_files = self.build_complete_file_set()
-        for file_aux in total_files:
+        all_files = self._build_complete_file_set()
+        for file_aux in all_files:
             if self.tool == None:
                 if any(isinstance(file_aux, file_type)
                        for file_type in [VHDLFile, VerilogFile, SVFile]):

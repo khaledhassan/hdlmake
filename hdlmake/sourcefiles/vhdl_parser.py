@@ -216,19 +216,33 @@ class VHDLParser(DepParser):
 
         buf = re.sub(function_pattern, do_function, buf)
 
-        # instantiations
-        instance_pattern = re.compile(
+        # component instantiation
+        instance_component_pattern = re.compile(
             r"^\s*(?P<LABEL>\w+)\s*:"
-            r"\s*(?:entity\s+(?P<LIB>\w+)\.)?(?P<ENTITY>\w+)"
+            r"\s*(?:component\s+)?(?P<COMPONENT>\w+)\s*"
+            r"(?:port|generic)\s+map.*?;",
+            re.DOTALL | re.MULTILINE | re.IGNORECASE)
+
+        def do_instance_component(text):
+            """Function to be applied by re.sub to every match of the
+            instance_component_pattern in the VHDL code"""
+            logging.debug("found component instantiation %s %s", text.group(1), text.group(2))
+            comp_name = text.group("COMPONENT")
+            dep_file.add_require(DepRelation(comp_name, dep_file.library, DepRelation.ENTITY))
+            return "<hdlmake component instance %s as %s>" % (comp_name, text.group("LABEL"))
+        buf = re.sub(instance_component_pattern, do_instance_component, buf)
+
+        # direct instantiations
+        direct_instance_pattern = re.compile(
+            r"^\s*(?P<LABEL>\w+)\s*:"
+            r"\s*entity\s+((?P<LIB>\w+)\.)?(?P<ENTITY>\w+)"
             r"\s*(?:\(\s*(?P<ARCH>\w+)\s*\)\s*)?"
             r"(?:port|generic)\s+map.*?;",
             re.DOTALL | re.MULTILINE | re.IGNORECASE)
 
-        def do_instance(text):
+        def do_direct_instance(text):
             """Function to be applied by re.sub to every match of the
-            instance_pattern in the VHDL code -- group() returns positive
-            matches as indexed plain strings. It adds the found USE
-            relations to the file"""
+            direct_instance_pattern in the VHDL code"""
             logging.debug("-> instantiates %s.%s(%s) as %s",
                           text.group("LIB"), text.group("ENTITY"), text.group("ARCH"), text.group("LABEL"))
             lib_name = text.group("LIB")
@@ -236,8 +250,8 @@ class VHDLParser(DepParser):
                 lib_name = dep_file.library
             ent_name = text.group("ENTITY")
             dep_file.add_require(DepRelation(ent_name, lib_name, DepRelation.ENTITY))
-            return "<hdlmake instance %s|%s|%s>" % (text.group("LABEL"), lib_name, ent_name)
-        buf = re.sub(instance_pattern, do_instance, buf)
+            return "<hdlmake direct instance %s|%s|%s>" % (text.group("LABEL"), lib_name, ent_name)
+        buf = re.sub(direct_instance_pattern, do_direct_instance, buf)
 
         # libraries
         library_pattern = re.compile(

@@ -217,7 +217,6 @@ class VHDLParser(DepParser):
         buf = re.sub(function_pattern, do_function, buf)
 
         # instantiations
-        libraries = set([dep_file.library])
         instance_pattern = re.compile(
             r"^\s*(?P<LABEL>\w+)\s*:"
             r"\s*(?:entity\s+(?P<LIB>\w+)\.)?(?P<ENTITY>\w+)"
@@ -251,7 +250,6 @@ class VHDLParser(DepParser):
             matches as indexed plain strings. It adds the used libraries
             to the file's 'library' property"""
             logging.debug("use library %s", text.group(1))
-            libraries.add(text.group(1))
             return "<hdlmake library %s>" % text.group(1)
         buf = re.sub(library_pattern, do_library, buf)
         # logging.debug("\n" + buf) # print modified buffer.

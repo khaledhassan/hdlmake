@@ -40,6 +40,7 @@ class ToolVivadoSim(MakefileSim):
     }
 
     STANDARD_LIBS = ['ieee', 'std']
+    SYSTEM_LIBS = ['xilinx']
 
     HDL_FILES = {VerilogFile: '', VHDLFile: '', SVFile: ''}
 

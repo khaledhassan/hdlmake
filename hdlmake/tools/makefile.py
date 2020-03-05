@@ -39,6 +39,7 @@ class ToolMakefile(object):
     HDL_FILES = {}
     TOOL_INFO = {}
     STANDARD_LIBS = []
+    SYSTEM_LIBS = []
     CLEAN_TARGETS = {}
     SUPPORTED_FILES = {}
 
@@ -55,8 +56,14 @@ class ToolMakefile(object):
             self._file.close()
 
     def get_standard_libs(self):
-        """Get the standard libs supported by the tool"""
+        """Get the standard vhdl libraries supported by the tool.  Any package
+        from these libraries are considered as satisfied"""
         return self.STANDARD_LIBS
+
+    def get_system_libs(self):
+        """Get the system libs supported by the tool.  Any package or entities
+        provided by those are considered as satisfied"""
+        return self.SYSTEM_LIBS
 
     def get_parseable_files(self):
         """Get the parseable HDL file types supported by the tool"""

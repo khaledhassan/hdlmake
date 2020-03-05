@@ -152,9 +152,12 @@ class Action(object):
         """Build file set with only those files required by the top entity"""
         if not self._deps_solved:
             libs = None
+            system_libs = self.system_libs
             if self.tool is not None:
                 libs = self.tool.get_standard_libs()
-            dep_solver.solve(self.parseable_fileset, self.system_libs, libs)
+                for l in self.tool.get_system_libs():
+                    system_libs.add(l)
+            dep_solver.solve(self.parseable_fileset, system_libs, libs)
             self._deps_solved = True
         if self.options.all_files:
             # If option -all is used, no need to compute dependencies.

@@ -45,6 +45,7 @@ class ToolVivado(ToolXilinx):
     }
 
     STANDARD_LIBS = ['ieee', 'std']
+    SYSTEM_LIBS = ['xilinx']
 
     SUPPORTED_FILES = {
          XDCFile: ToolXilinx._XILINX_SOURCE,

@@ -31,14 +31,20 @@ def build_xilinx():
     """Modules and packages provided by Xilinx system libraries"""
     res = []
     add_package(res, 'unisim', 'vcomponents')
-    for n in ['ibufds', 'ibufgds', 'ibufds_diff_out',
+    for n in ['ibuf', 'ibufds', 'ibufgds', 'ibufds_diff_out',
               'ibufds_gte2',
-              'obufds', 'bufio',
+              'obufds', 'obuft', 'obuftds',
               'oserdes2', 'oserdese2', 'iserdese2', 'iodelay2', 'odelaye2', 'idelaye2', 'idelayctrl',
-              'bufgmux_ctrl', 'bufg', 'bufr', 'bufpll',
+              'iobuf', 'iobufds',
+              'pullup', 'pulldown',
+              'bufio', 'bufio2',
+              'bufgmux_ctrl', 'bufg', 'bufgce', 'bufr', 'bufpll',
               'startupe2',
-              'mmcme2_adv', 'mmcme2_base', 'pll_base', 'dcm_base', 'dcm_adv', 'dcm_sp',
-              'icap_spartan6', 'gtxe2_channel',
+              'mmcme2_adv', 'mmcme2_base', 'pll_base', 'pll_adv', 'dcm_base', 'dcm_adv', 'dcm_sp',
+              'bufpll_mcb', 'mcb', 'iodrp2', 'iodrp2_mcb',
+              'icap_spartan6', 'bscan_spartan6',
+              'gtxe2_channel', 'gtpa1_dual',
+              'dsp48a1',
               'srlc32e']:
         add_entity(res, n)
     return res

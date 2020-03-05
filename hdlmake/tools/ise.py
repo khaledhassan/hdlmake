@@ -61,7 +61,8 @@ class ToolISE(MakefileSyn):
 
     STANDARD_LIBS = ['ieee', 'ieee_proposed', 'iSE', 'simprims', 'std',
                      'synopsys', 'unimacro', 'unisim', 'XilinxCoreLib']
-
+    SYSTEM_LIBS = ['xilinx']
+    
     SUPPORTED_FILES = {
         UCFFile: 'xfile add {srcfile}',
         CDCFile: 'xfile add {srcfile}',

@@ -62,6 +62,8 @@ class ToolGHDL(MakefileSim):
 
     def _makefile_sim_compilation(self):
         """Print the GDHL simulation compilation target"""
+        libs = self.get_all_libs()
+        self._makefile_sim_libs_variables(libs)
         self.writeln("simulation: $(VERILOG_OBJ) $(VHDL_OBJ)")
         self.writeln("\t\t" + self.SIMULATOR_CONTROLS['compiler'])
         self.writeln('\n')

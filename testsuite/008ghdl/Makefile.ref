@@ -19,6 +19,9 @@ VHDL_SRC := ../files/gate.vhdl \
 VHDL_OBJ := work/gate/.gate_vhdl \
 work/gate3/.gate3_vhd \
 
+LIBS := work
+LIB_IND := work/.work
+
 simulation: $(VERILOG_OBJ) $(VHDL_OBJ)
 		$(GHDL) -e $(GHDL_OPT) $(TOP_MODULE)
 

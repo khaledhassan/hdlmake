@@ -98,7 +98,7 @@ class VerilogPreprocessor(object):
 
         def _filter_protected_regions(text):
             '''Remove regions demarked by `pragma protect being_protected/end_protected'''
-            return re.sub(r'\s*`pragma\s+protect\s+begin_protected.*`pragma\s+protect\s+end_protected\b', '', text, flags=re.DOTALL)
+            return re.sub(r'`pragma\s+protect\s+begin_protected.*`pragma\s+protect\s+end_protected\b', '', text, flags=re.DOTALL)
 
         def _handle_macros(text):
             '''Process text to implement ifdef/ifndef/elsif/else/endif & define logic'''

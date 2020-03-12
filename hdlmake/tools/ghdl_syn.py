@@ -31,6 +31,7 @@ class GhdlSyn(ToolMakefile):
 
     CLEAN_TARGETS = {'clean': [],
                      'mrproper': []}
+    SYSTEM_LIBS = ['vhdl']
 
     HDL_FILES = {VHDLFile: '$(sourcefile)'}
 
@@ -55,15 +56,10 @@ class GhdlSyn(ToolMakefile):
 
     def _makefile_syn_top(self):
         """Create the top part of the synthesis Makefile"""
-        top_parameter = """\
-TOP_MODULE := {top_module}
-TOOL_PATH := {tool_path}
-TOP_MODULE := {top_module}
-GHDL := ghdl
-"""
-        self.writeln(top_parameter.format(
-            tool_path=self.manifest_dict["syn_path"],
-            top_module=self.manifest_dict["syn_top"]))
+        self.writeln("TOP_MODULE := {}".format(self.manifest_dict["syn_top"]))
+        self.writeln("TOOL_PATH := {}".format(self.manifest_dict["syn_path"]))
+        self.writeln("GHDL := ghdl")
+        self.writeln("GHDL_OPT := {}".format(self.manifest_dict.get("ghdl_opt", '')))
 
     def _makefile_syn_files(self):
         """Write the files TCL section of the Makefile"""
@@ -117,7 +113,7 @@ GHDL := ghdl
         """Generate the synthesis Makefile targets for handling design build"""
         self.writeln("""\
 synthesis: files.tcl
-\t$(GHDL) --synth @files.tcl -e $(TOP_MODULE)
+\t$(GHDL) --synth $(GHDL_OPT) @files.tcl -e $(TOP_MODULE)
 """)
 
     def _makefile_syn_clean(self):

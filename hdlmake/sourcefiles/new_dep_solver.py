@@ -64,7 +64,10 @@ def solve(fileset, syslibs, standard_libs=None):
     # Dependencies provided by system libraries.
     system_rels = []
     for e in syslibs:
-        system_rels.extend(all_system_libs[e]())
+        f = all_system_libs.get(e)
+        if f is None:
+            raise Exception("system library '{}' is unknown".format(e))
+        system_rels.extend(f())
 
     logging.debug("SOLVE BEGIN")
     not_satisfied = 0

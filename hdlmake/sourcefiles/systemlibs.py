@@ -49,5 +49,18 @@ def build_xilinx():
         add_entity(res, n)
     return res
 
+def build_vhdl():
+    res = []
+    # TODO: dependency for any package of the library.
+    for p in ['textio', 'env']:
+        add_package(res, "std", p)
+    for p in ['std_logic_1164', 'numeric_std', 
+              'math_real',
+              'std_logic_arith', 'std_logic_misc']:
+        add_package(res, "ieee", p)
+    return res
 
-all_system_libs = {'xilinx': build_xilinx}
+all_system_libs = {
+    'xilinx': build_xilinx,
+    'vhdl': build_vhdl
+}

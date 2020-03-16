@@ -26,7 +26,8 @@
 
 from __future__ import absolute_import
 from .makefilesyn import MakefileSyn
-from ..sourcefiles.srcfile import VHDLFile, VerilogFile, SVFile, TCLFile
+from ..sourcefiles.srcfile import VHDLFile, VerilogFile, SVFile, TCLFile, SourceFile
+from ..util import shell
 import logging
 
 
@@ -34,15 +35,18 @@ class ToolXilinx(MakefileSyn):
 
     """Class providing the interface for Xilinx Vivado synthesis"""
 
-    _XILINX_SOURCE = (
-        "add_files -norecurse {srcfile}; "
-        "set_property IS_GLOBAL_INCLUDE 1 [get_files {srcfile}]; "
+    _XILINX_ANY_SOURCE = ""
+
+    _XILINX_VHDL_SOURCE = (
         "set_property LIBRARY {library} [get_files {srcfile}]")
 
+    _XILINX_VERILOG_SOURCE = (
+        "set_property IS_GLOBAL_INCLUDE 1 [get_files {srcfile}]; ")
+
     HDL_FILES = {
-        VHDLFile: _XILINX_SOURCE,
-        VerilogFile: _XILINX_SOURCE,
-        SVFile: _XILINX_SOURCE}
+        VHDLFile: _XILINX_VHDL_SOURCE,
+        VerilogFile: _XILINX_VERILOG_SOURCE,
+        SVFile: _XILINX_VERILOG_SOURCE}
 
     SUPPORTED_FILES = {TCLFile: 'source {srcfile}'}
 
@@ -96,6 +100,39 @@ $(TCL_CLOSE)'''
         if not syn_properties is None:
             properties.extend(syn_properties)
         return properties
+
+    def _makefile_syn_files(self):
+        """Write the files TCL section of the Makefile"""
+        fileset_dict = {}
+        fileset_dict.update(self.HDL_FILES)
+        fileset_dict.update(self.SUPPORTED_FILES)
+        # Create files.tcl target
+        self.writeln('files.tcl:')
+        # Xilinx has no extra commands before source files.
+        assert "files" not in self._tcl_controls
+        # Add all files at once.
+        q = '' if shell.check_windows_commands() else '"'
+        self.writeln('\techo add_files -norecurse {q}{{{q} >> $@'.format(q=q))
+        for srcfile in self.fileset.sort():
+            if type(srcfile) in fileset_dict:
+                self.writeln('\techo {q} {srcfile}{q} >> $@'.format(
+                    q=q, srcfile=shell.tclpath(srcfile.rel_path())))
+        self.writeln('\techo {q}}}{q} >> $@'.format(q=q))
+        # Add each source file
+        for srcfile in self.fileset.sort():
+            command = fileset_dict.get(type(srcfile))
+            # Put the file in files.tcl only if it is supported.
+            if command is not None:
+                # Libraries are defined only for hdl files.
+                if isinstance(srcfile, SourceFile):
+                    library = srcfile.library
+                else:
+                    library = None
+                command = command.format(srcfile=shell.tclpath(srcfile.rel_path()),
+                                         library=library)
+                self.writeln('\techo {q}{cmd}{q} >> $@'.format(
+                    q=q, cmd=command))
+        self.writeln()
 
     def _makefile_syn_tcl(self):
         """Create a Xilinx synthesis project by TCL"""

@@ -110,12 +110,14 @@ endif""")
         fileset_dict.update(self.SUPPORTED_FILES)
         # Create files.tcl target
         self.writeln('files.tcl:')
+        # Extra commands before source files.
         if "files" in self._tcl_controls:
             for command in self._tcl_controls["files"].split('\n'):
                 command_string = '\t\t@echo {0} >> $@'.format(command)
                 if shell.check_windows_commands():
                     command_string = command_string.replace("'", "")
                 self.writeln(command_string)
+        # Add each source file
         for srcfile in self.fileset.sort():
             command = fileset_dict.get(type(srcfile))
             # Put the file in files.tcl only if it is supported.

@@ -48,26 +48,26 @@ class ToolVivado(ToolXilinx):
     SYSTEM_LIBS = ['xilinx']
 
     SUPPORTED_FILES = {
-         XDCFile: ToolXilinx._XILINX_SOURCE,
-         XCFFile: ToolXilinx._XILINX_SOURCE,
-         NGCFile: ToolXilinx._XILINX_SOURCE,
-         XMPFile: ToolXilinx._XILINX_SOURCE,
-         XCOFile: ToolXilinx._XILINX_SOURCE,
-         COEFile: ToolXilinx._XILINX_SOURCE,
-         BDFile: ToolXilinx._XILINX_SOURCE,
-         BMMFile: ToolXilinx._XILINX_SOURCE,
-         TCLFile: ToolXilinx._XILINX_SOURCE,
-         MIFFile: ToolXilinx._XILINX_SOURCE,
-         RAMFile: ToolXilinx._XILINX_SOURCE,
-         VHOFile: ToolXilinx._XILINX_SOURCE,
-         VEOFile: ToolXilinx._XILINX_SOURCE}
+         XDCFile: ToolXilinx._XILINX_ANY_SOURCE,
+         XCFFile: ToolXilinx._XILINX_ANY_SOURCE,
+         NGCFile: ToolXilinx._XILINX_ANY_SOURCE,
+         XMPFile: ToolXilinx._XILINX_ANY_SOURCE,
+         XCOFile: ToolXilinx._XILINX_ANY_SOURCE,
+         COEFile: ToolXilinx._XILINX_ANY_SOURCE,
+         BDFile: ToolXilinx._XILINX_ANY_SOURCE,
+         BMMFile: ToolXilinx._XILINX_ANY_SOURCE,
+         TCLFile: ToolXilinx._XILINX_ANY_SOURCE,
+         MIFFile: ToolXilinx._XILINX_ANY_SOURCE,
+         RAMFile: ToolXilinx._XILINX_ANY_SOURCE,
+         VHOFile: ToolXilinx._XILINX_ANY_SOURCE,
+         VEOFile: ToolXilinx._XILINX_ANY_SOURCE}
     SUPPORTED_FILES.update(ToolXilinx.SUPPORTED_FILES)
 
     HDL_FILES = {
-        VHDLFile:    ToolXilinx._XILINX_SOURCE,
-        VerilogFile: ToolXilinx._XILINX_SOURCE,
-        SVFile:      ToolXilinx._XILINX_SOURCE,
-        XCIFile:     ToolXilinx._XILINX_SOURCE}
+        VHDLFile:    ToolXilinx._XILINX_VHDL_SOURCE,
+        VerilogFile: ToolXilinx._XILINX_VERILOG_SOURCE,
+        SVFile:      ToolXilinx._XILINX_VERILOG_SOURCE,
+        XCIFile:     ToolXilinx._XILINX_ANY_SOURCE}
 
     CLEAN_TARGETS = {'clean': [".Xil", "*.jou", "*.log", "*.pb", "*.dmp",
                                "$(PROJECT).cache", "$(PROJECT).data", "work",

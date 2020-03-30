@@ -68,6 +68,9 @@ class VHDLParser(DepParser):
             file"""
             lib_name = text.group(1).lower()
             pkg_name = text.group(2).lower()
+            if pkg_name == "all":
+                # Forget 'use work.all'
+                return "";
             if lib_name == "work":
                 # Work is an alias for the current library
                 lib_name = dep_file.library
@@ -76,7 +79,7 @@ class VHDLParser(DepParser):
                 DepRelation(pkg_name, lib_name, DepRelation.PACKAGE))
             return "<hdlmake use_pattern %s.%s>" % (lib_name, pkg_name)
         buf = re.sub(use_pattern, do_use, buf)
-        
+
         use_context_pattern = re.compile(
             r"^\s*context\s+(\w+)\s*\.\s*(\w+)\s*;",
             re.DOTALL | re.MULTILINE | re.IGNORECASE)

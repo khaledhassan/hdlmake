@@ -282,8 +282,11 @@ def test_gitsm_fetch026():
         hdlmake.main.hdlmake(['fetch'])
         shutil.rmtree('ipcores')
 
-def test_vhdl_parser():
+def test_vhdl_parser027():
     run_compare(path="027vhdl_parser")
+
+def test_vhdl_parser100():
+    run_compare(path="100vhdl_parser")
 
 def test_manifest_print():
     run([], path="028manifest_print")

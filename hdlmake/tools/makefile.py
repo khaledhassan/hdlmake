@@ -134,6 +134,8 @@ class ToolMakefile(object):
             for file_aux in self.manifest_dict["incl_makefiles"]:
                 if os.path.exists(file_aux):
                     self.writeln("include %s" % file_aux)
+                else:
+                    logging.warning("Included Makefile %s NOT found.", file_aux)
             self.writeln()
 
     def makefile_clean(self):

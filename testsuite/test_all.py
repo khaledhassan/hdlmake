@@ -288,6 +288,9 @@ def test_vhdl_parser027():
 def test_vhdl_parser100():
     run_compare(path="100vhdl_parser")
 
+def test_vhdl_context101():
+    run_compare(path="101vhdl_context")
+
 def test_manifest_print():
     run([], path="028manifest_print")
     os.remove('028manifest_print/Makefile')

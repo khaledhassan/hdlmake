@@ -46,7 +46,7 @@ project.tcl:
 
 project: files.tcl project.tcl
 		$(SYN_PRE_PROJECT_CMD)
-		$(TCL_INTERPRETER) $@.tcl
+		$(TCL_INTERPRETER)$@.tcl
 		$(SYN_POST_PROJECT_CMD)
 		touch $@
 
@@ -57,7 +57,7 @@ bitstream.tcl:
 
 bitstream: project bitstream.tcl
 		$(SYN_PRE_BITSTREAM_CMD)
-		$(TCL_INTERPRETER) $@.tcl
+		$(TCL_INTERPRETER)$@.tcl
 		$(SYN_POST_BITSTREAM_CMD)
 		touch $@
 

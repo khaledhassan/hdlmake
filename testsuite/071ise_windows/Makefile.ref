@@ -67,7 +67,7 @@ project.tcl:
 
 project: files.tcl project.tcl
 		$(SYN_PRE_PROJECT_CMD)
-		$(TCL_INTERPRETER) $@.tcl
+		$(TCL_INTERPRETER)$@.tcl
 		$(SYN_POST_PROJECT_CMD)
 		type nul >> $@
 
@@ -84,7 +84,7 @@ synthesize.tcl:
 
 synthesize: project synthesize.tcl
 		$(SYN_PRE_SYNTHESIZE_CMD)
-		$(TCL_INTERPRETER) $@.tcl
+		$(TCL_INTERPRETER)$@.tcl
 		$(SYN_POST_SYNTHESIZE_CMD)
 		type nul >> $@
 
@@ -101,7 +101,7 @@ translate.tcl:
 
 translate: synthesize translate.tcl
 		$(SYN_PRE_TRANSLATE_CMD)
-		$(TCL_INTERPRETER) $@.tcl
+		$(TCL_INTERPRETER)$@.tcl
 		$(SYN_POST_TRANSLATE_CMD)
 		type nul >> $@
 
@@ -118,7 +118,7 @@ map.tcl:
 
 map: translate map.tcl
 		$(SYN_PRE_MAP_CMD)
-		$(TCL_INTERPRETER) $@.tcl
+		$(TCL_INTERPRETER)$@.tcl
 		$(SYN_POST_MAP_CMD)
 		type nul >> $@
 
@@ -135,7 +135,7 @@ par.tcl:
 
 par: map par.tcl
 		$(SYN_PRE_PAR_CMD)
-		$(TCL_INTERPRETER) $@.tcl
+		$(TCL_INTERPRETER)$@.tcl
 		$(SYN_POST_PAR_CMD)
 		type nul >> $@
 
@@ -152,7 +152,7 @@ bitstream.tcl:
 
 bitstream: par bitstream.tcl
 		$(SYN_PRE_BITSTREAM_CMD)
-		$(TCL_INTERPRETER) $@.tcl
+		$(TCL_INTERPRETER)$@.tcl
 		$(SYN_POST_BITSTREAM_CMD)
 		type nul >> $@
 

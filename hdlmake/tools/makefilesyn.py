@@ -35,7 +35,7 @@ class MakefileSyn(ToolMakefile):
 
 {0}: {1} {0}.tcl
 \t\t$(SYN_PRE_{2}_CMD)
-\t\t$(TCL_INTERPRETER) $@.tcl
+\t\t$(TCL_INTERPRETER)$@.tcl
 \t\t$(SYN_POST_{2}_CMD)
 \t\t{4} $@
 """

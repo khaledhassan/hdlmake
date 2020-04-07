@@ -12,6 +12,7 @@ def load_syn_tool(tool_name):
     from .quartus import ToolQuartus
     from .diamond import ToolDiamond
     from .libero import ToolLibero
+    from .liberosoc import ToolLiberoSoC
     from .icestorm import ToolIcestorm
     from .ghdl_syn import GhdlSyn
     available_tools = {'ise': ToolISE,
@@ -20,6 +21,7 @@ def load_syn_tool(tool_name):
                        'quartus': ToolQuartus,
                        'diamond': ToolDiamond,
                        'libero': ToolLibero,
+                       'liberosoc': ToolLiberoSoC,
                        'icestorm': ToolIcestorm,
                        'ghdl': GhdlSyn}
     if tool_name in available_tools:

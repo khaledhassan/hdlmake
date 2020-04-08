@@ -67,6 +67,7 @@ class ToolLiberoSoC(MakefileSyn):
         'project': '$(TCL_CREATE)\n'
                    'source files.tcl\n'
                    'refresh\n'
+                   'set_root $(TOP_MODULE)\n'
                    '{0}\n'
                    '$(TCL_SAVE)\n'
                    '$(TCL_CLOSE)',

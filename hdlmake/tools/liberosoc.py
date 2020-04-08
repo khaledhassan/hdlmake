@@ -85,6 +85,18 @@ class ToolLiberoSoC(MakefileSyn):
                      '$(TCL_CLOSE)',
         'install_source': '$(PROJECT)/designer/impl1/$(SYN_TOP).pdb'}
 
+    # Override the build command, because no space is expected between TCL_INTERPRETER and the tcl file
+    MAKEFILE_SYN_BUILD_CMD="""\
+{0}.tcl:
+{3}
+
+{0}: {1} {0}.tcl
+\t$(SYN_PRE_{2}_CMD)
+\t$(TCL_INTERPRETER)$@.tcl
+\t$(SYN_POST_{2}_CMD)
+\t{4} $@
+"""
+
     def __init__(self):
         super(ToolLiberoSoC, self).__init__()
         self._tcl_controls.update(ToolLiberoSoC.TCL_CONTROLS)

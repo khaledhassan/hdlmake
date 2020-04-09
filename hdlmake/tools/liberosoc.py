@@ -27,7 +27,7 @@
 
 from __future__ import absolute_import
 from .makefilesyn import MakefileSyn
-from ..sourcefiles.srcfile import VHDLFile, VerilogFile, SDCFile, PDCFile
+from ..sourcefiles.srcfile import VHDLFile, VerilogFile, SDCFile, PDCFile, CXFFile
 
 
 class ToolLiberoSoC(MakefileSyn):
@@ -51,7 +51,8 @@ class ToolLiberoSoC(MakefileSyn):
 
     HDL_FILES = {
         VHDLFile: _LIBERO_SOURCE.format('-hdl_source'),
-        VerilogFile: _LIBERO_SOURCE.format('-hdl_source')}
+        VerilogFile: _LIBERO_SOURCE.format('-hdl_source'),
+        CXFFile: ''}
 
     CLEAN_TARGETS = {'clean': ["$(PROJECT)"],
                      'mrproper': ["*.pdb", "*.stp"]}

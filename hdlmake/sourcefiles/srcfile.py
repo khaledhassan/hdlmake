@@ -244,9 +244,17 @@ class PDCFile(File):
     """Physical Design Constraints"""
     pass
 
+class CXFFile(SourceFile):
+    """Microsemi IP core File"""
+
+    def __init__(self, path, module, library=None):
+        SourceFile.__init__(self, path=path, module=module, library=library)
+        from .cxf_parser import CXFParser
+        self.parser = CXFParser(self)
 
 MICROSEMI_FILE_DICT = {
-    'pdc': PDCFile}
+    'pdc': PDCFile,
+    'cxf': CXFFile}
 
 
 # OHR FILES
@@ -348,6 +356,8 @@ def create_source_file(path, module, library=None, include_dirs=None):
         new_file = SDCFile(path=path, module=module)
     elif extension == 'xci':
         new_file = XCIFile(path=path, module=module, library=library)
+    elif extension == 'cxf':
+        new_file = CXFFile(path=path, module=module, library=library)
     elif extension in XILINX_FILE_DICT:
         new_file = XILINX_FILE_DICT[extension](path=path, module=module)
     elif extension in ALTERA_FILE_DICT:

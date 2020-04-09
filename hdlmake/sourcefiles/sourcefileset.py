@@ -19,6 +19,8 @@
 #
 
 from .dep_file import File
+from .srcfile import CXFFile, create_source_file
+import os
 import logging
 
 class SourceFileSet(set):
@@ -36,7 +38,13 @@ class SourceFileSet(set):
         if files is None:
             logging.debug("Got None as a file.\n Ommiting")
             return
-        if isinstance(files, (SourceFileSet, set)):
+        if isinstance(files, CXFFile):
+            if not files.is_parsed:
+                files.parser.parse(files)
+                for f in files.included_files:
+                    path_abs = os.path.abspath(os.path.dirname(files.path) + '/' + f)
+                    super(SourceFileSet, self).add(create_source_file(path_abs, files.module))
+        elif isinstance(files, (SourceFileSet, set)):
             for file_aux in files:
                 super(SourceFileSet, self).add(file_aux)
         else:

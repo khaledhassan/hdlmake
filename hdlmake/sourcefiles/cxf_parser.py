@@ -22,6 +22,7 @@
 
 from __future__ import absolute_import
 import re
+import os
 import logging
 
 from xml.etree import ElementTree as ET
@@ -29,6 +30,7 @@ from xml.etree import ElementTree as ET
 from .new_dep_solver import DepParser
 from .dep_file import DepRelation
 from ..sourcefiles.srcfile import create_source_file
+from ..sourcefiles.srcfile import VHDL_EXTENSIONS, VERILOG_EXTENSIONS, SV_EXTENSIONS
 
 class CXFParser(DepParser):
     """Class providing the Microsemi CXF parser"""
@@ -63,7 +65,8 @@ class CXFParser(DepParser):
             # gather the list of source files
             for i in xmlET.iter(ns+'file'):
                 for ii in i.iter(ns+'name'):
-                    if ii.text.endswith(('.vhd', '.cxf')):
+                    _, extension = os.path.splitext(ii.text)
+                    if extension[1:] in VHDL_EXTENSIONS + VERILOG_EXTENSIONS + SV_EXTENSIONS + ('sdc', 'cxf'):
                         dep_file.included_files.add(ii.text)
 
             if not module_name is None:

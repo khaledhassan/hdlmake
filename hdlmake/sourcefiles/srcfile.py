@@ -323,6 +323,23 @@ ALTERA_FILE_DICT = {
     'gdf': GDFFile}
 
 
+VHDL_EXTENSIONS = (
+    'vhd',
+    'vhdl',
+    'vho')
+
+
+VERILOG_EXTENSIONS = (
+    'v',
+    'vh',
+    'vo',
+    'vm')
+
+SV_EXTENSIONS = (
+    'sv',
+    'svh')
+
+
 def create_source_file(path, module, library=None, include_dirs=None):
     """Function that analyzes the given arguments and returns a new HDL source
     file of the appropriated type"""
@@ -334,16 +351,16 @@ def create_source_file(path, module, library=None, include_dirs=None):
     extension = extension[1:]
     logging.debug("add file " + path)
 
-    if extension in ['vhd', 'vhdl', 'vho']:
+    if extension in VHDL_EXTENSIONS:
         new_file = VHDLFile(path=path,
                             module=module,
                             library=library)
-    elif extension in ['v', 'vh', 'vo', 'vm']:
+    elif extension in VERILOG_EXTENSIONS:
         new_file = VerilogFile(path=path,
                                module=module,
                                library=library,
                                include_dirs=include_dirs)
-    elif extension == 'sv' or extension == 'svh':
+    elif extension in SV_EXTENSIONS:
         new_file = SVFile(path=path,
                           module=module,
                           library=library,

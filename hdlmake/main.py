@@ -167,6 +167,9 @@ def _get_parser():
     parser.add_argument(
         "--full-error", default=False, action="store_true", dest="full_error",
         help="display full error log with traceback")
+    parser.add_argument(
+        "-M", "--Manifest", dest = "top_manifest", default="./Manifest.py",
+        help = "path to the root Manifest.py file to use")
     return parser
 
 def set_logging_level(options):

@@ -50,8 +50,11 @@ class Action(object):
     def load_top_manifest(self):
         # Top level module.
         assert self.top_manifest is None
+        top_manifest_dir = os.path.join(os.getcwd(), self.options.top_manifest)        
+        url, _ = os.path.split(top_manifest_dir)
+        print ("ROOT_MANIFEST directory:", top_manifest_dir)
         self.top_manifest = self.new_module(parent=None,
-                                            url=os.getcwd(),
+                                            url=url,
                                             source=None,
                                             fetchto=".")
         self.top_manifest.parse_manifest()

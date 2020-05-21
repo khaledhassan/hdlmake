@@ -26,7 +26,7 @@ from __future__ import absolute_import
 import logging
 import os
 import sys
-if not sys.version[0] is "2":
+if sys.version[0] != "2":
     from io import StringIO
 else:
     from StringIO import StringIO

@@ -66,6 +66,12 @@ class Git(Fetcher):
             return None
 
     def fetch(self, module):
+        return self._fetch_or_fastforward(module, pull=False)
+    
+    def update(self, module):
+        return self._fetch_or_fastforward(module, pull=True)
+
+    def _fetch_or_fastforward(self, module, pull):
         """Get the code from the remote Git repository"""
         fetchto = module.fetchto()
         logging.debug("Fetchto = '{}'".format(fetchto))
@@ -73,9 +79,11 @@ class Git(Fetcher):
             os.mkdir(fetchto)
         basename = path_utils.url_basename(module.url)
         mod_path = os.path.join(fetchto, basename)
-        assert not module.isfetched
-        logging.info("Fetching git module %s", mod_path)
-        shell.run("(cd {0} && git clone {1})".format(fetchto, module.url))
+        if not pull:
+            assert not module.isfetched
+            logging.info("Fetching git module %s", mod_path)
+            shell.run("(cd {0} && git clone {1})".format(fetchto, module.url))
+
         checkout_id = None
         if module.branch is not None:
             checkout_id = module.branch
@@ -91,6 +99,14 @@ class Git(Fetcher):
             logging.info("Checking out version %s", checkout_id)
             cmd = "(cd {0} && git checkout {1})"
             cmd = cmd.format(module.path, checkout_id)
+            if os.system(cmd) != 0:
+                return False
+
+        if pull:
+            logging.info("Fetching git module {}".format(mod_path))
+            cmd = "(cd {0} && git pull --ff-only)"            
+            cmd = cmd.format(module.path, checkout_id)
+            logging.info(("Executing {}".format(cmd))
             if os.system(cmd) != 0:
                 return False
 

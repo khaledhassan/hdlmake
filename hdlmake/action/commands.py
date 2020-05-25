@@ -83,7 +83,7 @@ class ActionCore(Action):
             logging.debug("Fetching module: %s", str(module))
             if module.source == 'svn':
                 result = self.svn_backend.fetch(module)
-            elif module.source == 'git':
+            elif module.source == 'git':                
                 result = self.git_backend.fetch(module)
             else:
                 assert module.source == 'gitsm'
@@ -234,3 +234,14 @@ class ActionCore(Action):
                     self._print_file_list(mod_aux.files)
                 self._print_comment("# MODULE END -> %s" % mod_aux.url)
             self._print_comment("")
+
+    def update(self):
+        """Pull updates to modules"""
+        for mod_aux in self.manifests:
+            if not mod_aux.isfetched:
+                logging.warning("Module not fetched: %s", mod_aux.url)
+                self._print_comment("# MODULE UNFETCHED! -> %s" % mod_aux.url)
+            else:                
+                if mod_aux.source == 'git':
+                    self.git_backend.update(mod_aux)
+                

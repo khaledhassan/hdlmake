@@ -75,6 +75,8 @@ def _action_runner(modules_pool):
         modules_pool.makefile()
     elif options.command == "fetch":
         modules_pool.fetch()
+    elif options.command == "update":
+        modules_pool.update()
     elif options.command == "clean":
         modules_pool.clean()
     elif options.command == "list-mods":
@@ -105,6 +107,9 @@ def _get_parser():
     subparsers.add_parser(
         "fetch",
         help="fetch and/or update all of the remote modules")
+    subparsers.add_parser(
+        "update",
+        help="update all of the remote modules")
     subparsers.add_parser(
         "clean",
         help="clean all of the already fetched remote modules")

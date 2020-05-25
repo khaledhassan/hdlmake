@@ -106,7 +106,7 @@ class Git(Fetcher):
             logging.info("Fetching git module {}".format(mod_path))
             cmd = "(cd {0} && git pull --ff-only)"            
             cmd = cmd.format(module.path, checkout_id)
-            logging.info(("Executing {}".format(cmd))
+            logging.info("Executing {}".format(cmd))
             if os.system(cmd) != 0:
                 return False
 

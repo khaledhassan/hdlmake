@@ -204,6 +204,16 @@ class ToolQuartus(MakefileSyn):
         self._tcl_controls["project"] = '\n'.join(command_list)
         super(ToolQuartus, self)._makefile_syn_tcl()
 
+    def _makefile_syn_override_prj_tcl_create(self):
+        """Override the TCL create project command by the open one if
+        the project already exists.  For Quartus, a project may have
+        different extensions."""
+        self.writeln("""\
+ifneq ($(wildcard $(PROJECT).qpf $(PROJECT).qsf)),)
+TCL_CREATE := $(TCL_OPEN)
+endif""")
+        self.writeln()
+
     def _makefile_syn_files(self):
         # Insert the Quartus standard control TCL files
         command_list = []

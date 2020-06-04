@@ -90,18 +90,26 @@ SYN_GRADE := {syn_grade}
             tool_path=self.manifest_dict["syn_path"],
             top_module=self.manifest_dict["syn_top"]))
 
-    def _makefile_syn_tcl(self):
-        """Create the Makefile TCL dictionary for the selected tool"""
-        command_list = ["create", "open", "save", "close"]
-        for command in command_list:
+    def _makefile_syn_prj_tcl_cmd(self):
+        """Create the Makefile variables for the TCL project commands."""
+        for command in ["create", "open", "save", "close"]:
             if command in self._tcl_controls:
                 self.writeln('TCL_{} := {}'.format(
                     command.upper(), self._tcl_controls[command]))
+
+    def _makefile_syn_override_prj_tcl_create(self):
+        """Override the TCL create project command by the open one if
+        the project already exists"""
         self.writeln("""\
 ifneq ($(wildcard $(PROJECT_FILE)),)
 TCL_CREATE := $(TCL_OPEN)
 endif""")
         self.writeln()
+
+    def _makefile_syn_tcl(self):
+        """Create the Makefile TCL dictionary for the selected tool"""
+        self._makefile_syn_prj_tcl_cmd()
+        self._makefile_syn_override_prj_tcl_create()
 
     def _makefile_syn_files(self):
         """Write the files TCL section of the Makefile"""

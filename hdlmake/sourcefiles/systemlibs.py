@@ -49,9 +49,24 @@ def build_xilinx():
         add_entity(res, n)
     return res
 
+def build_altera():
+    res = []
+    for n in ['altsyncram',
+              'cyclone_asmiblock', 'cycloneii_asmiblock', 'cyclonev_asmiblock',
+              'stratixii_asmiblock', 'stratixiii_asmiblock', 'stratixiv_asmiblock',
+              'stratixv_asmiblock',
+              'arriav_asmiblock',
+              'arria2_pcie_reconf', 'arria5_pcie_reconf',
+              'arria2_pcie_hip', 'arria5_pcie_hip',
+              'arria5_phy8', 'arria5_phy16', 'arria5_phy_reconf',
+              'scfifo', 'dcfifo',
+              'sld_virtual_jtag']:
+        add_entity(res, n)
+    return res
+
 def build_vhdl():
     res = []
-    # TODO: dependency for any package of the library.
+    # TODO: dependency for any package of a library.
     for p in ['textio', 'env']:
         add_package(res, "std", p)
     for p in ['std_logic_1164', 'numeric_std', 
@@ -62,5 +77,6 @@ def build_vhdl():
 
 all_system_libs = {
     'xilinx': build_xilinx,
-    'vhdl': build_vhdl
+    'vhdl': build_vhdl,
+    'altera': build_altera
 }

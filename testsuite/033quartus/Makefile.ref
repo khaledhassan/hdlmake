@@ -19,7 +19,7 @@ SYN_GRADE := c4
 
 TCL_CREATE := project_new $(PROJECT)
 TCL_OPEN := project_open $(PROJECT)
-ifneq ($(wildcard $(PROJECT).qpf $(PROJECT).qsf)),)
+ifneq ($(wildcard $(PROJECT).qpf $(PROJECT).qsf),)
 TCL_CREATE := $(TCL_OPEN)
 endif
 

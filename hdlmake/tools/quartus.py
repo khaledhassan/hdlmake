@@ -209,7 +209,7 @@ class ToolQuartus(MakefileSyn):
         the project already exists.  For Quartus, a project may have
         different extensions."""
         self.writeln("""\
-ifneq ($(wildcard $(PROJECT).qpf $(PROJECT).qsf)),)
+ifneq ($(wildcard $(PROJECT).qpf $(PROJECT).qsf),)
 TCL_CREATE := $(TCL_OPEN)
 endif""")
         self.writeln()

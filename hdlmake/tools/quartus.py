@@ -225,10 +225,9 @@ endif""")
                 if not os.path.exists(path):
                     raise Exception("{} file listed in {} doesn't exist: {}.\nExiting".format(
                         name, os.getcwd(), path))
-                s = '"' + 'quartus_sh:' + path + '"'
                 command_list.append(self._emit_property(self.SET_GLOBAL_ASSIGNMENT,
                                     {'name': filename,
-                                    'value': s}))
+                                    'value': 'quartus_sh:' + path}))
         if command_list:
             self._tcl_controls["files"] = '\n'.join(command_list)
         super(ToolQuartus, self)._makefile_syn_files()

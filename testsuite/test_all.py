@@ -152,6 +152,10 @@ def test_quartus016():
 def test_quartus033():
     run_compare(path="033quartus")
 
+def test_quartus_windows102():
+    assert hdlmake.util.shell.check_windows_tools() is False
+    run_compare(path="102quartus_windows", my_os='windows')
+
 def test_quartus034():
     run([], path="034quartus_prop")
 

@@ -217,39 +217,18 @@ endif""")
     def _makefile_syn_files(self):
         # Insert the Quartus standard control TCL files
         command_list = []
-        if "quartus_preflow" in self.manifest_dict:
-            path = shell.tclpath(path_mod.compose(
-                self.manifest_dict["quartus_preflow"]))
-            if not os.path.exists(path):
-                raise Exception("quartus_preflow file listed in "
-                                + os.getcwd() + " doesn't exist: "
-                                + path + ".\nExiting.")
-            preflow = '"' + 'quartus_sh:' + path + '"'
-            command_list.append(self._emit_property(self.SET_GLOBAL_ASSIGNMENT,
-                                {'name': 'PRE_FLOW_SCRIPT_FILE',
-                                'value': preflow}))
-        if "quartus_postmodule" in self.manifest_dict:
-            path = shell.tclpath(path_mod.compose(
-                self.manifest_dict["quartus_postmodule"]))
-            if not os.path.exists(path):
-                raise Exception("quartus_postmodule file listed in "
-                                + os.getcwd() + " doesn't exist: "
-                                + path + ".\nExiting.")
-            postmodule = '"' + 'quartus_sh:' + path + '"'
-            command_list.append(self._emit_property(self.SET_GLOBAL_ASSIGNMENT,
-                                {'name': 'POST_MODULE_SCRIPT_FILE',
-                                'value': postmodule}))
-        if "quartus_postflow" in self.manifest_dict:
-            path = shell.tclpath(path_mod.compose(
-                self.manifest_dict["quartus_postflow"]))
-            if not os.path.exists(path):
-                raise Exception("quartus_postflow file listed in "
-                                + os.getcwd() + " doesn't exist: "
-                                + path + ".\nExiting.")
-            postflow = '"' + 'quartus_sh:' + path + '"'
-            command_list.append(self._emit_property(self.SET_GLOBAL_ASSIGNMENT,
-                                {'name': 'POST_FLOW_SCRIPT_FILE',
-                                'value': postflow}))
+        for name, filename in [("quartus_preflow", 'PRE_FLOW_SCRIPT_FILE'),
+                               ("quartus_postmodule", 'POST_MODULE_SCRIPT_FILE'),
+                               ("quartus_postflow", 'POST_FLOW_SCRIPT_FILE')]:
+            if name in self.manifest_dict:
+                path = shell.tclpath(path_mod.compose(self.manifest_dict[name]))
+                if not os.path.exists(path):
+                    raise Exception("{} file listed in {} doesn't exist: {}.\nExiting".format(
+                        name, os.getcwd(), path))
+                s = '"' + 'quartus_sh:' + path + '"'
+                command_list.append(self._emit_property(self.SET_GLOBAL_ASSIGNMENT,
+                                    {'name': filename,
+                                    'value': s}))
         if command_list:
             self._tcl_controls["files"] = '\n'.join(command_list)
         super(ToolQuartus, self)._makefile_syn_files()

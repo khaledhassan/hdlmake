@@ -53,5 +53,5 @@ def load_sim_tool(tool_name):
         logging.debug("Simulation tool to be used found: %s", tool_name)
         return available_tools[tool_name]()
     else:
-        raise Exception("Unknown simulation tool: " + tool_name
-                        + "    Supported simulation tools are " + available_tools.keys())
+        raise Exception("Unknown simulation tool: " + tool_name + '\n'
+                        + "Supported simulation tools are " + ' '.join(available_tools.keys()))

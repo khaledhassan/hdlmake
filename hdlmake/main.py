@@ -70,7 +70,7 @@ def hdlmake(args):
         _action_runner(action)
     except Exception as e:
         import traceback
-        logging.error(e)
+        logging.critical(e)
         if options.full_error:
             logging.error("Trace:")
             traceback.print_exc()

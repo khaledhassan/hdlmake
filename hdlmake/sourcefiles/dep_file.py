@@ -165,6 +165,7 @@ class DepFile(File):
         later the full fileset"""
         if self.dep_level is None:
             if len(self.depends_on) == 0:
+                # No dependency for this file
                 self.dep_level = 0
             else:
                 # set dep_level to a negative value so we can detect
@@ -180,4 +181,20 @@ class DepFile(File):
                             "dependencies. It appears %s depends on itself, "
                             "indirectly via atleast one other file.",
                             self.path)
+            self.show_circular_dependency([self])
         return self.dep_level
+
+    def show_circular_dependency(self, stack):
+        for dep in self.depends_on:
+            if dep is stack[0]:
+                # Loop found
+                for f in stack:
+                    logging.warning("file %s depends on...", f)
+                logging.warning("itself (%s)", dep)
+                return True
+        for dep in self.depends_on:
+            stack.append(dep)
+            if dep.show_circular_dependency(stack):
+                return True
+            stack.pop()
+        return False

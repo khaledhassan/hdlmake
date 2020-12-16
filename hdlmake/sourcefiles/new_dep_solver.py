@@ -117,9 +117,8 @@ def solve(fileset, syslibs, standard_libs=None):
                               "standard libs.",
                               str(rel), investigated_file.name)
                 continue
-            logging.warning("Relation %s in %s not satisfied by "
-                            "any source file",
-                            str(rel), investigated_file.name)
+            logging.warning("File '%s' depends on %s, but the latter was not found in any source file",
+                            investigated_file.name, str(rel))
             not_satisfied += 1
     logging.debug("SOLVE END")
     if not_satisfied != 0:

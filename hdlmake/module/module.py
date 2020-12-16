@@ -220,16 +220,26 @@ class Module(object):
         if files is None:
             self.files = SourceFileSet()
             logging.debug("No files in the manifest at %s", self.path or '?')
-        else:
-            # Be sure it is a list.
-            files = path_mod.flatten_list(files)
-            self.manifest_dict["files"] = files
-            logging.debug("Files in %s: %s to library %s" ,
-                          self.path,
-                          str(self.manifest_dict["files"]),
-                          self.library)
-            paths = self._make_list_of_paths(files)
-            self.files = self._create_file_list_from_paths(paths=paths)
+            return
+        # Be sure it is a list.
+        files = path_mod.flatten_list(files)
+        # Remove duplicates
+        files_set = set()
+        nfiles = []
+        for f in files:
+            if f in files_set:
+                logging.warning("file %s appear twice in Manifest %s", f, self.path)
+            else:
+                files_set.add(f)
+                nfiles.append(f)
+        # Convert to paths
+        self.manifest_dict["files"] = nfiles
+        logging.debug("Files in %s: %s to library %s" ,
+                      self.path,
+                      str(self.manifest_dict["files"]),
+                      self.library)
+        paths = self._make_list_of_paths(nfiles)
+        self.files = self._create_file_list_from_paths(paths=paths)
 
     def fetchto(self):
         """Get the fetchto folder for the module"""

@@ -123,13 +123,7 @@ class Action(object):
         """Initialize the parseable and privative fileset contents"""
         all_files = self._build_complete_file_set()
         for file_aux in all_files:
-            if self.tool == None:
-                if any(isinstance(file_aux, file_type)
-                       for file_type in [VHDLFile, VerilogFile, SVFile]):
-                    self.parseable_fileset.add(file_aux)
-                else:
-                    self.privative_fileset.add(file_aux)
-            else:
+            if self.tool:
                 if any(isinstance(file_aux, file_type)
                        for file_type in self.tool.get_parseable_files()):
                     self.parseable_fileset.add(file_aux)
@@ -139,9 +133,18 @@ class Action(object):
                 else:
                     logging.debug("File not supported by the tool: %s",
                                   file_aux.path)
+            else:
+                # Not usual case: tool is not known
+                if any(isinstance(file_aux, file_type)
+                       for file_type in [VHDLFile, VerilogFile, SVFile]):
+                    self.parseable_fileset.add(file_aux)
+                else:
+                    self.privative_fileset.add(file_aux)
         if len(self.privative_fileset) > 0:
+            # Do we need to warn about those files ?  This may simply confuse the user.
             logging.info("Detected %d supported files that are not parseable",
                          len(self.privative_fileset))
+            logging.info("Potential dependencies cannot be extracted from them")
             for f in self.privative_fileset:
                 logging.info("not parseable: %s", f)
         if len(self.parseable_fileset) > 0:

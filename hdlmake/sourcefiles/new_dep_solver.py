@@ -77,16 +77,14 @@ def solve(fileset, syslibs, standard_libs=None):
     from .dep_file import DepRelation
     assert isinstance(fileset, SourceFileSet)
 
-    # Consider only source files with dependencies
-    fset = fileset.filter(DepFile)
-
     graph = AllRelations()
 
     # Parse source files
     # TODO: explain why some files are not parsed.
     logging.debug("PARSE SOURCE BEGIN: Here, we parse all the files in the "
                   "fileset: no manifest parsing should be done beyond this point")
-    for investigated_file in fset:
+    for investigated_file in fileset:
+        assert isinstance(investigated_file, DepFile)
         logging.debug("PARSING SOURCE FILE: %s", investigated_file)
         investigated_file.parser.parse(investigated_file, graph)
         if logging.root.level >= logging.DEBUG:
@@ -107,7 +105,7 @@ def solve(fileset, syslibs, standard_libs=None):
 
     logging.debug("SOLVE BEGIN")
     not_satisfied = 0
-    for investigated_file in fset:
+    for investigated_file in fileset:
         # logging.info("INVESTIGATED FILE: %s" % investigated_file)
         for rel in investigated_file.requires:
             lst = list(rel.provided_by)
@@ -181,7 +179,6 @@ def make_dependency_set(fileset, top_level_entity, extra_modules=None):
     from ..sourcefiles.sourcefileset import SourceFileSet
     from ..sourcefiles.dep_file import DepRelation
     assert isinstance(fileset, SourceFileSet)
-    fset = fileset.filter(DepFile)
 
     def _check_entity(test_file, entity_name):
         """ Check if :param test_file: provides the entity pointed by :param entity_name:"""
@@ -195,7 +192,7 @@ def make_dependency_set(fileset, top_level_entity, extra_modules=None):
 
     top_file = None
     extra_files = []
-    for chk_file in fset:
+    for chk_file in fileset:
         if _check_entity(chk_file, top_level_entity):
             top_file = chk_file
         if extra_modules is not None:

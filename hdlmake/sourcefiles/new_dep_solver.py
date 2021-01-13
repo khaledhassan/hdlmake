@@ -58,10 +58,8 @@ def solve(fileset, syslibs, standard_libs=None):
     logging.debug("PARSE BEGIN: Here, we will parse all the files in the "
                   "fileset: no parsing should be done beyond this point")
     for investigated_file in fset:
-        logging.debug("INVESTIGATED FILE: %s", investigated_file)
-        if not investigated_file.is_parsed:
-            logging.debug("Not parsed yet, let's go!")
-            investigated_file.parser.parse(investigated_file)
+        logging.debug("PARSING FILE: %s", investigated_file)
+        investigated_file.parser.parse(investigated_file)
     logging.debug("PARSE END: now the parsing is done")
 
     # Dependencies provided by system libraries.

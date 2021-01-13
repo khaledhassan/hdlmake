@@ -143,7 +143,6 @@ class DepFile(File):
         self.depends_on = set()     # Set of files this file depends on.
         self.included_files = set()
         self.dep_level = None
-        self.is_parsed = False
 
     def add_require(self, rel):
         """Add dependency :param rel:"""

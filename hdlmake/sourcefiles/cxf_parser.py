@@ -41,9 +41,6 @@ class CXFParser(DepParser):
 
     def parse(self, dep_file):
         """Parse a Microsemi CXF IP description file to determine the provided module(s)"""
-        assert not dep_file.is_parsed
-        logging.debug("Parsing %s in library %s", dep_file.path, dep_file.library)
-
         with open(dep_file.path) as f:
             xml = f.read()
             # extract namespaces with a regex
@@ -75,4 +72,3 @@ class CXFParser(DepParser):
                 #     DepRelation(module_name, dep_file.library, DepRelation.MODULE))
 
         logging.debug("%s has %d includes.", str(dep_file), len(dep_file.included_files))
-        dep_file.is_parsed = True

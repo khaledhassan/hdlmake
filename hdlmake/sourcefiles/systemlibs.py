@@ -41,7 +41,7 @@ def build_xilinx():
               'iobuf', 'iobufds',
               'pullup', 'pulldown',
               'bufio', 'bufio2', 'bufio2fb',
-              'bufgmux_ctrl', 'bufg', 'bufgce', 'bufr', 'bufpll', 'bufmr',
+              'bufgmux_ctrl', 'bufgmux', 'bufg', 'bufgce', 'bufr', 'bufpll', 'bufmr',
               'startupe2',
               'mmcme2_adv', 'mmcme2_base', 'pll_base', 'pll_adv', 'dcm_base', 'dcm_adv', 'dcm_sp',
               'plle2_adv',

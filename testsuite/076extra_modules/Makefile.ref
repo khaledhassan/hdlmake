@@ -3,7 +3,7 @@
 #  http://ohwr.org/projects/hdl-make/  #
 ########################################
 
-TOP_MODULE := gate_tb
+TOP_MODULE := gate
 
 MODELSIM_INI_PATH := ../linux_fakebin/..
 
@@ -18,8 +18,10 @@ VERILOG_SRC := ../files/gate_tb.v \
 
 VERILOG_OBJ := work/hdlmake/gate_tb_v \
 
-VHDL_SRC := 
-VHDL_OBJ := 
+VHDL_SRC := ../files/gate.vhdl \
+
+VHDL_OBJ := work/hdlmake/gate_vhdl \
+
 INCLUDE_DIRS :=
 LIBS := work
 LIB_IND := work/hdlmake/work-stamp
@@ -34,7 +36,12 @@ modelsim.ini: $(MODELSIM_INI_PATH)/modelsim.ini
 work/hdlmake/work-stamp:
 	(vlib work && vmap $(VMAP_FLAGS) work && mkdir -p work/hdlmake && touch work/hdlmake/work-stamp) || rm -rf work
 
-work/hdlmake/gate_tb_v: ../files/gate_tb.v
+work/hdlmake/gate_vhdl: ../files/gate.vhdl
+		vcom $(VCOM_FLAGS) -work work $< 
+		@touch $@
+
+work/hdlmake/gate_tb_v: ../files/gate_tb.v \
+work/hdlmake/gate_vhdl
 		vlog -work work $(VLOG_FLAGS)  $(INCLUDE_DIRS) $<
 		@touch $@
 

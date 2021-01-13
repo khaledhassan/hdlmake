@@ -69,15 +69,14 @@ class AllRelations(object):
         file.provides.add(rel)
         rel.provided_by.add(file)
 
+    def find_provider(self, rel):
+        return self.rels.get(rel)
 
-def solve(fileset, syslibs, standard_libs=None):
-    """Function that Parses and Solves the provided HDL fileset. Note
-       that it doesn't return a new fileset, but modifies the original one"""
+
+def parse_source_files(graph, fileset):
+    """Parse source files to extract the graph dependencies"""
     from .sourcefileset import SourceFileSet
-    from .dep_file import DepRelation
     assert isinstance(fileset, SourceFileSet)
-
-    graph = AllRelations()
 
     # Parse source files
     # TODO: explain why some files are not parsed.
@@ -94,6 +93,19 @@ def solve(fileset, syslibs, standard_libs=None):
                 logging.debug("REQUIRE %s", r)
     logging.debug("PARSE SOURCE END: now the parsing is done")
 
+    # Compute file dependencies
+    for investigated_file in fileset:
+        for rel in investigated_file.requires:
+            for dep_file in rel.provided_by:
+                if dep_file is not investigated_file:
+                    # A file cannot depends on itself.
+                    investigated_file.depends_on.add(dep_file)
+
+
+def solve(graph, fileset, syslibs, standard_libs=None):
+    """Function that Parses and Solves the provided HDL fileset. Note
+       that it doesn't return a new fileset, but modifies the original one"""
+    from .dep_file import DepRelation
     # Dependencies provided by system libraries.
     system_rels = []
     for e in syslibs:
@@ -109,10 +121,6 @@ def solve(fileset, syslibs, standard_libs=None):
         # logging.info("INVESTIGATED FILE: %s" % investigated_file)
         for rel in investigated_file.requires:
             lst = list(rel.provided_by)
-            for dep_file in lst:
-                if dep_file is not investigated_file:
-                    # A file cannot depends on itself.
-                    investigated_file.depends_on.add(dep_file)
             if len(lst) > 1:
                 logging.warning(
                     "Relation %s satisfied by multiple (%d) files:\n %s",
@@ -173,51 +181,48 @@ def make_dependency_sorted_list(fileset):
     return non_dependable + dependable
 
 
-def make_dependency_set(fileset, top_level_entity, extra_modules=None):
+def make_dependency_set(graph, fileset, top_level_entity, extra_modules=None):
     """Create the set of all files required to build the named
      top_level_entity."""
     from ..sourcefiles.sourcefileset import SourceFileSet
     from ..sourcefiles.dep_file import DepRelation
     assert isinstance(fileset, SourceFileSet)
 
-    def _check_entity(test_file, entity_name):
-        """ Check if :param test_file: provides the entity pointed by :param entity_name:"""
-        if entity_name == None:
-            return False
-        entity_rel = DepRelation(entity_name, "work", DepRelation.MODULE)
-        for rel in test_file.provides:
-            if rel == entity_rel:
-                return True
-        return False
-
-    top_file = None
-    extra_files = []
-    for chk_file in fileset:
-        if _check_entity(chk_file, top_level_entity):
-            top_file = chk_file
-        if extra_modules is not None:
-            for entity_aux in extra_modules:
-                if _check_entity(chk_file, entity_aux):
-                    extra_files.append(chk_file)
-    if top_file is None:
-        if top_level_entity is None:
-            logging.critical(
-                    'Could not find a top level file because the top '
-                    'module is undefined. Continuing with the full file set.')
-        else:
-            logging.critical(
-                    'Could not find a top level file that provides the '
-                    '"%s" top module. Continuing with the full file set.',
-                     top_level_entity)
+    # Find top file
+    rel = DepRelation(top_level_entity, "work", DepRelation.MODULE)
+    rel = graph.find_provider(rel)
+    if rel is None:
+        logging.critical(
+            'Could not find a top level file that provides the '
+            '"%s" top module. Continuing with the full file set.',
+            top_level_entity)
         return fileset
+    top_file = list(rel.provided_by)
+    # TODO: warn if multiple providers ?
+
+    # Add extra modules
+    extra_files = []
+    if extra_modules is not None:
+        for name in extra_modules:
+            rel = DepRelation(name, "work", DepRelation.MODULE)
+            rel = graph.find_provider(rel)
+            if rel is None:
+                logging.critical(
+                    'Could not find a extra module %s (ignored)', name)
+            else:
+                extra_files.extend(list(rel.provided_by))
+
     # Collect only the files that the top level entity is dependant on, by
     # walking the dependancy tree.
     dep_file_set = SourceFileSet()
-    file_set = set([top_file] + extra_files)
+    file_set = set(top_file + extra_files)
     while len(file_set) > 0:
         chk_file = file_set.pop()
-        dep_file_set.add(chk_file)
-        file_set.update(chk_file.depends_on - dep_file_set)
+        if chk_file not in dep_file_set:
+            dep_file_set.add(chk_file)
+            for f in chk_file.depends_on:
+                file_set.add(f)
+
     hierarchy_drivers = [top_level_entity]
     if extra_modules is not None:
         hierarchy_drivers += extra_modules

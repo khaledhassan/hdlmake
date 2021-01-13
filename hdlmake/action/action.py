@@ -157,15 +157,21 @@ class Action(object):
             libs = self.tool.get_standard_libs()
             for l in self.tool.get_system_libs():
                 system_libs.add(l)
-        dep_solver.solve(self.parseable_fileset, system_libs, libs)
+        graph = dep_solver.AllRelations()
+        dep_solver.parse_source_files(graph, self.parseable_fileset)
         if self.options.all_files:
             # If option -all is used, no need to compute dependencies.
             pass
+        elif self.top_entity is None:
+            logging.critical(
+                    'Could not find a top level file because the top '
+                    'module is undefined. Continuing with the full file set.')
         else:
             # Only keep top_entity, extra_modules and their dependencies
             extra_modules = self.top_manifest.manifest_dict.get("extra_modules")
             self.parseable_fileset = dep_solver.make_dependency_set(
-                self.parseable_fileset, self.top_entity, extra_modules)
+                graph, self.parseable_fileset, self.top_entity, extra_modules)
+        dep_solver.solve(graph, self.parseable_fileset, system_libs, libs)
 
     def get_top_manifest(self):
         """Get the Top module from the pool"""

@@ -34,7 +34,7 @@ class VHDLParser(DepParser):
 
     """Class providing the container for VHDL parser instances"""
 
-    def parse(self, dep_file):
+    def parse(self, dep_file, graph):
         """Parse the provided VHDL file and add the detected relations to it"""
         from .dep_file import DepRelation
 
@@ -68,8 +68,8 @@ class VHDLParser(DepParser):
                 # Work is an alias for the current library
                 lib_name = dep_file.library
             logging.debug("use package %s.%s", lib_name, pkg_name)
-            dep_file.add_require(
-                DepRelation(pkg_name, lib_name, DepRelation.PACKAGE))
+            graph.add_require(
+                dep_file, DepRelation(pkg_name, lib_name, DepRelation.PACKAGE))
             return "<hdlmake use_pattern %s.%s>" % (lib_name, pkg_name)
         buf = re.sub(use_pattern, do_use, buf)
 
@@ -88,8 +88,8 @@ class VHDLParser(DepParser):
                 # Work is an alias for the current library
                 lib_name = dep_file.library
             logging.debug("use package %s.%s", lib_name, pkg_name)
-            dep_file.add_require(
-                DepRelation(pkg_name, lib_name, DepRelation.CONTEXT))
+            graph.add_require(
+                dep_file, DepRelation(pkg_name, lib_name, DepRelation.CONTEXT))
             return "<hdlmake use_pattern %s.%s>" % (lib_name, pkg_name)
         buf = re.sub(use_context_pattern, do_use_context, buf)
 
@@ -107,7 +107,8 @@ class VHDLParser(DepParser):
             """
             ctx_name = text.group(1)
             logging.debug("found entity %s.%s", dep_file.library, ctx_name)
-            dep_file.add_provide(
+            graph.add_provide(
+                dep_file,
                 DepRelation(ctx_name, dep_file.library, DepRelation.CONTEXT))
             return "<hdlmake entity_pattern %s.%s>" % (dep_file.library, ctx_name)
         buf = re.sub(context_declaration_pattern, do_context_declaration, buf)
@@ -125,7 +126,8 @@ class VHDLParser(DepParser):
             to the file"""
             ent_name = text.group(1)
             logging.debug("found entity %s.%s", dep_file.library, ent_name)
-            dep_file.add_provide(
+            graph.add_provide(
+                dep_file,
                 DepRelation(ent_name, dep_file.library, DepRelation.ENTITY))
             return "<hdlmake entity_pattern %s.%s>" % (dep_file.library, ent_name)
 
@@ -145,9 +147,12 @@ class VHDLParser(DepParser):
             ent_name = text.group(2)
             logging.debug("found architecture %s of entity %s.%s",
                           arch_name, dep_file.library, ent_name)
-            dep_file.add_provide(
+            graph.add_provide(
+                dep_file,
                 DepRelation(ent_name, dep_file.library, DepRelation.ARCHITECTURE))
-            dep_file.add_require(
+            # The architecture depends on the entity.
+            graph.add_require(
+                dep_file,
                 DepRelation(ent_name, dep_file.library, DepRelation.ENTITY))
 
             return "<hdlmake architecture %s.%s>" % (dep_file.library,
@@ -166,7 +171,8 @@ class VHDLParser(DepParser):
             relations to the file"""
             pkg_name = text.group(1)
             logging.debug("found package %s.%s", dep_file.library, pkg_name)
-            dep_file.add_provide(
+            graph.add_provide(
+                dep_file,
                 DepRelation(pkg_name, dep_file.library, DepRelation.PACKAGE))
             return "<hdlmake package %s.%s>" % (dep_file.library, pkg_name)
         buf = re.sub(package_pattern, do_package, buf)
@@ -263,7 +269,9 @@ class VHDLParser(DepParser):
             instance_component_pattern in the VHDL code"""
             logging.debug("found component instantiation %s %s", text.group(1), text.group(2))
             comp_name = text.group("COMPONENT")
-            dep_file.add_require(DepRelation(comp_name, dep_file.library, DepRelation.ENTITY))
+            graph.add_require(
+                dep_file,
+                DepRelation(comp_name, dep_file.library, DepRelation.ENTITY))
             return "<hdlmake component instance %s as %s>" % (comp_name, text.group("LABEL"))
         buf = re.sub(instance_component_pattern, do_instance_component, buf)
 
@@ -284,7 +292,9 @@ class VHDLParser(DepParser):
             if not lib_name or lib_name == "work":
                 lib_name = dep_file.library
             ent_name = text.group("ENTITY")
-            dep_file.add_require(DepRelation(ent_name, lib_name, DepRelation.ENTITY))
+            graph.add_require(
+                dep_file,
+                DepRelation(ent_name, lib_name, DepRelation.ENTITY))
             return "<hdlmake direct instance %s|%s|%s>" % (text.group("LABEL"), lib_name, ent_name)
         buf = re.sub(direct_instance_pattern, do_direct_instance, buf)
 

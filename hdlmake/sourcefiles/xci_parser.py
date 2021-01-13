@@ -33,7 +33,7 @@ from ..sourcefiles.srcfile import create_source_file
 class XCIParser(DepParser):
     """Class providing the Xilinx XCI parser"""
 
-    def parse(self, dep_file):
+    def parse(self, dep_file, graph):
         """Parse a Xilinx XCI IP description file to determine the provided module(s)"""
         with open(dep_file.path) as f:
             # extract namespaces with a regex -- not really ideal, but without pulling in
@@ -45,6 +45,7 @@ class XCIParser(DepParser):
             if not value is None:
                 module_name = value.text
                 logging.debug("found module %s.%s", dep_file.library, module_name)
-                dep_file.add_provide(
+                graph.add_provide(
+                    dep_file,
                     DepRelation(module_name, dep_file.library, DepRelation.MODULE))
 

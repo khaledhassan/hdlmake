@@ -35,9 +35,39 @@ class DepParser(object):
 
     """Base Class for the different HDL parsers (VHDL and Verilog)"""
 
-    def parse(self, dep_file):
+    def parse(self, dep_file, alldeps):
         """Base dummy interface method for the HDL parse execution"""
         pass
+
+    
+class AllRelations(object):
+    def __init__(self):
+        # Dict of Rel to itself.
+        # FIXME: is there a better way to do this ?
+        self.rels = {}
+
+    def add_require(self, file, rel):
+        """Called by a parsed when :param file: requires :param rel:"""
+        if rel in file.requires:
+            # Already present
+            assert rel in self.rels
+            return
+        # Get the existing relation or insert the new one
+        rel = self.rels.setdefault(rel, rel)
+        # Update the graph
+        file.requires.add(rel)
+        rel.required_by.add(file)
+
+    def add_provide(self, file, rel):
+        """Called by a parsed when :param file: provides :param rel:"""
+        if rel in file.provides:
+            # Alreay present
+            assert rel in self.rels
+        # Get the existing relation or insert the new one
+        rel = self.rels.setdefault(rel, rel)
+        # Update the graph
+        file.provides.add(rel)
+        rel.provided_by.add(file)
 
 
 def solve(fileset, syslibs, standard_libs=None):
@@ -50,14 +80,21 @@ def solve(fileset, syslibs, standard_libs=None):
     # Consider only source files with dependencies
     fset = fileset.filter(DepFile)
 
+    graph = AllRelations()
+
     # Parse source files
     # TODO: explain why some files are not parsed.
-    logging.debug("PARSE BEGIN: Here, we will parse all the files in the "
-                  "fileset: no parsing should be done beyond this point")
+    logging.debug("PARSE SOURCE BEGIN: Here, we parse all the files in the "
+                  "fileset: no manifest parsing should be done beyond this point")
     for investigated_file in fset:
-        logging.debug("PARSING FILE: %s", investigated_file)
-        investigated_file.parser.parse(investigated_file)
-    logging.debug("PARSE END: now the parsing is done")
+        logging.debug("PARSING SOURCE FILE: %s", investigated_file)
+        investigated_file.parser.parse(investigated_file, graph)
+        if logging.root.level >= logging.DEBUG:
+            for r in investigated_file.provides:
+                logging.debug("PROVIDE %s", r)
+            for r in investigated_file.requires:
+                logging.debug("REQUIRE %s", r)
+    logging.debug("PARSE SOURCE END: now the parsing is done")
 
     # Dependencies provided by system libraries.
     system_rels = []
@@ -65,35 +102,32 @@ def solve(fileset, syslibs, standard_libs=None):
         f = all_system_libs.get(e)
         if f is None:
             raise Exception("system library '{}' is unknown".format(e))
-        system_rels.extend(f())
+        rels = f()
+        system_rels.extend(rels)
 
     logging.debug("SOLVE BEGIN")
     not_satisfied = 0
     for investigated_file in fset:
         # logging.info("INVESTIGATED FILE: %s" % investigated_file)
         for rel in investigated_file.requires:
-            # logging.info("- relation: %s" % rel)
-            # Only analyze USE relations, we are looking for dependencies
-            satisfied_by = set()
-            for dep_file in fset:
-                if dep_file.satisfies(rel):
-                    if dep_file is not investigated_file:
-                        # A file cannot depends on itself.
-                        investigated_file.depends_on.add(dep_file)
-                    satisfied_by.add(dep_file)
-            if len(satisfied_by) == 1:
-                # Perfect!
-                continue
-            if len(satisfied_by) > 1:
+            lst = list(rel.provided_by)
+            for dep_file in lst:
+                if dep_file is not investigated_file:
+                    # A file cannot depends on itself.
+                    investigated_file.depends_on.add(dep_file)
+            if len(lst) > 1:
                 logging.warning(
                     "Relation %s satisfied by multiple (%d) files:\n %s",
                     str(rel),
-                    len(satisfied_by),
-                    '\n '.join([file_aux.path for
-                               file_aux in list(satisfied_by)]))
+                    len(lst),
+                    '\n '.join([file_aux.path for file_aux in lst]))
                 continue
+            if len(lst) == 1:
+                # Perfect!
+                continue
+
             # So we are handling an unsatisfied dependency.
-            assert(len(satisfied_by) == 0)
+            assert(len(lst) == 0)
 
             # Maybe provided by system libraries
             found = False

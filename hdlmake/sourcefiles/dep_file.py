@@ -52,6 +52,10 @@ class DepRelation(object):
         self.rel_type = rel_type
         self.obj_name = obj_name.lower()
         self.lib_name = None if lib_name is None else lib_name.lower()
+        # Set of DepFile provided/required by this relation.
+        # In general, provided_by has only one element.
+        self.provided_by = set()
+        self.required_by = set()
 
     def satisfies(self, rel_b):
         """Check if the current dependency relation matches the provided one"""
@@ -75,7 +79,9 @@ class DepRelation(object):
 
     def __eq__(self, other):
         return (isinstance(other, self.__class__)
-                and self.__dict__ == other.__dict__)
+                and self.rel_type == other.rel_type
+                and self.obj_name == other.obj_name
+                and self.lib_name == other.lib_name)
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -138,19 +144,12 @@ class DepFile(File):
     def __init__(self, path, module):
         assert isinstance(path, six.string_types)
         File.__init__(self, path=path, module=module)
+        # Relations provided/required by this file
         self.provides = set()
         self.requires = set()
         self.depends_on = set()     # Set of files this file depends on.
         self.included_files = set()
         self.dep_level = None
-
-    def add_require(self, rel):
-        """Add dependency :param rel:"""
-        self.requires.add(rel)
-
-    def add_provide(self, rel):
-        """Add provide :param rel:"""
-        self.provides.add(rel)
 
     def satisfies(self, rel_b):
         """Check if any of the file object relations match any of the relations

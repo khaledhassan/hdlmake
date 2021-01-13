@@ -483,7 +483,7 @@ class VerilogParser(DepParser):
                       "xnor",
                       "xor"]
 
-    def parse(self, dep_file):
+    def parse(self, dep_file, graph):
         """Parse the provided Verilog file and add to its properties
         all of the detected dependency relations"""
         # assert isinstance(dep_file, DepFile), print("unexpected type: " +
@@ -515,7 +515,8 @@ class VerilogParser(DepParser):
             pkg_name = text.group(1)
             logging.debug("file %s imports/uses %s.%s package",
                           dep_file.path, dep_file.library, pkg_name)
-            dep_file.add_require(
+            graph.add_require(
+                dep_file,
                 DepRelation(pkg_name, dep_file.library, DepRelation.PACKAGE))
         import_pattern.subn(do_imports, buf)
         # packages
@@ -530,7 +531,8 @@ class VerilogParser(DepParser):
             relations to the file"""
             pkg_name = text.group(1)
             logging.debug("found pacakge %s.%s", dep_file.library, pkg_name)
-            dep_file.add_provide(
+            graph.add_provide(
+                dep_file,
                 DepRelation(pkg_name, dep_file.library, DepRelation.PACKAGE))
         m_inside_package.subn(do_package, buf)
 
@@ -554,7 +556,8 @@ class VerilogParser(DepParser):
             PROVIDE relations to the file"""
             module_name = text.group(1)
             logging.debug("found module %s.%s", dep_file.library, module_name)
-            dep_file.add_provide(
+            graph.add_provide(
+                dep_file,
                 DepRelation(module_name, dep_file.library, DepRelation.MODULE))
 
             def do_inst(text):
@@ -568,7 +571,8 @@ class VerilogParser(DepParser):
                     return
                 logging.debug("-> instantiates %s.%s as %s",
                               dep_file.library, mod_name, text.group(2))
-                dep_file.add_require(
+                graph.add_require(
+                    dep_file,
                     DepRelation(mod_name, dep_file.library, DepRelation.MODULE))
             for stmt in [x for x in m_stmt.split(text.group(2)) if x and x[-1] == ")"]:
                 match = m_instantiation.match(stmt)

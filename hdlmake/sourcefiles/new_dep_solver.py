@@ -215,7 +215,7 @@ def make_dependency_set(fileset, top_level_entity, extra_modules=None):
         return fileset
     # Collect only the files that the top level entity is dependant on, by
     # walking the dependancy tree.
-    dep_file_set = set()
+    dep_file_set = SourceFileSet()
     file_set = set([top_file] + extra_files)
     while len(file_set) > 0:
         chk_file = file_set.pop()

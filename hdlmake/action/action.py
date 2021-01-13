@@ -161,11 +161,9 @@ class Action(object):
         if self.options.all_files:
             # If option -all is used, no need to compute dependencies.
             return
-        solved_files = SourceFileSet()
-        solved_files.add(dep_solver.make_dependency_set(
+        self.parseable_fileset = dep_solver.make_dependency_set(
             self.parseable_fileset, self.top_entity,
-            self.top_manifest.manifest_dict.get("extra_modules")))
-        self.parseable_fileset = solved_files
+            self.top_manifest.manifest_dict.get("extra_modules"))
 
     def get_top_manifest(self):
         """Get the Top module from the pool"""

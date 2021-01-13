@@ -31,7 +31,6 @@ class SourceFileSet(set):
 
     def __init__(self):
         super(SourceFileSet, self).__init__()
-        self = []
 
     def add(self, files):
         """Add a set of files to the source fileset instance"""
@@ -39,15 +38,20 @@ class SourceFileSet(set):
             logging.debug("Got None as a file.\n Ommiting")
             return
         if isinstance(files, CXFFile):
+            # CXFFile provides a list of source files, but no relation by
+            # itself.  Parse it now to get the source files.
+            # TODO: this is a little bit ad-hoc.
             if not files.is_parsed:
                 files.parser.parse(files)
                 for f in files.included_files:
                     path_abs = os.path.abspath(os.path.dirname(files.path) + '/' + f)
                     super(SourceFileSet, self).add(create_source_file(path_abs, files.module))
         elif isinstance(files, (SourceFileSet, set)):
+            # Use super() to add to the set.
             for file_aux in files:
                 super(SourceFileSet, self).add(file_aux)
         else:
+            # Use super() to add to the set.
             assert isinstance(files, File)
             super(SourceFileSet, self).add(files)
 

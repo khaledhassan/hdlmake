@@ -49,9 +49,12 @@ def solve(fileset, syslibs, standard_libs=None):
     from .sourcefileset import SourceFileSet
     from .dep_file import DepRelation
     assert isinstance(fileset, SourceFileSet)
+
+    # Consider only source files with dependencies
     fset = fileset.filter(DepFile)
 
     # Parse source files
+    # TODO: explain why some files are not parsed.
     logging.debug("PARSE BEGIN: Here, we will parse all the files in the "
                   "fileset: no parsing should be done beyond this point")
     for investigated_file in fset:

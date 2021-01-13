@@ -360,7 +360,7 @@ class Module(object):
 
         logging.debug("""
 ***********************************************************
-PARSE START: %s
+PARSE MANIFEST START: %s
 ***********************************************************""", self.path)
 
         manifest_parser = ManifestParser()
@@ -392,7 +392,7 @@ PARSE START: %s
 
         logging.debug("""
 ***********************************************************
-PARSE END: %s
+PARSE MANIFEST END: %s
 ***********************************************************
 
                       """, self.path)

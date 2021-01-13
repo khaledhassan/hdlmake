@@ -47,7 +47,6 @@ class Action(object):
         self.system_libs = set()
         self.parseable_fileset = SourceFileSet()
         self.privative_fileset = SourceFileSet()
-        self._deps_solved = False
         self.options = options
 
     def new_module(self, parent, url, source, fetchto):
@@ -60,8 +59,6 @@ class Action(object):
         for mod in self.all_manifests:
             if mod.url == url:
                 return None
-        # A new module will be added, dependencies have to be computed.
-        self._deps_solved = False
         args = ModuleArgs()
         args.set_args(parent, url, source, fetchto)
         res = Module(args, self)
@@ -153,15 +150,14 @@ class Action(object):
 
     def solve_file_set(self):
         """Build file set with only those files required by the top entity"""
-        if not self._deps_solved:
-            libs = None
-            system_libs = self.system_libs
-            if self.tool is not None:
-                libs = self.tool.get_standard_libs()
-                for l in self.tool.get_system_libs():
-                    system_libs.add(l)
-            dep_solver.solve(self.parseable_fileset, system_libs, libs)
-            self._deps_solved = True
+        libs = None
+        system_libs = self.system_libs
+        if self.tool is not None:
+            # Get system libs and standard libs from the tool
+            libs = self.tool.get_standard_libs()
+            for l in self.tool.get_system_libs():
+                system_libs.add(l)
+        dep_solver.solve(self.parseable_fileset, system_libs, libs)
         if self.options.all_files:
             # If option -all is used, no need to compute dependencies.
             return

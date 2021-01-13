@@ -35,10 +35,6 @@ from ..sourcefiles.srcfile import VHDL_EXTENSIONS, VERILOG_EXTENSIONS, SV_EXTENS
 class CXFParser(DepParser):
     """Class providing the Microsemi CXF parser"""
 
-    def __init__(self, dep_file):
-        self.hdldeps = []
-        DepParser.__init__(self, dep_file)
-
     def parse(self, dep_file):
         """Parse a Microsemi CXF IP description file to determine the provided module(s)"""
         with open(dep_file.path) as f:

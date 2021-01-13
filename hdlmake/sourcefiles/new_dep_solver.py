@@ -35,9 +35,6 @@ class DepParser(object):
 
     """Base Class for the different HDL parsers (VHDL and Verilog)"""
 
-    def __init__(self, dep_file):
-        self.dep_file = dep_file
-
     def parse(self, dep_file):
         """Base dummy interface method for the HDL parse execution"""
         pass

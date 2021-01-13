@@ -33,9 +33,6 @@ from ..sourcefiles.srcfile import create_source_file
 class XCIParser(DepParser):
     """Class providing the Xilinx XCI parser"""
 
-    def __init__(self, dep_file):
-        DepParser.__init__(self, dep_file)
-
     def parse(self, dep_file):
         """Parse a Xilinx XCI IP description file to determine the provided module(s)"""
         with open(dep_file.path) as f:

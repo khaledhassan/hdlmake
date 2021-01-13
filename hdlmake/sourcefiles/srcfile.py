@@ -56,7 +56,7 @@ class VHDLFile(SourceFile):
     def __init__(self, path, module, library=None):
         SourceFile.__init__(self, path=path, module=module, library=library)
         from .vhdl_parser import VHDLParser
-        self.parser = VHDLParser(self)
+        self.parser = VHDLParser()
 
 
 class VerilogFile(SourceFile):
@@ -68,7 +68,7 @@ class VerilogFile(SourceFile):
         from .vlog_parser import VerilogParser
         self.include_dirs = include_dirs[:] if include_dirs else []
         self.include_dirs.append(path_mod.relpath(self.dirname))
-        self.parser = VerilogParser(self)
+        self.parser = VerilogParser()
 
 
 class SVFile(VerilogFile):
@@ -177,7 +177,7 @@ class XCIFile(SourceFile):
     def __init__(self, path, module, library=None):
         SourceFile.__init__(self, path=path, module=module, library=library)
         from .xci_parser import XCIParser
-        self.parser = XCIParser(self)
+        self.parser = XCIParser()
 
 XILINX_FILE_DICT = {
     'xise': XISEFile,
@@ -250,7 +250,7 @@ class CXFFile(SourceFile):
     def __init__(self, path, module, library=None):
         SourceFile.__init__(self, path=path, module=module, library=library)
         from .cxf_parser import CXFParser
-        self.parser = CXFParser(self)
+        self.parser = CXFParser()
 
 MICROSEMI_FILE_DICT = {
     'pdc': PDCFile,

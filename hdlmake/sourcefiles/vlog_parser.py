@@ -483,10 +483,6 @@ class VerilogParser(DepParser):
                       "xnor",
                       "xor"]
 
-    def __init__(self, dep_file):
-        DepParser.__init__(self, dep_file)
-        self.preprocessor = VerilogPreprocessor()
-
     def parse(self, dep_file):
         """Parse the provided Verilog file and add to its properties
         all of the detected dependency relations"""
@@ -494,6 +490,7 @@ class VerilogParser(DepParser):
         # str(type(dep_file)))
 
         # Preprocess the file and add included files as dependencies
+        self.preprocessor = VerilogPreprocessor()
         buf = self.preprocessor.preprocess(dep_file)
         dep_file.included_files = self.preprocessor.included_files
         logging.debug("%s has %d includes.", str(dep_file), len(dep_file.included_files))

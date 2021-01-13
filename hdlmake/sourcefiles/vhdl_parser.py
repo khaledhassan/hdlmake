@@ -34,10 +34,6 @@ class VHDLParser(DepParser):
 
     """Class providing the container for VHDL parser instances"""
 
-    def __init__(self, dep_file):
-        DepParser.__init__(self, dep_file)
-        # self.preprocessor = VHDLPreprocessor()
-
     def parse(self, dep_file):
         """Parse the provided VHDL file and add the detected relations to it"""
         from .dep_file import DepRelation

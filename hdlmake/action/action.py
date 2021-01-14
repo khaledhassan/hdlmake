@@ -171,7 +171,7 @@ class Action(object):
             extra_modules = self.top_manifest.manifest_dict.get("extra_modules")
             self.parseable_fileset = dep_solver.make_dependency_set(
                 graph, self.parseable_fileset, self.top_entity, extra_modules)
-        dep_solver.solve(graph, self.parseable_fileset, system_libs, libs)
+        dep_solver.check_graph(graph, self.parseable_fileset, system_libs, libs)
 
     def get_top_manifest(self):
         """Get the Top module from the pool"""

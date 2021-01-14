@@ -79,7 +79,6 @@ def parse_source_files(graph, fileset):
     assert isinstance(fileset, SourceFileSet)
 
     # Parse source files
-    # TODO: explain why some files are not parsed.
     logging.debug("PARSE SOURCE BEGIN: Here, we parse all the files in the "
                   "fileset: no manifest parsing should be done beyond this point")
     for investigated_file in fileset:
@@ -102,9 +101,9 @@ def parse_source_files(graph, fileset):
                     investigated_file.depends_on.add(dep_file)
 
 
-def solve(graph, fileset, syslibs, standard_libs=None):
-    """Function that Parses and Solves the provided HDL fileset. Note
-       that it doesn't return a new fileset, but modifies the original one"""
+def check_graph(graph, fileset, syslibs, standard_libs=None):
+    """Check that each dependency of :param fileset: can be solved once or by
+       a module from :param syslibs: or :param standard_libs:"""
     from .dep_file import DepRelation
     # Dependencies provided by system libraries.
     system_rels = []
@@ -117,9 +116,14 @@ def solve(graph, fileset, syslibs, standard_libs=None):
 
     logging.debug("SOLVE BEGIN")
     not_satisfied = 0
+    done = set()
     for investigated_file in fileset:
         # logging.info("INVESTIGATED FILE: %s" % investigated_file)
         for rel in investigated_file.requires:
+            if rel in done:
+                # Already handled.  Avoid to warn several times
+                continue
+            done.add(rel)
             lst = list(rel.provided_by)
             if len(lst) > 1:
                 logging.warning(
@@ -172,13 +176,12 @@ def make_dependency_sorted_list(fileset):
     """Sort files in order of dependency.
     Files with no dependencies first.
     All files that another depends on will be earlier in the list."""
-    dependable = [f for f in fileset if isinstance(f, DepFile)]
-    non_dependable = [f for f in fileset if not isinstance(f, DepFile)]
-    dependable.sort(key=lambda f: f.path.lower())
+    fset = list(fileset)
+    fset.sort(key=lambda f: f.path.lower())
     # Not necessary, but will tend to group files more nicely
     # in the output.
-    dependable.sort(key=DepFile.get_dep_level)
-    return non_dependable + dependable
+    fset.sort(key=DepFile.get_dep_level)
+    return fset
 
 
 def make_dependency_set(graph, fileset, top_level_entity, extra_modules=None):

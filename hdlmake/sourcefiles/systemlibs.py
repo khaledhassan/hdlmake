@@ -50,6 +50,10 @@ def build_xilinx():
               'icap_spartan6', 'bscan_spartan6',
               'gtxe2_channel', 'gtxe2_common', 'gtpa1_dual',
               'dsp48a1',
+              'lut1', 'lut2', 'lut3', 'lut4', 'lut5', 'lut6',
+              'fdre',
+              'muxf7', 'carry4',
+              'vcc', 'gnd',
               'srlc32e']:
         add_entity(res, n)
     return res

@@ -50,8 +50,7 @@ class Commands(Action):
 
     def _check_all_fetched(self):
         """Check if every module in the pool is fetched"""
-
-        if not len([m for m in self.all_manifests if not m.isfetched]) == 0:
+        if any([not m.isfetched for m in self.all_manifests]):
             raise Exception(
                 "Fetching should be done before continuing.\n"
                 "The following modules remains unfetched:\n"

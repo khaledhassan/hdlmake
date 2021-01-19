@@ -35,7 +35,7 @@ from ..fetch.git import Git, GitSM
 from ..fetch.local import Local
 from .action import Action
 from ..util import shell
-
+from .gen_edalize import Edalize
 
 class Commands(Action):
 
@@ -75,6 +75,15 @@ class Commands(Action):
         self.tool.write_makefile(self.top_manifest,
                                  combined_fileset,
                                  filename=filename)
+
+    def write_edalize(self):
+        filename = "run.py"
+        self._check_all_fetched()
+        self.build_file_set()
+        self.solve_file_set()
+        edl = Edalize(self)
+        with open(filename, "w") as f:
+            edl.generate_file(f)
 
     def _fetch_all(self):
         """Fetch all the modules declared in the design"""

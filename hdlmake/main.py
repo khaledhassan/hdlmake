@@ -79,24 +79,26 @@ def hdlmake(args):
 
 def _action_runner(action):
     """Funtion that decodes and executed the action selected by the user"""
-    options = action.options
-    if options.command == "manifest-help":
+    cmd = action.options.command
+    if cmd == "manifest-help":
         ManifestParser().print_help()
-    elif options.command == "makefile" or options.command is None:
+    elif cmd == "makefile" or cmd is None:
         action.makefile()
-    elif options.command == "fetch":
+    elif cmd == "edalize":
+        action.write_edalize()
+    elif cmd == "fetch":
         action.fetch()
-    elif options.command == "clean":
+    elif cmd == "clean":
         action.clean()
-    elif options.command == "list-mods":
+    elif cmd == "list-mods":
         action.list_modules()
-    elif options.command == "list-files":
+    elif cmd == "list-files":
         action.list_files()
-    elif options.command == "list-json":
+    elif cmd == "list-json":
         action.list_json()
-    elif options.command == "list-deps":
+    elif cmd == "list-deps":
         action.list_deps()
-    elif options.command == "tree":
+    elif cmd == "tree":
         action.generate_tree()
     else:
         raise AssertionError
@@ -133,6 +135,10 @@ def _get_parser():
     makefile.add_argument(
         "--windows", action='store_const', dest='make', const='windows',
         help="select a mingw/windows 'make' on windows platforms")
+
+    subparsers.add_parser(
+        "edalize",
+        help="write a run.py file based on edalize")
 
     subparsers.add_parser(
         "fetch",

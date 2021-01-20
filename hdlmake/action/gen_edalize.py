@@ -23,13 +23,16 @@
 # to reparse all the manifest files at each step.
 
 import os.path
-from ..sourcefiles.srcfile import VHDLFile, SVFile, VerilogFile
+from ..sourcefiles.srcfile import VHDLFile, SVFile, VerilogFile, UCFFile
+from ..tools.ise import FAMILY_NAMES as ISE_FAMILY_NAMES
 
 class Edalize():
     def __init__(self, action):
         self.action = action
         self.out = None
-
+        self.tool = None
+        self.tool_options = {}
+        self.manifest = action.top_manifest.manifest_dict
 
     def w(self, s=''):
         print(s, file=self.out)
@@ -42,29 +45,53 @@ class Edalize():
             lang = 'systemVerilogSource'
         elif isinstance(src, VerilogFile):
             lang = 'verilogSource'
+        elif isinstance(src, UCFFile):
+            lang = 'UCF'
         else:
             lang = 'unknown'
         self.w("   'file_type': '{}'}},".format(lang))
 
+    def gen_ise(self):
+        """Xilinx ISE specific parameters"""
+        # Extract family
+        syn_device = self.manifest["syn_device"]
+        syn_family = self.manifest.get("syn_family", None)
+        if syn_family is None:
+            syn_family = ISE_FAMILY_NAMES.get(syn_device[0:4].upper())
+            if syn_family is None:
+                raise Exception(
+                    "syn_family is not defined in Manifest.py"
+                    " and can not be guessed!")
+        self.tool_options['ise'] = {
+            'family': syn_family,
+            'device': syn_device,
+            'package': self.manifest['syn_package'],
+            'speed': self.manifest['syn_grade']
+        }
+
     def gen_tool(self):
-        name = self.action.tool.TOOL_INFO['id']
-        self.w("tool = '{}'".format(name))
+        self.tool = self.action.tool.TOOL_INFO['id']
+        if self.tool == 'ise':
+            self.gen_ise()
 
     def gen_top(self):
-        project_name = self.action.top_manifest.manifest_dict.get("syn_project", None)
+        project_name = self.manifest.get("syn_project", None)
         if project_name is None:
             project_name = self.action.top_entity
         else:
             project_name = os.path.splitext(project_name)[0]
 
         self.w("edam = {")
-        self.w("  'files'        : files,")
-        self.w("  'name'         : '{}',".format(project_name))
-        self.w("  'toplevel'     : '{}'".format(self.action.top_entity))
+        self.w("  'files': files,")
+        self.w("  'name': '{}',".format(project_name))
+        self.w("  'toplevel': '{}',".format(self.action.top_entity))
+        if self.tool_options:
+            self.w("  'tool_options': {},".format(self.tool_options))
         self.w("}")
 
     def generate_file(self, f):
         self.out = f
+        self.gen_tool()
         self.w("import sys")
         self.w("import os")
         self.w("from edalize import *")
@@ -76,7 +103,7 @@ class Edalize():
             self.gen_source_file(src)
         self.w("]")
         self.w()
-        self.gen_tool()
+        self.w("tool = '{}'".format(self.tool))
         self.w()
         self.gen_top()
         self.w()
